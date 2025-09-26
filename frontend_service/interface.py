@@ -490,8 +490,6 @@ def build_interface() -> gr.Blocks:
                     feature_select = gr.Dropdown(choices=feature_choices, value=feature_choices[0], label="功能选择")
                     
                     with gr.Group(visible=True) as chat_group:
-                        gr.Markdown("### 🤖 AI 助教")
-                        # MODIFIED: Removed `type="messages"`
                         chatbot = gr.Chatbot(elem_id="chatbot", label="Chat", height=500)
                         with gr.Row():
                             msg = gr.Textbox(placeholder="输入你的问题...", container=False, scale=4)
@@ -501,7 +499,7 @@ def build_interface() -> gr.Blocks:
                         clear = gr.Button("清除对话历史")
                     
                     with gr.Group(visible=False) as quiz_group:
-                        gr.Markdown("### 📝 随堂测验")
+                        
                         quiz_subject = gr.Textbox(label="测验主题")
                         start_btn = gr.Button("开始测验", variant="primary")
                         quiz_question = gr.Markdown(label="问题")
@@ -515,20 +513,20 @@ def build_interface() -> gr.Blocks:
                         plan_quiz_output = gr.Textbox(label="计划输出", lines=10, interactive=False)
 
                     with gr.Group(visible=False) as plan_group:
-                        gr.Markdown("### 🗺️ 学习计划")
+                        
                         plan_name = gr.Textbox(label="你的名字")
                         plan_goals = gr.Textbox(label="学习目标 (用分号隔开)")
                         plan_btn = gr.Button("生成计划", variant="primary")
                         plan_output = gr.Textbox(label="计划输出", lines=10, interactive=False)
                     
                     with gr.Group(visible=False) as summary_group:
-                        gr.Markdown("### 📜 知识总结")
+                        
                         sum_topic = gr.Textbox(label="主题或材料")
                         sum_btn = gr.Button("生成总结", variant="primary")
                         sum_output = gr.Textbox(label="总结内容", lines=10, interactive=False)
                     
                     with gr.Group(visible=False) as upload_group:
-                        gr.Markdown("### 📤 上传新资源")
+                        
                         gr.Markdown("上传文件到当前学习节点：")
                         current_node_display = gr.Markdown()
                         upload_files_new = gr.File(file_count="multiple", label="选择PDF文件")
