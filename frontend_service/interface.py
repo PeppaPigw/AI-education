@@ -297,103 +297,6 @@ def run_learning_plan_from_quiz(name: str, state: dict, lang_choice: str) -> str
     return buffer.getvalue()
 
 
-# 移除闪卡相关函数
-# def _init_flashcard_state(cards: list[dict]) -> dict:
-#     """Return a new flashcard navigation state."""
-#     return {"cards": cards, "index": 0, "side": "question"}
-
-# def _render_flashcard(state: dict) -> str:
-#     """Return the currently visible side of the flashcard."""
-#     if not state or not state.get("cards"):
-#         return ""
-#     card = state["cards"][state["index"]]
-#     side = state.get("side", "question")
-#     return card.get(side, "")
-
-# def run_flashcards_generate(
-#     topic: str, lang_choice: str, retriever=None
-# ) -> tuple[str, dict, str, str]:
-#     """Generate flashcards from a topic and prepare viewer state."""
-#     code = LanguageHandler.code_from_display(lang_choice)
-#     language = code if code != "auto" else LanguageHandler.choose_or_detect(topic)
-#     flashcards = FlashcardSet(topic, retriever=retriever)
-#     buffer = io.StringIO()
-#     with redirect_stdout(buffer):
-#         used_retriever = flashcards.generate_from_prompt(
-#             topic_prompt=topic, language=language, retriever=retriever
-#         )
-#         path = flashcards.save_to_file()
-#     logs = buffer.getvalue()
-#     notice = (
-#         "📄 Flashcards generated with document context"
-#         if used_retriever
-#         else "⚠️ Flashcards generated without document context"
-#     )
-#     logs = notice + ("\n" + logs if logs else "")
-#     if path:
-#         logs += f"\nSaved to: {path}"
-#     cards = flashcards.to_dict_list()
-#     state = _init_flashcard_state(cards)
-#     first = _render_flashcard(state)
-#     progress = f"1/{len(cards)}" if cards else "0/0"
-#     return first, state, logs, progress
-
-# def run_flashcards_review(path: str) -> tuple[str, dict, str]:
-#     """Load flashcards from file for interactive review."""
-#     flashcards = FlashcardSet.load_from_file(path)
-#     if not flashcards:
-#         return "Failed to load flashcards.", {}, "0/0"
-#     cards = flashcards.to_dict_list()
-#     state = _init_flashcard_state(cards)
-#     first = _render_flashcard(state)
-#     progress = f"1/{len(cards)}" if cards else "0/0"
-#     return first, state, progress
-
-
-# def flashcard_flip(state: dict) -> tuple[str, dict]:
-#     """Flip between question and answer."""
-#     if not state or not state.get("cards"):
-#         return "", state
-#     state["side"] = "answer" if state.get("side") == "question" else "question"
-#     return _render_flashcard(state), state
-
-
-# def flashcard_next(state: dict) -> tuple[str, dict, str]:
-#     """Move to the next flashcard."""
-#     if not state or not state.get("cards"):
-#         return "", state, "0/0"
-#     state["index"] = (state["index"] + 1) % len(state["cards"])
-#     state["side"] = "question"
-#     return (
-#         _render_flashcard(state),
-#         state,
-#         f"{state['index'] + 1}/{len(state['cards'])}",
-#     )
-
-
-# def flashcard_prev(state: dict) -> tuple[str, dict, str]:
-#     """Move to the previous flashcard."""
-#     if not state or not state.get("cards"):
-#         return "", state, "0/0"
-#     state["index"] = (state["index"] - 1) % len(state["cards"])
-#     state["side"] = "question"
-#     return (
-#         _render_flashcard(state),
-#         state,
-#         f"{state['index'] + 1}/{len(state['cards'])}",
-#     )
-
-
-# def flashcard_shuffle(state: dict) -> tuple[str, dict, str]:
-#     """Shuffle flashcards order and restart."""
-#     if not state or not state.get("cards"):
-#         return "", state, "0/0"
-#     random.shuffle(state["cards"])
-#     state["index"] = 0
-#     state["side"] = "question"
-#     return _render_flashcard(state), state, f"1/{len(state['cards'])}"
-
-
 def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
     """Generate a detailed study summary."""
     code = LanguageHandler.code_from_display(lang_choice)
@@ -409,22 +312,6 @@ def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
     )
     return f"{notice}\n\n{summary}"
 
-
-# 移除 Cheat sheet（备忘录/小抄）相关函数
-# def run_cheatsheet_interface(topic: str, lang_choice: str, retriever=None) -> str:
-#     """Generate a cheat sheet."""
-#     code = LanguageHandler.code_from_display(lang_choice)
-#     language = code if code != "auto" else LanguageHandler.choose_or_detect(topic)
-#     generator = CheatSheetGenerator(retriever=retriever)
-#     sheet, used_retriever = generator.generate_cheatsheet(
-#         topic, language=language, retriever=retriever
-#     )
-#     notice = (
-#         "📄 Cheat sheet generated with document context"
-#         if used_retriever
-#         else "⚠️ Cheat sheet generated without document context"
-#     )
-#     return f"{notice}\n\n{sheet}"
 
 
 def build_interface() -> gr.Blocks:

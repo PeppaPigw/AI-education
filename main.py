@@ -1,15 +1,3 @@
-"""Application entry point for the EduGen toolkit.
-
-Running the module exposes two interfaces:
-
-* ``main.py`` – launches a Gradio web application showcasing all study tools.
-* ``main.py --cli`` – starts a textual interface for chatting, quizzes and
-  content generation.
-
-Both modes share a single ReAct agent and a retrieval‑augmented generation
-service to provide consistent responses across components.
-"""
-
 from dotenv import load_dotenv
 from QuizModule import generate_quiz, generate_learning_plan_from_quiz
 from LearningPlanModule import LearningPlan
