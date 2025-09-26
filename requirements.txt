@@ -1,0 +1,47 @@
+# Core dependencies
+langchain==0.3.14
+langchain-core==0.3.29
+langchain-text-splitters==0.3.5
+langchain-openai>=0.1.8
+langchain-community
+langsmith==0.2.10
+openai==1.59.6
+tiktoken==0.8.0
+pandas==2.2.3
+numpy==1.26.4
+
+# Utilities
+python-dotenv==1.0.1
+requests==2.32.3
+langdetect
+langid
+
+# Development tools
+nest-asyncio==1.6.0
+tenacity==8.5.0
+pydantic==2.10.5
+pydantic-core==2.27.2
+
+# Testing
+pytest==8.3.2
+
+# RAG dependencies
+chromadb>=0.4.0
+langchain-chroma
+pypdf>=3.14.0
+unstructured>=0.12.0
+pdfminer.six
+docx2txt
+python-docx
+
+# For Windows users
+python-magic-bin>=0.4.14; platform_system == "Windows"
+
+# Extra tools
+wikipedia
+nltk
+deep-translator
+
+fastapi>=0.111
+starlette>=0.32
+gradio>=4.44.1
