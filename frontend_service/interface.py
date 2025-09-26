@@ -10,6 +10,10 @@ import re
 import gradio as gr
 from dotenv import load_dotenv
 
+# --- 后端逻辑与函数 (未作修改) ---
+# 这部分代码与你提供的原始代码完全相同，以确保功能和接口不变。
+
+# 确保脚本可以找到自定义模块
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from AgentModule import create_agent
 from AgentModule.edu_agent import run_agent
@@ -19,21 +23,24 @@ from SummaryModule import StudySummaryGenerator
 from tools.language_handler import LanguageHandler
 from tools.rag_service import get_rag_service
 
+# 加载环境变量
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 load_dotenv(dotenv_path)
 
-
+# 检查 API Key
 if not os.environ.get("api_key"):
     raise RuntimeError(
         "api_key is not set. Create a .env file or export the variable."
     )
 
+# 初始化服务
 agent = create_agent()
 rag_service = get_rag_service()
 retriever = rag_service.get_retriever()
 
 logger = logging.getLogger(__name__)
 
+# CSS 样式 (未作修改)
 CSS = """
 * {
     font-family: 'Segoe UI', Tahoma, sans-serif;
@@ -46,50 +53,10 @@ CSS = """
     background-color: #f0f0f0;
     border-radius: 8px;
 }
-/* 移除闪卡相关 CSS */
-/* #flashcard-container {
-    background-color: #fffbe6;
-    border: 1px solid #ffd580;
-    border-radius: 8px;
-    padding: 16px;
-    max-width: 500px;
-    margin: auto;
-    text-align: center;
-    width: fit-content;
-}
-#flashcard-content {
-    min-height: 120px;
-    font-size: 1.1em;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-#flashcard-buttons {
-    display: grid;
-    grid-template-columns: repeat(2, auto);
-    gap: 4px;
-    justify-content: center;
-}
-#flashcard-buttons button {
-    width: 48px;
-    margin: 0;
-}
-#flashcard-counter {
-    font-weight: bold;
-    margin-top: 8px;
-}
-#flashcard-container .wrap,
-#flashcard-container .progress-text,
-#flashcard-container .progress-bar-wrap,
-#flashcard-container .eta-bar {
-    display: none !important;
-} */
 #chatbot .message.bot.fallback {
     background-color: #fff9c4;
 }
 """
-
 
 def respond(
     message: str,
@@ -97,13 +64,7 @@ def respond(
     lang_choice: str,
     retriever=None,
 ) -> tuple[list[dict], str]:
-    """Return updated chat history and logs.
-
-    The user's message is yielded immediately so it appears in the UI while the
-    bot processes the response.
-    """
-
-    # show the user's message right away with a placeholder for the response
+    """Return updated chat history and logs."""
     history = history + [
         {"role": "user", "content": message},
         {"role": "assistant", "content": "..."},
@@ -132,7 +93,6 @@ def respond(
             )
             result = f"<div class='retrieval'>{notice}<br>{result}</div>"
 
-    # replace the placeholder with the actual response
     history[-1] = {"role": "assistant", "content": result}
     logs = buffer.getvalue()
     yield history, logs
@@ -144,11 +104,7 @@ def respond_with_retriever(message: str, history: list[dict], lang_choice: str):
 
 
 def process_knowledge(files: list):
-    """Save uploaded files and ingest them into the RAG service.
-
-    Emits status updates so the UI can show progress and final result.
-    """
-
+    """Save uploaded files and ingest them into the RAG service."""
     if not files:
         yield "⚠️ No files uploaded."
         return
@@ -183,9 +139,7 @@ def process_knowledge(files: list):
 
 def _format_question(q: dict) -> str:
     """Return formatted question text with options on separate lines."""
-    
     text = q["question"]
-    # ensure each answer choice appears on its own line
     text = re.sub(r"\s*([abcd]\))", r"\n\1", text, flags=re.I)
     text = text.strip()
     return f"**{q['topic']}**\n\n{text}"
@@ -312,127 +266,173 @@ def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
     )
     return f"{notice}\n\n{summary}"
 
-
+# --- Gradio UI 构建 (已修改) ---
+# 这部分是根据你的新布局要求重构的。
 
 def build_interface() -> gr.Blocks:
-    """Create the Gradio UI replicating the CLI menu."""
+    """创建具有右侧边栏布局的 Gradio UI。"""
     with gr.Blocks(css=CSS, theme=gr.themes.Soft()) as demo:
-        gr.Markdown("# EduGen", elem_id="title")
-        lang_select = gr.Dropdown(
-            choices=LanguageHandler.dropdown_choices(),
-            value=LanguageHandler.dropdown_choices()[0],
-            label="Language",
-        )
+        with gr.Row():
+            # 左侧 3/4 空白区域
+            with gr.Column(scale=3):
+                pass  # 此列根据要求留空
 
-        with gr.Accordion("Upload Knowledge", open=False):
-            upload_files = gr.File(file_count="multiple")
-            process_btn = gr.Button("Process")
-            upload_status = gr.Markdown()
-            process_btn.click(process_knowledge, upload_files, upload_status)
+            # 右侧 1/4 功能面板
+            with gr.Column(scale=1):
+                gr.Markdown("<h1>EduGen 🎓</h1>")
 
-        with gr.Tabs():
-            # Chat tab
-            with gr.TabItem("Chat with the bot"):
-                chatbot = gr.Chatbot(elem_id="chatbot", type="messages")
-                with gr.Row():
-                    msg = gr.Textbox(
-                        placeholder="Type your message and press enter...",
-                        container=False,
-                    )
-                    send = gr.Button("Send", variant="primary")
-                    clear = gr.Button("Clear")
-                logs = gr.Textbox(label="Terminal output", lines=8)
-
-                def clear_history():
-                    return [], ""
-
-                msg.submit(
-                    respond_with_retriever,
-                    [msg, chatbot, lang_select],
-                    [chatbot, logs],
-                )
-                send.click(
-                    respond_with_retriever,
-                    [msg, chatbot, lang_select],
-                    [chatbot, logs],
-                )
-                clear.click(clear_history, None, [chatbot, logs])
-
-            # Quiz tab
-            with gr.TabItem("Generate quiz"):
-                quiz_subject = gr.Textbox(label="Subject")
-                start_btn = gr.Button("Start Quiz")
-                quiz_question = gr.Markdown()
-                with gr.Row():
-                    btn_a = gr.Button("A")
-                    btn_b = gr.Button("B")
-                    btn_c = gr.Button("C")
-                    btn_d = gr.Button("D")
-                quiz_result = gr.Markdown()
-                quiz_name = gr.Textbox(label="Your name")
-                plan_quiz_btn = gr.Button("Generate Learning Plan from Quiz")
-                plan_quiz_output = gr.Textbox(label="Plan Output", lines=10)
-                quiz_state = gr.State()
-
-                start_btn.click(
-                    lambda sub, lang: start_quiz(sub, lang, retriever),
-                    [quiz_subject, lang_select],
-                    [quiz_question, quiz_state, quiz_result],
-                )
-                btn_a.click(
-                    lambda st: answer_quiz("a", st),
-                    quiz_state,
-                    [quiz_question, quiz_state, quiz_result],
-                )
-                btn_b.click(
-                    lambda st: answer_quiz("b", st),
-                    quiz_state,
-                    [quiz_question, quiz_state, quiz_result],
-                )
-                btn_c.click(
-                    lambda st: answer_quiz("c", st),
-                    quiz_state,
-                    [quiz_question, quiz_state, quiz_result],
-                )
-                btn_d.click(
-                    lambda st: answer_quiz("d", st),
-                    quiz_state,
-                    [quiz_question, quiz_state, quiz_result],
-                )
-                plan_quiz_btn.click(
-                    run_learning_plan_from_quiz,
-                    [quiz_name, quiz_state, lang_select],
-                    plan_quiz_output,
+                # 功能选择下拉菜单
+                feature_choices = [
+                    "Chat with the bot",
+                    "Generate quiz",
+                    "Learning plan",
+                    "Summary",
+                    "Upload Knowledge",
+                ]
+                feature_select = gr.Dropdown(
+                    choices=feature_choices,
+                    value=feature_choices[0],
+                    label="Select Functionality",
                 )
 
-            # Learning plan tab
-            with gr.TabItem("Learning plan"):
-                plan_name = gr.Textbox(label="Your name")
-                plan_goals = gr.Textbox(label="Learning goals (semicolon separated)")
-                plan_btn = gr.Button("Generate Plan")
-                plan_output = gr.Textbox(label="Plan Output", lines=10)
-                plan_btn.click(
-                    run_learning_plan_interface,
-                    [plan_name, plan_goals, lang_select],
-                    plan_output,
+                # 语言选择下拉菜单
+                lang_select = gr.Dropdown(
+                    choices=LanguageHandler.dropdown_choices(),
+                    value=LanguageHandler.dropdown_choices()[0],
+                    label="Language",
                 )
 
+                # --- 各功能的 UI 组件组 ---
+                
+                # “Upload Knowledge” 功能组
+                with gr.Group(visible=False) as upload_group:
+                    with gr.Blocks() as upload_blocks:
+                        gr.Markdown("### Upload Knowledge 🧠")
+                        upload_files = gr.File(file_count="multiple", label="Upload Files")
+                        process_btn = gr.Button("Process", variant="primary")
+                        upload_status = gr.Markdown()
+                        process_btn.click(process_knowledge, upload_files, upload_status)
 
+                # “Chat with the bot” 功能组
+                with gr.Group(visible=True) as chat_group:
+                    with gr.Blocks() as chat_blocks:
+                        gr.Markdown("### Chat with the bot 💬")
+                        chatbot = gr.Chatbot(elem_id="chatbot", type="messages", label="Chat", height=500)
+                        with gr.Row():
+                            msg = gr.Textbox(
+                                placeholder="Type your message and press enter...",
+                                container=False,
+                                scale=4,
+                            )
+                            send = gr.Button("Send", variant="primary", scale=1)
+                        with gr.Accordion("Terminal Output", open=False):
+                            logs = gr.Textbox(label=None, lines=8)
+                        clear = gr.Button("Clear Chat History")
+                        
+                        def clear_history():
+                            return [], "", ""
+                        
+                        msg.submit(
+                            respond_with_retriever, [msg, chatbot, lang_select], [chatbot, logs]
+                        ).then(lambda: "", outputs=msg)
+                        send.click(
+                            respond_with_retriever, [msg, chatbot, lang_select], [chatbot, logs]
+                        ).then(lambda: "", outputs=msg)
+                        clear.click(clear_history, None, [chatbot, logs, msg])
 
-            # Summary tab
-            with gr.TabItem("Summary"):
-                sum_topic = gr.Textbox(label="Topic or material")
-                sum_btn = gr.Button("Generate Summary")
-                sum_output = gr.Textbox(label="Summary", lines=10)
-                sum_btn.click(
-                    lambda t, l: run_summary_interface(t, l, retriever),
-                    [sum_topic, lang_select],
-                    sum_output,
+                # “Generate quiz” 功能组
+                with gr.Group(visible=False) as quiz_group:
+                    with gr.Blocks() as quiz_blocks:
+                        gr.Markdown("### Generate quiz 📝")
+                        quiz_subject = gr.Textbox(label="Subject")
+                        start_btn = gr.Button("Start Quiz", variant="primary")
+                        quiz_question = gr.Markdown(label="Question")
+                        with gr.Row():
+                            btn_a = gr.Button("A")
+                            btn_b = gr.Button("B")
+                            btn_c = gr.Button("C")
+                            btn_d = gr.Button("D")
+                        quiz_result = gr.Markdown(label="Result")
+                        quiz_state = gr.State()
+                        
+                        gr.Markdown("---")
+                        
+                        quiz_name = gr.Textbox(label="Your name (for learning plan)")
+                        plan_quiz_btn = gr.Button("Generate Learning Plan from Quiz")
+                        plan_quiz_output = gr.Textbox(label="Plan Output", lines=10)
+
+                        start_btn.click(
+                            lambda sub, lang: start_quiz(sub, lang, retriever),
+                            [quiz_subject, lang_select],
+                            [quiz_question, quiz_state, quiz_result],
+                        )
+                        btn_a.click(lambda st: answer_quiz("a", st), quiz_state, [quiz_question, quiz_state, quiz_result])
+                        btn_b.click(lambda st: answer_quiz("b", st), quiz_state, [quiz_question, quiz_state, quiz_result])
+                        btn_c.click(lambda st: answer_quiz("c", st), quiz_state, [quiz_question, quiz_state, quiz_result])
+                        btn_d.click(lambda st: answer_quiz("d", st), quiz_state, [quiz_question, quiz_state, quiz_result])
+                        plan_quiz_btn.click(
+                            run_learning_plan_from_quiz,
+                            [quiz_name, quiz_state, lang_select],
+                            plan_quiz_output,
+                        )
+
+                # “Learning plan” 功能组
+                with gr.Group(visible=False) as plan_group:
+                    with gr.Blocks() as plan_blocks:
+                        gr.Markdown("### Learning plan 🗺️")
+                        plan_name = gr.Textbox(label="Your name")
+                        plan_goals = gr.Textbox(label="Learning goals (semicolon separated)")
+                        plan_btn = gr.Button("Generate Plan", variant="primary")
+                        plan_output = gr.Textbox(label="Plan Output", lines=10)
+                        plan_btn.click(
+                            run_learning_plan_interface,
+                            [plan_name, plan_goals, lang_select],
+                            plan_output,
+                        )
+
+                # “Summary” 功能组
+                with gr.Group(visible=False) as summary_group:
+                    with gr.Blocks() as summary_blocks:
+                        gr.Markdown("### Summary 📜")
+                        sum_topic = gr.Textbox(label="Topic or material")
+                        sum_btn = gr.Button("Generate Summary", variant="primary")
+                        sum_output = gr.Textbox(label="Summary", lines=10)
+                        sum_btn.click(
+                            lambda t, l: run_summary_interface(t, l, retriever),
+                            [sum_topic, lang_select],
+                            sum_output,
+                        )
+
+                # --- 控制 UI 显隐的逻辑 ---
+                all_groups = [chat_group, quiz_group, plan_group, summary_group, upload_group]
+                
+                def switch_feature_visibility(feature_name: str):
+                    """根据下拉菜单的选择，更新各个功能组的可见性。"""
+                    is_visible = {choice: (feature_name == choice) for choice in feature_choices}
+                    return {
+                        chat_group: gr.update(visible=is_visible[feature_choices[0]]),
+                        quiz_group: gr.update(visible=is_visible[feature_choices[1]]),
+                        plan_group: gr.update(visible=is_visible[feature_choices[2]]),
+                        summary_group: gr.update(visible=is_visible[feature_choices[3]]),
+                        upload_group: gr.update(visible=is_visible[feature_choices[4]]),
+                    }
+                
+                feature_select.change(
+                    fn=switch_feature_visibility,
+                    inputs=feature_select,
+                    outputs=all_groups,
+                    queue=False  # 界面切换无需排队，响应更快
                 )
+
     return demo
 
 
 def launch_gradio() -> None:
+    """启动 Gradio 应用。"""
     demo = build_interface()
     demo.queue()
     demo.launch()
+
+
+if __name__ == "__main__":
+    launch_gradio()
