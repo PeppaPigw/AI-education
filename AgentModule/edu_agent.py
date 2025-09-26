@@ -8,7 +8,7 @@ from tools.language_handler import LanguageHandler
 from tools.rag_service import RAGService
 from tools.rag_utils import get_context_or_empty
 from tools.edu_tools import (
-    wikipedia_search,
+    # wikipedia_search,
     define_word,
     calculator,
     current_date,
@@ -60,7 +60,7 @@ translate it to {language} before giving the final answer.
 def create_agent() -> AgentExecutor:
     """Create an agent executor with default tools."""
     tools = [
-        wikipedia_search,
+        # wikipedia_search,
         define_word,
         calculator,
         current_date,
@@ -103,8 +103,11 @@ def run_agent(
 
     lang = LanguageHandler.choose_or_detect(question)
     try:
+        print("Question:    ",question)
         result = executor.invoke({"input": question, "language": lang})
+        
         output = result["output"]
+        print("Output:    ",output)
     except Exception as e:  # pragma: no cover - agent execution errors
         output = f"Agent error: {e}"
 

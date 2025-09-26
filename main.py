@@ -14,8 +14,6 @@ from dotenv import load_dotenv
 from QuizModule import generate_quiz, generate_learning_plan_from_quiz
 from LearningPlanModule import LearningPlan
 from SummaryModule import StudySummaryGenerator
-from FlashcardsModule import FlashcardSet
-from CheatSheetModule import CheatSheetGenerator
 from AgentModule import create_agent
 from AgentModule.edu_agent import run_agent
 from frontend_service import launch_gradio
@@ -193,7 +191,7 @@ def main_menu():
         elif choice == "7":
             topic = prompt_input("Enter the topic or material for the cheat sheet: ")
             language = LanguageHandler.choose_or_detect(topic)
-            generator = CheatSheetGenerator(retriever=retriever)
+            
             cheatsheet = generator.generate_cheatsheet(
                 topic, language=language, retriever=retriever
             )
@@ -217,7 +215,4 @@ def main_menu():
 
 if __name__ == "__main__":
 
-    if len(sys.argv) > 1 and sys.argv[1] == "--cli":
-        main_menu()
-    else:
-        launch_gradio()
+    launch_gradio()

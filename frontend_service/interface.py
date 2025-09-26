@@ -13,8 +13,6 @@ from dotenv import load_dotenv
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from AgentModule import create_agent
 from AgentModule.edu_agent import run_agent
-from CheatSheetModule import CheatSheetGenerator
-from FlashcardsModule import FlashcardSet
 from LearningPlanModule import LearningPlan
 from QuizModule import generate_learning_plan_from_quiz, prepare_quiz_questions
 from SummaryModule import StudySummaryGenerator
@@ -38,56 +36,57 @@ logger = logging.getLogger(__name__)
 
 CSS = """
 * {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 #chatbot .message.user {
-  background-color: #e6f3ff;
-  border-radius: 8px;
+    background-color: #e6f3ff;
+    border-radius: 8px;
 }
 #chatbot .message.bot {
-  background-color: #f0f0f0;
-  border-radius: 8px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
 }
-#flashcard-container {
-  background-color: #fffbe6;
-  border: 1px solid #ffd580;
-  border-radius: 8px;
-  padding: 16px;
-  max-width: 500px;
-  margin: auto;
-  text-align: center;
-  width: fit-content;
+/* 移除闪卡相关 CSS */
+/* #flashcard-container {
+    background-color: #fffbe6;
+    border: 1px solid #ffd580;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 500px;
+    margin: auto;
+    text-align: center;
+    width: fit-content;
 }
 #flashcard-content {
-  min-height: 120px;
-  font-size: 1.1em;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    min-height: 120px;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 #flashcard-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, auto);
-  gap: 4px;
-  justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 4px;
+    justify-content: center;
 }
 #flashcard-buttons button {
-  width: 48px;
-  margin: 0;
+    width: 48px;
+    margin: 0;
 }
 #flashcard-counter {
-  font-weight: bold;
-  margin-top: 8px;
+    font-weight: bold;
+    margin-top: 8px;
 }
 #flashcard-container .wrap,
 #flashcard-container .progress-text,
 #flashcard-container .progress-bar-wrap,
 #flashcard-container .eta-bar {
-  display: none !important;
-}
+    display: none !important;
+} */
 #chatbot .message.bot.fallback {
-  background-color: #fff9c4;
+    background-color: #fff9c4;
 }
 """
 
@@ -298,102 +297,101 @@ def run_learning_plan_from_quiz(name: str, state: dict, lang_choice: str) -> str
     return buffer.getvalue()
 
 
-def _init_flashcard_state(cards: list[dict]) -> dict:
-    """Return a new flashcard navigation state."""
-    return {"cards": cards, "index": 0, "side": "question"}
+# 移除闪卡相关函数
+# def _init_flashcard_state(cards: list[dict]) -> dict:
+#     """Return a new flashcard navigation state."""
+#     return {"cards": cards, "index": 0, "side": "question"}
+
+# def _render_flashcard(state: dict) -> str:
+#     """Return the currently visible side of the flashcard."""
+#     if not state or not state.get("cards"):
+#         return ""
+#     card = state["cards"][state["index"]]
+#     side = state.get("side", "question")
+#     return card.get(side, "")
+
+# def run_flashcards_generate(
+#     topic: str, lang_choice: str, retriever=None
+# ) -> tuple[str, dict, str, str]:
+#     """Generate flashcards from a topic and prepare viewer state."""
+#     code = LanguageHandler.code_from_display(lang_choice)
+#     language = code if code != "auto" else LanguageHandler.choose_or_detect(topic)
+#     flashcards = FlashcardSet(topic, retriever=retriever)
+#     buffer = io.StringIO()
+#     with redirect_stdout(buffer):
+#         used_retriever = flashcards.generate_from_prompt(
+#             topic_prompt=topic, language=language, retriever=retriever
+#         )
+#         path = flashcards.save_to_file()
+#     logs = buffer.getvalue()
+#     notice = (
+#         "📄 Flashcards generated with document context"
+#         if used_retriever
+#         else "⚠️ Flashcards generated without document context"
+#     )
+#     logs = notice + ("\n" + logs if logs else "")
+#     if path:
+#         logs += f"\nSaved to: {path}"
+#     cards = flashcards.to_dict_list()
+#     state = _init_flashcard_state(cards)
+#     first = _render_flashcard(state)
+#     progress = f"1/{len(cards)}" if cards else "0/0"
+#     return first, state, logs, progress
+
+# def run_flashcards_review(path: str) -> tuple[str, dict, str]:
+#     """Load flashcards from file for interactive review."""
+#     flashcards = FlashcardSet.load_from_file(path)
+#     if not flashcards:
+#         return "Failed to load flashcards.", {}, "0/0"
+#     cards = flashcards.to_dict_list()
+#     state = _init_flashcard_state(cards)
+#     first = _render_flashcard(state)
+#     progress = f"1/{len(cards)}" if cards else "0/0"
+#     return first, state, progress
 
 
-def _render_flashcard(state: dict) -> str:
-    """Return the currently visible side of the flashcard."""
-    if not state or not state.get("cards"):
-        return ""
-    card = state["cards"][state["index"]]
-    side = state.get("side", "question")
-    return card.get(side, "")
+# def flashcard_flip(state: dict) -> tuple[str, dict]:
+#     """Flip between question and answer."""
+#     if not state or not state.get("cards"):
+#         return "", state
+#     state["side"] = "answer" if state.get("side") == "question" else "question"
+#     return _render_flashcard(state), state
 
 
-def run_flashcards_generate(
-    topic: str, lang_choice: str, retriever=None
-) -> tuple[str, dict, str, str]:
-    """Generate flashcards from a topic and prepare viewer state."""
-    code = LanguageHandler.code_from_display(lang_choice)
-    language = code if code != "auto" else LanguageHandler.choose_or_detect(topic)
-    flashcards = FlashcardSet(topic, retriever=retriever)
-    buffer = io.StringIO()
-    with redirect_stdout(buffer):
-        used_retriever = flashcards.generate_from_prompt(
-            topic_prompt=topic, language=language, retriever=retriever
-        )
-        path = flashcards.save_to_file()
-    logs = buffer.getvalue()
-    notice = (
-        "📄 Flashcards generated with document context"
-        if used_retriever
-        else "⚠️ Flashcards generated without document context"
-    )
-    logs = notice + ("\n" + logs if logs else "")
-    if path:
-        logs += f"\nSaved to: {path}"
-    cards = flashcards.to_dict_list()
-    state = _init_flashcard_state(cards)
-    first = _render_flashcard(state)
-    progress = f"1/{len(cards)}" if cards else "0/0"
-    return first, state, logs, progress
-
-def run_flashcards_review(path: str) -> tuple[str, dict, str]:
-    """Load flashcards from file for interactive review."""
-    flashcards = FlashcardSet.load_from_file(path)
-    if not flashcards:
-        return "Failed to load flashcards.", {}, "0/0"
-    cards = flashcards.to_dict_list()
-    state = _init_flashcard_state(cards)
-    first = _render_flashcard(state)
-    progress = f"1/{len(cards)}" if cards else "0/0"
-    return first, state, progress
+# def flashcard_next(state: dict) -> tuple[str, dict, str]:
+#     """Move to the next flashcard."""
+#     if not state or not state.get("cards"):
+#         return "", state, "0/0"
+#     state["index"] = (state["index"] + 1) % len(state["cards"])
+#     state["side"] = "question"
+#     return (
+#         _render_flashcard(state),
+#         state,
+#         f"{state['index'] + 1}/{len(state['cards'])}",
+#     )
 
 
-def flashcard_flip(state: dict) -> tuple[str, dict]:
-    """Flip between question and answer."""
-    if not state or not state.get("cards"):
-        return "", state
-    state["side"] = "answer" if state.get("side") == "question" else "question"
-    return _render_flashcard(state), state
+# def flashcard_prev(state: dict) -> tuple[str, dict, str]:
+#     """Move to the previous flashcard."""
+#     if not state or not state.get("cards"):
+#         return "", state, "0/0"
+#     state["index"] = (state["index"] - 1) % len(state["cards"])
+#     state["side"] = "question"
+#     return (
+#         _render_flashcard(state),
+#         state,
+#         f"{state['index'] + 1}/{len(state['cards'])}",
+#     )
 
 
-def flashcard_next(state: dict) -> tuple[str, dict, str]:
-    """Move to the next flashcard."""
-    if not state or not state.get("cards"):
-        return "", state, "0/0"
-    state["index"] = (state["index"] + 1) % len(state["cards"])
-    state["side"] = "question"
-    return (
-        _render_flashcard(state),
-        state,
-        f"{state['index'] + 1}/{len(state['cards'])}",
-    )
-
-
-def flashcard_prev(state: dict) -> tuple[str, dict, str]:
-    """Move to the previous flashcard."""
-    if not state or not state.get("cards"):
-        return "", state, "0/0"
-    state["index"] = (state["index"] - 1) % len(state["cards"])
-    state["side"] = "question"
-    return (
-        _render_flashcard(state),
-        state,
-        f"{state['index'] + 1}/{len(state['cards'])}",
-    )
-
-
-def flashcard_shuffle(state: dict) -> tuple[str, dict, str]:
-    """Shuffle flashcards order and restart."""
-    if not state or not state.get("cards"):
-        return "", state, "0/0"
-    random.shuffle(state["cards"])
-    state["index"] = 0
-    state["side"] = "question"
-    return _render_flashcard(state), state, f"1/{len(state['cards'])}"
+# def flashcard_shuffle(state: dict) -> tuple[str, dict, str]:
+#     """Shuffle flashcards order and restart."""
+#     if not state or not state.get("cards"):
+#         return "", state, "0/0"
+#     random.shuffle(state["cards"])
+#     state["index"] = 0
+#     state["side"] = "question"
+#     return _render_flashcard(state), state, f"1/{len(state['cards'])}"
 
 
 def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
@@ -412,20 +410,21 @@ def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
     return f"{notice}\n\n{summary}"
 
 
-def run_cheatsheet_interface(topic: str, lang_choice: str, retriever=None) -> str:
-    """Generate a cheat sheet."""
-    code = LanguageHandler.code_from_display(lang_choice)
-    language = code if code != "auto" else LanguageHandler.choose_or_detect(topic)
-    generator = CheatSheetGenerator(retriever=retriever)
-    sheet, used_retriever = generator.generate_cheatsheet(
-        topic, language=language, retriever=retriever
-    )
-    notice = (
-        "📄 Cheat sheet generated with document context"
-        if used_retriever
-        else "⚠️ Cheat sheet generated without document context"
-    )
-    return f"{notice}\n\n{sheet}"
+# 移除 Cheat sheet（备忘录/小抄）相关函数
+# def run_cheatsheet_interface(topic: str, lang_choice: str, retriever=None) -> str:
+#     """Generate a cheat sheet."""
+#     code = LanguageHandler.code_from_display(lang_choice)
+#     language = code if code != "auto" else LanguageHandler.choose_or_detect(topic)
+#     generator = CheatSheetGenerator(retriever=retriever)
+#     sheet, used_retriever = generator.generate_cheatsheet(
+#         topic, language=language, retriever=retriever
+#     )
+#     notice = (
+#         "📄 Cheat sheet generated with document context"
+#         if used_retriever
+#         else "⚠️ Cheat sheet generated without document context"
+#     )
+#     return f"{notice}\n\n{sheet}"
 
 
 def build_interface() -> gr.Blocks:
@@ -531,64 +530,7 @@ def build_interface() -> gr.Blocks:
                     plan_output,
                 )
 
-            # Flashcards tab
-            with gr.TabItem("Flashcards"):
-                with gr.Accordion("Generate flashcards", open=True):
-                    fc_topic = gr.Textbox(label="Topic")
-                    fc_gen_btn = gr.Button("Generate")
-                    with gr.Column(elem_id="flashcard-container"):
-                        fc_card = gr.Markdown(elem_id="flashcard-content")
-                        with gr.Column(elem_id="flashcard-buttons"):
-                            fc_prev = gr.Button("⬅️", size="sm", scale=0)
-                            fc_next = gr.Button("➡️", size="sm", scale=0)
-                            fc_flip = gr.Button("🔄", size="sm", scale=0)
-                            fc_shuffle = gr.Button("🔀", size="sm", scale=0)
-                        fc_counter = gr.Markdown("0/0", elem_id="flashcard-counter")
-                    fc_logs = gr.Textbox(label="Logs", lines=4)
-                    fc_state = gr.State()
 
-                    fc_gen_btn.click(
-                        lambda topic, lang: run_flashcards_generate(
-                            topic, lang, retriever
-                        ),
-                        [fc_topic, lang_select],
-                        [fc_card, fc_state, fc_logs, fc_counter],
-                        show_progress=False,
-                    )
-                    fc_flip.click(
-                        flashcard_flip,
-                        fc_state,
-                        [fc_card, fc_state],
-                        show_progress=False,
-                    )
-                    fc_next.click(
-                        flashcard_next,
-                        fc_state,
-                        [fc_card, fc_state, fc_counter],
-                        show_progress=False,
-                    )
-                    fc_prev.click(
-                        flashcard_prev,
-                        fc_state,
-                        [fc_card, fc_state, fc_counter],
-                        show_progress=False,
-                    )
-                    fc_shuffle.click(
-                        flashcard_shuffle,
-                        fc_state,
-                        [fc_card, fc_state, fc_counter],
-                        show_progress=False,
-                    )
-
-                with gr.Accordion("Review flashcards", open=False):
-                    fc_path = gr.Textbox(label="Path to flashcards JSON")
-                    fc_load_btn = gr.Button("Load")
-                    fc_load_btn.click(
-                        run_flashcards_review,
-                        fc_path,
-                        [fc_card, fc_state, fc_counter],
-                        show_progress=False,
-                    )
 
             # Summary tab
             with gr.TabItem("Summary"):
@@ -600,18 +542,6 @@ def build_interface() -> gr.Blocks:
                     [sum_topic, lang_select],
                     sum_output,
                 )
-
-            # Cheat sheet tab
-            with gr.TabItem("Cheat sheet"):
-                cs_topic = gr.Textbox(label="Topic or material")
-                cs_btn = gr.Button("Generate Cheat Sheet")
-                cs_output = gr.Textbox(label="Cheat Sheet", lines=10)
-                cs_btn.click(
-                    lambda t, l: run_cheatsheet_interface(t, l, retriever),
-                    [cs_topic, lang_select],
-                    cs_output,
-                )
-
     return demo
 
 
