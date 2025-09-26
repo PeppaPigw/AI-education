@@ -57,7 +57,7 @@ translate it to {language} before giving the final answer.
 )
 
 
-def create_agent(model_name: str ,api_key:str) -> AgentExecutor:
+def create_agent() -> AgentExecutor:
     """Create an agent executor with default tools."""
     tools = [
         wikipedia_search,

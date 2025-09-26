@@ -48,7 +48,7 @@ warnings.filterwarnings(
 warnings.filterwarnings("ignore", category=LangChainDeprecationWarning)
 
 # Create a single agent instance for handling on-demand questions
-_agent = create_agent(model_name=model_name,api_key=api_key)
+_agent = create_agent()
 
 # Instantiate a global retriever for RAG operations
 _rag_service = get_rag_service()

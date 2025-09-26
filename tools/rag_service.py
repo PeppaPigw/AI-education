@@ -38,9 +38,6 @@ class RAGService:
 
     def __init__(
         self,
-        base_url,
-        model_name,
-        api_key,
         embeddings: Optional[Embeddings] = None,
         persist_directory: str = "data/chroma_db",
         retriever_k: Optional[int] = None,
@@ -50,7 +47,7 @@ class RAGService:
         mq_num_queries: Optional[int] = None,
         mq_include_original: Optional[bool] = None,
     ) -> None:
-        self._embeddings= OpenAIEmbeddings(openai_api_base=base_url,model=model_name,openai_api_key=api_key)
+        self._embeddings= OpenAIEmbeddings(openai_api_base=base_url+"/v1",model=embedding_model,openai_api_key=api_key)
         self._persist_directory = persist_directory
         self._vectorstore: Optional[Chroma] = None
         self._retriever = None
@@ -216,5 +213,5 @@ def get_rag_service() -> RAGService:
     global _instance
     if _instance is None:
         # print(f"get_rag_service:\nbase_url={base_url}\nmodel_name={model_name}\napi_key={api_key}")
-        _instance = RAGService(base_url=base_url+"/v1",model_name=embedding_model,api_key=api_key)
+        _instance = RAGService()
     return _instance

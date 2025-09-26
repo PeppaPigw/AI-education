@@ -30,7 +30,7 @@ if not os.environ.get("api_key"):
         "api_key is not set. Create a .env file or export the variable."
     )
 
-agent = create_agent(os.environ.get("model_name"),api_key=os.environ.get("api_key"))
+agent = create_agent()
 rag_service = get_rag_service()
 retriever = rag_service.get_retriever()
 

@@ -21,7 +21,7 @@ class StudySummaryGenerator:
     Ideal for exam preparation.
     """
 
-    def __init__(self, model_name, temperature=0.5, retriever=None):
+    def __init__(self, temperature=0.5, retriever=None):
         self.llm = ChatOpenAI(model=model_name, temperature=0,base_url=base_url,api_key=api_key)
         if retriever is None:
             retriever = RAGService().get_retriever()
