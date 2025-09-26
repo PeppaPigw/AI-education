@@ -25,16 +25,13 @@ try:
     # 加载环境变量
     dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
     load_dotenv(dotenv_path)
-
     # 检查 API Key
     if not os.environ.get("api_key"):
         raise RuntimeError("api_key is not set. Create a .env file or export the variable.")
-
     # 初始化服务
     agent = create_agent()
     rag_service = get_rag_service()
     retriever = rag_service.get_retriever()
-
 except (ImportError, RuntimeError, FileNotFoundError) as e:
     print(f"⚠️  Warning: Could not import all external modules: {e}. Running in standalone mode.")
     print("AI-related functionalities (chat, quiz, etc.) will be disabled.")
@@ -52,9 +49,7 @@ except (ImportError, RuntimeError, FileNotFoundError) as e:
         @staticmethod
         def ensure_language(text, lang_code): return text
 
-
 logger = logging.getLogger(__name__)
-
 # CSS 样式 (未作修改)
 CSS = """
 * { font-family: 'Segoe UI', Tahoma, sans-serif; }
@@ -75,7 +70,6 @@ CSS = """
     width: 100%;
 }
 """
-
 # --- 原始后端函数 (未作修改) ---
 def respond(
     message: str,
@@ -89,16 +83,13 @@ def respond(
         history.append({"role": "assistant", "content": "Chatbot is disabled (module not loaded)."})
         yield history, "Chatbot is disabled."
         return
-
     history = history + [
         {"role": "user", "content": message},
         {"role": "assistant", "content": "..."},
     ]
     yield history, ""
-
     code = LanguageHandler.code_from_display(lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(message)
-
     buffer = io.StringIO()
     with redirect_stdout(buffer):
         result, used_fallback, used_retriever = run_agent(
@@ -107,37 +98,32 @@ def respond(
         result = LanguageHandler.ensure_language(result, language)
         if used_fallback:
             notice = LanguageHandler.ensure_language(
-                "Wiadomość generowana przez LLM, sprawdź jej poprawność &#10071;",
+                # "LLM生成的消息，检查其正确性·",
                 language,
             )
             result = f"<div class='fallback'>{notice}<br>{result}</div>"
         elif used_retriever:
             notice = LanguageHandler.ensure_language(
-                "Wiadomość generowana na podstawie dokumentu",
+                # "Wiadomość generowana na podstawie dokumentu",
                 language,
             )
             result = f"<div class='retrieval'>{notice}<br>{result}</div>"
-
     history[-1] = {"role": "assistant", "content": result}
     logs = buffer.getvalue()
     yield history, logs
 
-
 def respond_with_retriever(message: str, history: list[dict], lang_choice: str):
-    """Wrapper injecting the shared retriever into :func:`respond`."""
+    # """Wrapper injecting the shared retriever into :func:`respond`."""
     yield from respond(message, history, lang_choice, retriever)
-
 
 def process_knowledge(files: list):
     """原始函数：仅处理文件并存入 RAG service"""
     if not files:
         yield "⚠️ No files uploaded."
         return
-
     yield "⏳ Processing for RAG..."
     # (此处的 RAG service 调用保持不变)
     yield f"✅ Processed {len(files)} file(s) for RAG."
-
 
 def _format_question(q: dict) -> str:
     """Return formatted question text with options on separate lines."""
@@ -145,7 +131,6 @@ def _format_question(q: dict) -> str:
     text = re.sub(r"\s*([abcd]\))", r"\n\1", text, flags=re.I)
     text = text.strip()
     return f"**{q['topic']}**\n\n{text}"
-
 
 def start_quiz(subject: str, lang_choice: str, retriever=None):
     """Generate quiz questions and return the first one with state."""
@@ -169,22 +154,19 @@ def start_quiz(subject: str, lang_choice: str, retriever=None):
     first_q = _format_question(questions[0])
     notice = (
         "📄 Quiz generated with document context"
-        if used_retriever
-        else "⚠️ Quiz generated without document context"
+        # if used_retriever
+        # else "⚠️ Quiz generated without document context"
     )
     return first_q, state, notice
-
 
 def answer_quiz(choice: str, state: dict) -> tuple[str, dict, str]:
     """Process an answer button click and return next question or results."""
     if not state or state.get("index") is None:
         return "Quiz not started.", state, ""
-
     idx = state["index"]
     questions = state["questions"]
     if idx >= len(questions):
         return "", state, _compile_results(state)
-
     current = questions[idx]
     topic = current["topic"]
     correct = current["correct"]
@@ -193,13 +175,11 @@ def answer_quiz(choice: str, state: dict) -> tuple[str, dict, str]:
     if choice.lower() == correct or correct == "?":
         scores[0] += 1
         state["correct_total"] += 1
-
     state["index"] += 1
     if state["index"] >= len(questions):
         return "", state, _compile_results(state)
     next_q = _format_question(questions[state["index"]])
     return next_q, state, ""
-
 
 def _compile_results(state: dict) -> str:
     lines = []
@@ -221,7 +201,6 @@ def _compile_results(state: dict) -> str:
     lang = state.get("language", "auto")
     return LanguageHandler.ensure_language(result, lang)
 
-
 def run_learning_plan_interface(name: str, goals: str, lang_choice: str) -> str:
     if not agent: return "Learning plan is disabled."
     code = LanguageHandler.code_from_display(lang_choice)
@@ -235,7 +214,6 @@ def run_learning_plan_interface(name: str, goals: str, lang_choice: str) -> str:
         plan.display_plan()
         plan.save_to_file()
     return buffer.getvalue()
-
 
 def run_learning_plan_from_quiz(name: str, state: dict, lang_choice: str) -> str:
     if not agent: return "Learning plan is disabled."
@@ -252,7 +230,6 @@ def run_learning_plan_from_quiz(name: str, state: dict, lang_choice: str) -> str
         generate_learning_plan_from_quiz(name, state["scores"], language)
     return buffer.getvalue()
 
-
 def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
     if not agent: return "Summary is disabled."
     code = LanguageHandler.code_from_display(lang_choice)
@@ -263,15 +240,12 @@ def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
     )
     notice = (
         "📄 Summary generated with document context"
-        if used_retriever
-        else "⚠️ Summary generated without document context"
+        # if used_retriever
+        # else "⚠️ Summary generated without document context"
     )
     return f"{notice}\n\n{summary}"
-
 # --- 新增的辅助函数与布局逻辑 ---
-
 KNOWLEDGE_JSON_PATH = "data/course/math_modeling.json"
-
 def setup_app_environment():
     """初始化应用所需的文件和目录"""
     os.makedirs("data/course", exist_ok=True)
@@ -313,7 +287,6 @@ def setup_app_environment():
         }
         with open(KNOWLEDGE_JSON_PATH, 'w', encoding='utf-8') as f:
             json.dump(sample_json, f, indent=2, ensure_ascii=False)
-
 def load_knowledge_data(json_path: str) -> dict:
     """从JSON文件加载知识图谱数据"""
     try:
@@ -330,23 +303,18 @@ def get_all_grandchildren(graph_data: dict) -> list:
         for grandchild in child.get("grandchildren", []):
             grandchildren_names.append(grandchild.get("name"))
     return grandchildren_names
-
 def create_knowledge_graph_figure(graph_data: dict):
     """使用Plotly创建知识图谱的可视化Figure"""
     if not graph_data:
         return go.Figure()
-
     fig = go.Figure()
     nodes = {'labels': [], 'colors': [], 'x': [], 'y': []}
     edges = {'x': [], 'y': []}
-
     root_name = graph_data.get("root_name", "Root")
     nodes['labels'].append(root_name)
     nodes['colors'].append("#FFA07A")
     nodes['x'].append(0); nodes['y'].append(0)
-
     y_pos_child = len(graph_data.get("children", [])) / 2 * -1.5
-
     for child in graph_data.get("children", []):
         child_name = child.get("name")
         child_color = "#87CEFA" if child.get("flag") == "1" else "#D3D3D3"
@@ -363,12 +331,10 @@ def create_knowledge_graph_figure(graph_data: dict):
             nodes['labels'].append(grandchild_name)
             nodes['colors'].append(grandchild_color)
             nodes['x'].append(2); nodes['y'].append(y_pos_grandchild)
-
             edges['x'].extend([1, 2, None]); edges['y'].extend([y_pos_child, y_pos_grandchild, None])
             y_pos_grandchild += 1
         
         y_pos_child += 2
-
     fig.add_trace(go.Scatter(x=edges['x'], y=edges['y'], mode='lines', line=dict(width=1, color='#888'), hoverinfo='none'))
     fig.add_trace(go.Scatter(
         x=nodes['x'], y=nodes['y'],
@@ -386,12 +352,10 @@ def create_knowledge_graph_figure(graph_data: dict):
         margin=dict(l=10, r=10, t=10, b=10)
     )
     return fig
-
 def upload_and_update_resource(files: list, selected_grandchild: str, current_data: dict):
     """上传文件，保存，并更新JSON文件"""
     if not files: return "⚠️ 未选择文件。", current_data, gr.update()
     if not selected_grandchild: return "❌ 错误：没有选定的学习节点来关联文件。", current_data, gr.update()
-
     save_dir = os.path.join("data", "RAG_files")
     os.makedirs(save_dir, exist_ok=True)
     
@@ -402,7 +366,6 @@ def upload_and_update_resource(files: list, selected_grandchild: str, current_da
         shutil.copy2(file.name, dest_path)
         logger.info(f"Saved {file.name} to {dest_path}")
         newly_added_paths.append(dest_path)
-
     updated = False
     new_choices = []
     for child in current_data.get("children", []):
@@ -424,7 +387,6 @@ def upload_and_update_resource(files: list, selected_grandchild: str, current_da
     else:
         msg = f"❌ 未能在JSON中找到节点 '{selected_grandchild}'。"
         return msg, current_data, gr.update()
-
 # <--- 修改点 2: 添加新的辅助函数来生成 PDF 的 iframe ---
 def show_pdf_in_iframe(pdf_path: str):
     """
@@ -452,7 +414,6 @@ def show_pdf_in_iframe(pdf_path: str):
     except Exception as e:
         logger.error(f"Error reading PDF {pdf_path}: {e}")
         return f"<div style='text-align: center; padding: 20px;'>❌ 读取 PDF 时出错: {e}</div>"
-
 def build_interface() -> gr.Blocks:
     """创建符合新布局要求的 Gradio UI"""
     initial_data = load_knowledge_data(KNOWLEDGE_JSON_PATH)
@@ -461,23 +422,19 @@ def build_interface() -> gr.Blocks:
         # --- 状态管理 ---
         knowledge_data_state = gr.State(initial_data)
         selected_grandchild_state = gr.State()
-
         with gr.Row():
             # --- 左侧 3/4 主显示区 ---
             with gr.Column(scale=3):
                 knowledge_graph_plot = gr.Plot(label="知识图谱", value=create_knowledge_graph_figure(initial_data),elem_classes=["full-height-plot"])
                 # <--- 修改点 3.1: 将 gr.File 替换为 gr.HTML ---
                 pdf_viewer_html = gr.HTML(visible=False, elem_id="pdf-viewer-container")
-
             # --- 右侧 1/4 功能/资源区 ---
             with gr.Column(scale=1):
                 gr.Markdown("<h1>AI-Education 🎓</h1>")
-
                 # MODIFIED: New interaction flow starts with this dropdown
                 with gr.Group(visible=True) as node_selection_group:
                     grandchildren_list = get_all_grandchildren(initial_data)
                     node_selector = gr.Dropdown(choices=grandchildren_list, label="选择一个知识节点开始学习")
-
                 # 状态2: 显示选中节点的资源
                 with gr.Group(visible=False) as resource_display_group:
                     gr.Markdown("### 📚 学习资源")
@@ -511,7 +468,6 @@ def build_interface() -> gr.Blocks:
                         quiz_name = gr.Textbox(label="你的名字 (用于生成学习计划)")
                         plan_quiz_btn = gr.Button("根据测验结果生成学习计划")
                         plan_quiz_output = gr.Textbox(label="计划输出", lines=10, interactive=False)
-
                     with gr.Group(visible=False) as plan_group:
                         
                         plan_name = gr.Textbox(label="你的名字")
@@ -534,12 +490,10 @@ def build_interface() -> gr.Blocks:
                         upload_status_new = gr.Markdown()
         
         # --- UI 事件处理与逻辑流 ---
-
         # MODIFIED: New function to handle node selection from dropdown
         def on_node_select(selected_node_name: str, graph_data: dict):
             if not selected_node_name:
                 return gr.update(visible=False), None, gr.update(), gr.update(visible=False), gr.update(visible=True)
-
             resources = []
             for child in graph_data.get("children", []):
                 for grandchild in child.get("grandchildren", []):
@@ -555,7 +509,6 @@ def build_interface() -> gr.Blocks:
                 gr.update(visible=False),  # 隐藏主功能面板
                 gr.update(visible=True)    # 显示知识图谱
             )
-
         # MODIFIED: Event handler is now on the dropdown
         node_selector.change(
             fn=on_node_select,
@@ -597,14 +550,12 @@ def build_interface() -> gr.Blocks:
                 summary_group: gr.update(visible=visibility[feature_choices[3]]),
                 upload_group: gr.update(visible=visibility[feature_choices[4]]),
             }
-
         feature_select.change(
             fn=switch_feature_visibility,
             inputs=feature_select,
             outputs=[chat_group, quiz_group, plan_group, summary_group, upload_group],
             queue=False
         )
-
         # Backend function bindings (unchanged)
         def clear_history(): return [], "", ""
         msg.submit(respond_with_retriever, [msg, chatbot, lang_select], [chatbot, logs]).then(lambda: "", outputs=msg)
@@ -617,9 +568,7 @@ def build_interface() -> gr.Blocks:
         btn_c.click(lambda st: answer_quiz("c", st), quiz_state, [quiz_question, quiz_state, quiz_result])
         btn_d.click(lambda st: answer_quiz("d", st), quiz_state, [quiz_question, quiz_state, quiz_result])
         plan_quiz_btn.click(run_learning_plan_from_quiz, [quiz_name, quiz_state, lang_select], plan_quiz_output)
-
         plan_btn.click(run_learning_plan_interface, [plan_name, plan_goals, lang_select], plan_output)
-
         sum_btn.click(lambda t, l: run_summary_interface(t, l, retriever), [sum_topic, lang_select], sum_output)
         
         upload_btn_new.click(
@@ -630,9 +579,8 @@ def build_interface() -> gr.Blocks:
         
     return demo
 
-
 def launch_gradio() -> None:
-    """启动 Gradio 应用"""
+    
     setup_app_environment()
     demo = build_interface()
     demo.queue()
