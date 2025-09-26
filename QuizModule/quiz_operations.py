@@ -1,12 +1,3 @@
-"""Utility functions for quiz generation and learning plan creation.
-
-The module drives the question generation workflow by composing LangChain
-``Runnable`` chains.  Each quiz can optionally leverage a retrieval-augmented
-generation (RAG) pipeline: when a retriever is supplied, additional context is
-fetched and appended to prompts.  Generated quiz results may later feed into
-``LearningPlanModule`` to build personalised study schedules.
-"""
-
 from tools.quiz_prompts import generate_topic_list_prompt, generate_questions_prompt
 from langchain_openai import ChatOpenAI
 from langchain.schema.runnable import RunnableLambda, RunnableParallel

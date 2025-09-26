@@ -1,0 +1,25 @@
+[
+    {
+        "date": "2025-09-26",
+        "priority": "User-defined",
+        "topic": "学习数学建模",
+        "materials": [
+            "学习数学建模的推荐资源：",
+            "1. **《数学建模》**（作者：姜启源）- 国内经典教材，适合初学者系统学习。",
+            "2. **《A First Course in Mathematical Modeling》**（作者：Gary L. Bennett）- 英文教材，内容通俗易懂，适合国际读者。",
+            "3. **《Mathematical Models》**（作者：Jay Weidner）- 侧重应用案例，帮助理解建模过程。",
+            "4. **《用Python学数学建模》**（作者：Al Sweigart）- 结合编程实践，适合动手型学习者。",
+            "5. **《中国大学生数学建模竞赛优秀论文精选》** - 了解国内竞赛题型与建模思路。",
+            "6. **《Mathematical Programming》**（Springer） - 高阶建模与算法研究，适合进阶学习。",
+            "7. **《The Art of Modeling》**（作者：Jeffrey Shaman）- 强调建模思维与沟通技巧。",
+            "**在线资源：**",
+            "- 中国大学MOOC（搜索“数学建模”相关课程）",
+            "- Coursera 或 edX 上的“Mathematical Modeling”课程（如由 Univ of Colorado 提供）",
+            "- MATLAB 官方文档与教程（适合算法实现）",
+            "如需英文补充：",
+            "- *Mathematical Modeling: A Case-Centered Approach* by Wayne L. Winston",
+            "- *SIAM Series in Discrete Mathematics* for algorithmic modeling",
+            "建议从姜启源的《数学建模》入门，结合编程实践和竞赛案例，逐步提升建模能力。"
+        ]
+    }
+]
