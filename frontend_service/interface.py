@@ -12,51 +12,54 @@ from dotenv import load_dotenv
 import plotly.graph_objects as go
 import base64 
 
-try:
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-    from AgentModule import create_agent
-    from AgentModule.edu_agent import run_agent
-    from LearningPlanModule import LearningPlan
-    from QuizModule import generate_learning_plan_from_quiz, prepare_quiz_questions
-    from SummaryModule import StudySummaryGenerator
-    from tools.language_handler import LanguageHandler
-    from tools.rag_service import get_rag_service
+from AgentModule import create_agent
+from AgentModule.edu_agent import run_agent
+from LearningPlanModule import LearningPlan
+from QuizModule import generate_learning_plan_from_quiz, prepare_quiz_questions
+from SummaryModule import StudySummaryGenerator
+from tools.language_handler import LanguageHandler
+from tools.rag_service import get_rag_service
+
+dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
+load_dotenv(dotenv_path)
+# 检查 API Key
+if not os.environ.get("api_key"):
+    raise RuntimeError("api_key is not set. Create a .env file or export the variable.")
+# 初始化服务
+agent = create_agent()
+rag_service = get_rag_service()
+retriever = rag_service.get_retriever()
     
-    # 加载环境变量
-    dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
-    load_dotenv(dotenv_path)
-    # 检查 API Key
-    if not os.environ.get("api_key"):
-        raise RuntimeError("api_key is not set. Create a .env file or export the variable.")
-    # 初始化服务
-    agent = create_agent()
-    rag_service = get_rag_service()
-    retriever = rag_service.get_retriever()
-except (ImportError, RuntimeError, FileNotFoundError) as e:
-    print(f"⚠️  Warning: Could not import all external modules: {e}. Running in standalone mode.")
-    print("AI-related functionalities (chat, quiz, etc.) will be disabled.")
-    # 创建伪对象以避免程序崩溃
-    agent = None
-    retriever = None
-    # 为 LanguageHandler 创建一个简单的替代品
-    class LanguageHandler:
-        @staticmethod
-        def dropdown_choices(): return ["Auto-detect", "English", "Polish", "Chinese"]
-        @staticmethod
-        def code_from_display(display): return "auto" if display == "Auto-detect" else display[:2].lower()
-        @staticmethod
-        def choose_or_detect(text, lang_code="en"): return lang_code
-        @staticmethod
-        def ensure_language(text, lang_code): return text
 
 logger = logging.getLogger(__name__)
-# CSS 样式 (未作修改)
+
 CSS = """
+
 * { font-family: 'Segoe UI', Tahoma, sans-serif; }
-#chatbot .message.user { background-color: #e6f3ff; border-radius: 8px; }
-#chatbot .message.bot { background-color: #f0f0f0; border-radius: 8px; }
-#chatbot .message.bot.fallback { background-color: #fff9c4; }
-.gradio-container { max-width: none !important; }
+.gradio-container {
+    max-width: none !important;
+    background-color: #1a1a2e;
+}
+#chatbot {
+    background-color: transparent; 
+}
+#chatbot .message.user {
+    background-color: #4a90e2;
+    color: #ffffff;
+    border-radius: 15px 15px 5px 15px;
+    padding: 10px 15px;
+}
+#chatbot .message.bot {
+    background-color: #7d2a8b;
+    color: #ffffff;
+    border-radius: 15px 15px 15px 5px;
+    padding: 10px 15px;
+}
+#chatbot .message.bot.fallback {
+    background-color: #33ffcc;
+    color: #1a1a2e;
+    font-weight: bold;
+}
 .full-height-plot, .full-height-plot > div {
     height: 100vh !important;
     min-height: 80vh;
@@ -64,33 +67,43 @@ CSS = """
 .full-height-pdf, .full-height-pdf > div {
     height: 100vh !important;
 }
-/* 确保 iframe 占满容器 */
 #pdf-viewer-container, #pdf-viewer-container iframe {
     height: 98vh !important;
     width: 100%;
 }
+
 """
-# --- 原始后端函数 (未作修改) ---
+def convert_history_to_gradio_format(history: list[dict]) -> list[list[str]]:
+    return [
+        [history[i]["content"], history[i+1]["content"]]
+        for i in range(0, len(history), 2)
+    ]
+
 def respond(
     message: str,
-    history: list[dict],
+    history: list[list[str]], 
     lang_choice: str,
     retriever=None,
-) -> tuple[list[dict], str]:
-    """Return updated chat history and logs."""
-    if not agent:
-        history.append({"role": "user", "content": message})
-        history.append({"role": "assistant", "content": "Chatbot is disabled (module not loaded)."})
-        yield history, "Chatbot is disabled."
-        return
-    history = history + [
+):
+    
+    internal_history = []
+    for user_msg, assistant_msg in history:
+        internal_history.append({"role": "user", "content": user_msg})
+        if assistant_msg is not None:
+            internal_history.append({"role": "assistant", "content": assistant_msg})
+
+    internal_history.extend([
         {"role": "user", "content": message},
         {"role": "assistant", "content": "..."},
-    ]
-    yield history, ""
+    ])
+
+    # 在yield之前，将内部格式转换为Gradio Chatbot接受的格式
+    yield convert_history_to_gradio_format(internal_history), ""
+
     code = LanguageHandler.code_from_display(lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(message)
     buffer = io.StringIO()
+
     with redirect_stdout(buffer):
         result, used_fallback, used_retriever = run_agent(
             message, executor=agent, retriever=retriever, return_details=True
@@ -98,22 +111,28 @@ def respond(
         result = LanguageHandler.ensure_language(result, language)
         if used_fallback:
             notice = LanguageHandler.ensure_language(
-                # "LLM生成的消息，检查其正确性·",
+                "正在使用备用模型生成回复。",
                 language,
             )
             result = f"<div class='fallback'>{notice}<br>{result}</div>"
         elif used_retriever:
-            notice = LanguageHandler.ensure_language(
-                language,
-            )
-            result = f"<div class='retrieval'>{notice}<br>{result}</div>"
-    history[-1] = {"role": "assistant", "content": result}
-    logs = buffer.getvalue()
-    yield history, logs
 
-def respond_with_retriever(message: str, history: list[dict], lang_choice: str):
+            result = f"<div class='retrieval'>{result}</div>"
+
+    internal_history[-1] = {"role": "assistant", "content": result}
+    logs = buffer.getvalue()
+    
+    yield convert_history_to_gradio_format(internal_history), logs
+
+def respond_with_retriever(message: str, history: list[list[str]], lang_choice: str):
     yield from respond(message, history, lang_choice, retriever)
 
+def stream_chat_only(message: str, history: list[list[str]], lang_choice: str):
+    response_generator = respond_with_retriever(message, history, lang_choice)
+    for response_tuple in response_generator:
+        chat_history = response_tuple[0]
+        yield chat_history
+        
 def process_knowledge(files: list):
     """原始函数：仅处理文件并存入 RAG service"""
     if not files:
@@ -123,14 +142,12 @@ def process_knowledge(files: list):
     yield f"✅ Processed {len(files)} file(s) for RAG."
 
 def _format_question(q: dict) -> str:
-    """Return formatted question text with options on separate lines."""
     text = q["question"]
     text = re.sub(r"\s*([abcd]\))", r"\n\1", text, flags=re.I)
     text = text.strip()
     return f"**{q['topic']}**\n\n{text}"
 
 def start_quiz(subject: str, lang_choice: str, retriever=None):
-    """Generate quiz questions and return the first one with state."""
     if not agent:
         return "Quiz is disabled.", {}, "Quiz is disabled."
     code = LanguageHandler.code_from_display(lang_choice)
@@ -482,38 +499,35 @@ def build_interface() -> gr.Blocks:
             # --- 左侧 3/4 主显示区 ---
             with gr.Column(scale=3):
                 knowledge_graph_plot = gr.Plot(label="知识图谱", value=create_knowledge_graph_figure(initial_data),elem_classes=["full-height-plot"])
-                # <--- 修改点 3.1: 将 gr.File 替换为 gr.HTML ---
                 pdf_viewer_html = gr.HTML(visible=False, elem_id="pdf-viewer-container")
             # --- 右侧 1/4 功能/资源区 ---
             with gr.Column(scale=1):
                 gr.Markdown("<h1>AI-Education 🎓</h1>")
-                # MODIFIED: New interaction flow starts with this dropdown
                 with gr.Group(visible=True) as node_selection_group:
                     learning_nodes_list = get_all_learning_nodes(initial_data)
-                
                     node_selector = gr.Dropdown(choices=learning_nodes_list , label="选择一个知识节点开始学习")
+                
                 # 状态2: 显示选中节点的资源
                 with gr.Group(visible=False) as resource_display_group:
                     gr.Markdown("### 📚 学习资源")
                     resource_selector = gr.Radio(label="选择一个PDF进行阅读", choices=[])
                 
                 # 状态3: PDF阅读时，显示功能面板
-                with gr.Group(visible=False) as main_function_group:
+                # MODIFIED: 添加 elem_id 以便 CSS 控制
+                with gr.Group(visible=False, elem_id="main-function-group") as main_function_group:
                     lang_select = gr.Dropdown(choices=LanguageHandler.dropdown_choices(), value=LanguageHandler.dropdown_choices()[0], label="语言选择")
                     feature_choices = ["🤖 AI 助教", "📝 随堂测验", "🗺️ 学习计划", "📜 知识总结", "📤 上传新资源"]
                     feature_select = gr.Dropdown(choices=feature_choices, value=feature_choices[0], label="功能选择")
                     
-                    with gr.Group(visible=True) as chat_group:
-                        chatbot = gr.Chatbot(elem_id="chatbot", label="Chat", height=500)
+                    # MODIFIED: 添加 elem_classes, 移除 chatbot 固定高度, 移除 logs 和 clear 按钮
+                    with gr.Group(visible=True, elem_classes=["feature-group"]) as chat_group:
+                        chatbot = gr.Chatbot(elem_id="chatbot", label="Chat",height=750)
                         with gr.Row():
                             msg = gr.Textbox(placeholder="输入你的问题...", container=False, scale=4)
                             send = gr.Button("发送", variant="primary", scale=1)
-                        # with gr.Accordion("终端输出", open=False):
-                        logs = gr.Textbox(label=None, lines=2)
-                        clear = gr.Button("清除对话历史")
                     
-                    with gr.Group(visible=False) as quiz_group:
-                        
+                    # MODIFIED: 添加 elem_classes, 移除输出框固定行数
+                    with gr.Group(visible=False, elem_classes=["feature-group"]) as quiz_group:
                         quiz_subject = gr.Textbox(label="测验主题")
                         start_btn = gr.Button("开始测验", variant="primary")
                         quiz_question = gr.Markdown(label="问题")
@@ -524,22 +538,23 @@ def build_interface() -> gr.Blocks:
                         gr.Markdown("---")
                         quiz_name = gr.Textbox(label="你的名字 (用于生成学习计划)")
                         plan_quiz_btn = gr.Button("根据测验结果生成学习计划")
-                        plan_quiz_output = gr.Textbox(label="计划输出", lines=10, interactive=False)
-                    with gr.Group(visible=False) as plan_group:
-                        
+                        plan_quiz_output = gr.Textbox(label="计划输出", interactive=False, elem_classes=["fill-height"]) # 移除了 lines, 添加了 class
+                    
+                    # MODIFIED: 添加 elem_classes, 移除输出框固定行数
+                    with gr.Group(visible=False, elem_classes=["feature-group"]) as plan_group:
                         plan_name = gr.Textbox(label="你的名字")
                         plan_goals = gr.Textbox(label="学习目标 (用分号隔开)")
                         plan_btn = gr.Button("生成计划", variant="primary")
-                        plan_output = gr.Textbox(label="计划输出", lines=10, interactive=False)
-                    
-                    with gr.Group(visible=False) as summary_group:
-                        
+                        plan_output = gr.Textbox(label="计划输出", interactive=False, elem_classes=["fill-height"]) # 移除了 lines, 添加了 class
+
+                    # MODIFIED: 添加 elem_classes, 移除输出框固定行数
+                    with gr.Group(visible=False, elem_classes=["feature-group"]) as summary_group:
                         sum_topic = gr.Textbox(label="主题或材料")
                         sum_btn = gr.Button("生成总结", variant="primary")
-                        sum_output = gr.Textbox(label="总结内容", lines=10, interactive=False)
-                    
-                    with gr.Group(visible=False) as upload_group:
-                        
+                        sum_output = gr.Textbox(label="总结内容", interactive=False, elem_classes=["fill-height"]) # 移除了 lines, 添加了 class
+
+                    # MODIFIED: 添加 elem_classes
+                    with gr.Group(visible=False, elem_classes=["feature-group"]) as upload_group:
                         gr.Markdown("上传文件到当前学习节点：")
                         current_node_display = gr.Markdown()
                         upload_files_new = gr.File(file_count="multiple", label="选择PDF文件")
@@ -547,7 +562,7 @@ def build_interface() -> gr.Blocks:
                         upload_status_new = gr.Markdown()
         
         # --- UI 事件处理与逻辑流 ---
-        # MODIFIED: New function to handle node selection from dropdown
+        # (这部分没有功能性改动，除了下面标记的地方)
         def on_node_select(selected_node_name: str, graph_data: dict):
             if not selected_node_name:
                 return gr.update(visible=False), None, gr.update(), gr.update(visible=False), gr.update(visible=True)
@@ -561,32 +576,28 @@ def build_interface() -> gr.Blocks:
                 gr.update(visible=False),
                 gr.update(visible=True)
             )
-        # MODIFIED: Event handler is now on the dropdown
+
         node_selector.change(
             fn=on_node_select,
             inputs=[node_selector, knowledge_data_state],
             outputs=[resource_display_group, selected_grandchild_state, resource_selector, main_function_group, knowledge_graph_plot]
         )
         
-        # <--- 修改点 3.2: 修改 on_pdf_select 函数以输出 HTML ---
         def on_pdf_select(selected_pdf: str, selected_grandchild: str):
             if not selected_pdf:
-                # 如果没有选择PDF，则不做任何事情
                 return gr.update(), gr.update(), gr.update(), gr.update(), gr.update(), gr.update()
             
-            # 调用新函数生成 iframe HTML
             pdf_html_content = show_pdf_in_iframe(selected_pdf)
             
             return (
-                gr.update(visible=False), # 隐藏知识图谱
-                gr.update(visible=True, value=pdf_html_content), # 显示HTML组件并加载iframe内容
-                gr.update(visible=False), # 隐藏节点选择器
-                gr.update(visible=False), # 隐藏资源选择面板
-                gr.update(visible=True),  # 显示主功能面板
-                f"**当前节点**: {selected_grandchild}" # 在上传模块中显示当前节点
+                gr.update(visible=False),
+                gr.update(visible=True, value=pdf_html_content),
+                gr.update(visible=False),
+                gr.update(visible=False),
+                gr.update(visible=True), 
+                f"**当前节点**: {selected_grandchild}"
             )
-        
-        # <--- 修改点 3.3: 更新 change 事件的 outputs ---
+
         resource_selector.change(
             fn=on_pdf_select,
             inputs=[resource_selector, selected_grandchild_state],
@@ -608,12 +619,10 @@ def build_interface() -> gr.Blocks:
             outputs=[chat_group, quiz_group, plan_group, summary_group, upload_group],
             queue=False
         )
-        # Backend function bindings (unchanged)
-        def clear_history(): return [], "", ""
-        msg.submit(respond_with_retriever, [msg, chatbot, lang_select], [chatbot, logs]).then(lambda: "", outputs=msg)
-        send.click(respond_with_retriever, [msg, chatbot, lang_select], [chatbot, logs]).then(lambda: "", outputs=msg)
-        clear.click(clear_history, None, [chatbot, logs, msg])
-        
+
+        msg.submit(stream_chat_only, [msg, chatbot, lang_select], [chatbot]).then(lambda: "", outputs=msg)
+        send.click(stream_chat_only, [msg, chatbot, lang_select], [chatbot]).then(lambda: "", outputs=msg)
+                
         start_btn.click(lambda sub, lang: start_quiz(sub, lang, retriever), [quiz_subject, lang_select], [quiz_question, quiz_state, quiz_result])
         btn_a.click(lambda st: answer_quiz("a", st), quiz_state, [quiz_question, quiz_state, quiz_result])
         btn_b.click(lambda st: answer_quiz("b", st), quiz_state, [quiz_question, quiz_state, quiz_result])

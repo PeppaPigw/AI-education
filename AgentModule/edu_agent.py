@@ -8,7 +8,7 @@ from tools.language_handler import LanguageHandler
 from tools.rag_service import RAGService
 from tools.rag_utils import get_context_or_empty
 from tools.edu_tools import (
-    # wikipedia_search,
+    wikipedia_search,
     define_word,
     calculator,
     current_date,
@@ -28,7 +28,7 @@ def rag_search(query: str) -> str:
     try:
         retriever = RAGService().get_retriever()
         return get_context_or_empty(query, retriever)
-    except Exception as e:  # pragma: no cover - retrieval errors
+    except Exception as e:  
         return f"RAG search error: {e}"
 
 DEFAULT_PROMPT = PromptTemplate.from_template(
@@ -39,7 +39,7 @@ DEFAULT_PROMPT = PromptTemplate.from_template(
 
 {tools}
 
-使用 rag_search 查询文档数据库以获取其他上下文。
+你可以使用 rag_search 查询文档数据库以获取其他上下文。
 
 使用以下格式：
 Question: {input}
@@ -60,7 +60,7 @@ Final Answer: 对原始问题的最终答案
 
 def create_agent() -> AgentExecutor:
     tools = [
-        # wikipedia_search,
+        wikipedia_search,
         define_word,
         calculator,
         current_date,
