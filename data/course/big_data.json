@@ -1,0 +1,1373 @@
+{
+  "root_name": "大数据分析",
+  "children": [
+    {
+      "name": "大数据基础概念",
+      "flag": "1",
+      "resource_path": "",
+      "grandchildren": [
+        {
+          "name": "大数据生命周期与应用",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "大数据生命周期",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "大数据驱动因素",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "DIKW金字塔模型",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "商务智能的发展过程",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "大数据基本概念",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "大数据的概念",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "大数据定义、特征、生命周期等",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "大数据的渗透与影响",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "大数据的量化进程",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "数据的价值与原油的类比",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "大数据的产生阶段",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "传统数据库与大数据的区别",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "IT的发展历程",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "大数据特征与类型",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "大数据类型",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "大数据的种类",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "数据类型比例",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "大数据特征",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "大数据的规模与速度",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "大数据的规模",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "大数据的速度",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                },
+                {
+                  "name": "大数据的五大特征",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "大数据的特征",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "网络大数据特征",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "Volume",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "Variety",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "Velocity",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "Veracity",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "Value",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "大数据技术与模型",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "第四研究范式",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "数据密集型科学发现",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "大数据计算系统的三个基本层次",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "数据获取",
+      "flag": "0",
+      "resource_path": "",
+      "grandchildren": [
+        {
+          "name": "数据类型",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "结构化数据",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "非结构化数据",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "半结构化数据和准结构化数据",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "内部数据与外部数据",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "数据采集",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "深层网络(DeepWeb)",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "深网数据采集",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "暗网(DarkWeb)",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "PageRank与OPIC策略",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "ETL(Extract,Transform,Load)",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "数据源选择与数据收集",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "数据提取方法",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "增量数据提取",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "增量提取方法",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "数据质量与预处理",
+      "flag": "0",
+      "resource_path": "",
+      "grandchildren": [
+        {
+          "name": "数据质量问题",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "数据管理过程",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "数据管理的过程",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "数据规约与压缩",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "数据规约",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "属性子集选择",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "数据压缩",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "多数据源数据质量",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "多数据源数据质量",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "单数据源数据质量",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "单数据源的数据质量问题",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "单一数据源模型层数据质量问题",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "单一数据源实例层数据质量问题",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "数据质量问题分类",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "数据质量问题分类",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "数据预处理",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "数据预处理",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "数据存储与数据清洗",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "数据清洗",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "缺失值处理",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "重复记录清洗",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "噪声数据清洗",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "分箱算法",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                },
+                {
+                  "name": "数据清洗和建模",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "数据转换",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "数据集成",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "数据存储系统",
+      "flag": "0",
+      "resource_path": "",
+      "grandchildren": [
+        {
+          "name": "数据资产",
+          "flag": "0",
+          "resource_path": ""
+        },
+        {
+          "name": "数据建模与访问",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "数据访问层",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "数据建模",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "ACID与BASE模型",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "数据建模层级",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "统一数据访问接口",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "数据源包装器",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "数据存储技术",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "基于列的存储",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "基于列存储的表",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "数据压缩与分区",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "数据存储架构",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "分布式文件系统",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "HDFS数据操作",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "HDFS数据写入过程",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "HDFS数据读取过程",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "分布式存储与容错",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "分布式文件系统",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "分区容错性",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "分布式文件系统-以HDFS为例",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "分布式存储",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "HDFS架构与机制",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "HDFS存储机制",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "HDFS架构",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "HDFS一次写入多次读取",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "分布式数据库",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "分布式数据库",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "NewSQL数据库",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "NoSQL数据库",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "键值数据库",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "图数据库",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "文档数据库",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "NoSQL数据库类型",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "列存储数据库",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "CAP定理",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "BASE模型",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "数据存储系统",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "数据存储与处理平台",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "数据处理系统",
+      "flag": "0",
+      "resource_path": "",
+      "grandchildren": [
+        {
+          "name": "批处理",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "MapReduce计算模型",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "MapReduce计算模型",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "任务调度与资源管理",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "MapReduce工作流程",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "微量批处理系统",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "图计算与消息传递",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "并行图计算模型",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "超步(superstep)",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "图分区与消息传递",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "BulkSynchronousParallel(BSP)",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "GooglePregel架构",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "内存计算与数据处理",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "内存计算",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "流计算模型",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "计算引擎",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "Spark架构",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "弹性分布式数据集(RDD)",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "惰性求值(LazyEvaluation)",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "流处理",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "流处理计算模型",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "数据处理系统概念",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "数据处理系统架构",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "分布式计算架构",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "分布式策略",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "分布式计算",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "分布式计算",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "分布式处理",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "特征工程与数据分析",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "大规模并行处理",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "无共享架构",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "大规模并行处理",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "MPP数据库",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "数据分布与并行性",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "Greenplum物理架构",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "Greenplum",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "内存数据库",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "内存数据库-HANA",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "数据挖掘与分析",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "数据挖掘算法",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "深度学习技术",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "卷积神经网络",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "激活函数",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "权重和偏置",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "深度学习",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "TensorFlow架构",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "TensorFlow2.0架构",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "深度学习算法",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                },
+                {
+                  "name": "机器学习基础",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "机器学习工具与技术",
+                      "flag": "0",
+                      "resource_path": "",
+                      "great-grandchildren": [
+                        {
+                          "name": "机器学习Pipeline",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "模型持久化",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "MLlib算法",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "机器学习算法",
+                          "flag": "0",
+                          "resource_path": ""
+                        }
+                      ]
+                    },
+                    {
+                      "name": "监督学习与分类",
+                      "flag": "0",
+                      "resource_path": "",
+                      "great-grandchildren": [
+                        {
+                          "name": "K近邻算法",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "训练数据与测试数据",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "支持向量机(SVM)",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "软间隔分类器",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "核函数与核技巧",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "监督学习",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "无监督学习",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "朴素贝叶斯分类算法",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "先验概率",
+                          "flag": "0",
+                          "resource_path": ""
+                        },
+                        {
+                          "name": "加法平滑",
+                          "flag": "0",
+                          "resource_path": ""
+                        }
+                      ]
+                    },
+                    {
+                      "name": "聚类分析",
+                      "flag": "0",
+                      "resource_path": "",
+                      "great-grandchildren": [
+                        {
+                          "name": "K均值聚类算法",
+                          "flag": "0",
+                          "resource_path": "",
+                          "great-grandchildren": [
+                            {
+                              "name": "选择最佳K值",
+                              "flag": "0",
+                              "resource_path": ""
+                            },
+                            {
+                              "name": "欧几里得距离",
+                              "flag": "0",
+                              "resource_path": ""
+                            }
+                          ]
+                        },
+                        {
+                          "name": "聚类算法",
+                          "flag": "0",
+                          "resource_path": ""
+                        }
+                      ]
+                    },
+                    {
+                      "name": "统计分析与回归",
+                      "flag": "0",
+                      "resource_path": "",
+                      "great-grandchildren": [
+                        {
+                          "name": "线性回归",
+                          "flag": "0",
+                          "resource_path": "",
+                          "great-grandchildren": [
+                            {
+                              "name": "均值计算",
+                              "flag": "0",
+                              "resource_path": ""
+                            },
+                            {
+                              "name": "回归方程",
+                              "flag": "0",
+                              "resource_path": ""
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "关联规则挖掘",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "Apriori算法",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "支持度、置信度和提升度",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                },
+                {
+                  "name": "降维与矩阵分解",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "主成分分析(PCA)",
+                      "flag": "0",
+                      "resource_path": "",
+                      "great-grandchildren": [
+                        {
+                          "name": "特征值和特征向量",
+                          "flag": "0",
+                          "resource_path": ""
+                        }
+                      ]
+                    },
+                    {
+                      "name": "奇异值分解(SVD)",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "大数据平台与工具",
+      "flag": "0",
+      "resource_path": "",
+      "grandchildren": [
+        {
+          "name": "大数据三层架构",
+          "flag": "0",
+          "resource_path": ""
+        },
+        {
+          "name": "SparkMLlib",
+          "flag": "0",
+          "resource_path": ""
+        },
+        {
+          "name": "TensorFlow",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "数据流图",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "EagerExecution",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "分布式策略API",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "推荐系统与社交网络",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "社交网络分析",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "力导向图",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "Fruchterman-Reingold算法",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "社交网络度量指标",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "推荐系统",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "矩阵分解",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "隐语义模型",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "协同过滤",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "基于用户的协同过滤",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "基于物品的协同过滤",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                },
+                {
+                  "name": "相似度计算",
+                  "flag": "0",
+                  "resource_path": ""
+                },
+                {
+                  "name": "基于内容的过滤",
+                  "flag": "0",
+                  "resource_path": "",
+                  "great-grandchildren": [
+                    {
+                      "name": "档案学习",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "生成推荐",
+                      "flag": "0",
+                      "resource_path": ""
+                    },
+                    {
+                      "name": "物品表示",
+                      "flag": "0",
+                      "resource_path": ""
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "大数据应用与挑战",
+      "flag": "0",
+      "resource_path": "",
+      "grandchildren": [
+        {
+          "name": "数据与因果关系",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "全量数据取代样本数据",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "相关性取代因果关系",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "科学研究范式",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "科学研究第四范式",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "商务智能演变",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "商务智能的演变",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "BI商务智能报告",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "大数据分析能力",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "大数据分析能力的培养",
+              "flag": "0",
+              "resource_path": ""
+            }
+          ]
+        },
+        {
+          "name": "互联网数据收集",
+          "flag": "0",
+          "resource_path": "",
+          "great-grandchildren": [
+            {
+              "name": "互联网数据收集与挑战",
+              "flag": "0",
+              "resource_path": ""
+            },
+            {
+              "name": "网络爬虫技术",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "网络爬虫爬取策略",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            },
+            {
+              "name": "分布式爬虫架构",
+              "flag": "0",
+              "resource_path": "",
+              "great-grandchildren": [
+                {
+                  "name": "分布式网络爬虫架构",
+                  "flag": "0",
+                  "resource_path": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
