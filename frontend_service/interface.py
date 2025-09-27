@@ -11,7 +11,7 @@ import gradio as gr
 from dotenv import load_dotenv
 import plotly.graph_objects as go
 import base64 
-
+import math
 from AgentModule import create_agent
 from AgentModule.edu_agent import run_agent
 from LearningPlanModule import LearningPlan
@@ -22,7 +22,7 @@ from tools.rag_service import get_rag_service
 
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 load_dotenv(dotenv_path)
-# 检查 API Key
+
 if not os.environ.get("api_key"):
     raise RuntimeError("api_key is not set. Create a .env file or export the variable.")
 # 初始化服务
@@ -286,7 +286,7 @@ def get_all_learning_nodes(graph_data: dict) -> list:
     return learning_nodes
 
 def create_knowledge_graph_figure(graph_data: dict):
-    """使用Plotly创建4层知识图谱的可视化Figure"""
+    """使用Plotly创建4层知识图谱的圆形辐射状可视化Figure"""
     if not graph_data:
         return go.Figure()
     
@@ -294,67 +294,94 @@ def create_knowledge_graph_figure(graph_data: dict):
     nodes = {'labels': [], 'colors': [], 'x': [], 'y': []}
     edges = {'x': [], 'y': []}
     
-    # Root节点（第0层）
+    # --- 1. 坐标计算（核心修改部分） ---
+    
+    # 中心Root节点 (Level 0)
     root_name = graph_data.get("root_name", "Root")
     nodes['labels'].append(root_name)
-    nodes['colors'].append("#FFA07A")  # 珊瑚色
-    nodes['x'].append(0); nodes['y'].append(0)
-    
-    y_pos_child = 0
-    
-    for child in graph_data.get("children", []):
+    nodes['colors'].append("#FFA07A") # 珊瑚色
+    nodes['x'].append(0)
+    nodes['y'].append(0)
+
+    # 定义每层的半径和角度扩散因子
+    radii = [0, 1.5, 3.0, 4.5] 
+    spread_factor = 0.95 # 子节点在其父节点扇区中的占比
+
+    # Level 1: Children 围绕中心分布
+    children = graph_data.get("children", [])
+    num_children = len(children)
+    child_angle_step = 2 * math.pi / num_children if num_children > 0 else 0
+
+    for i, child in enumerate(children):
+        # 使用极坐标转笛卡尔坐标：x = r * cos(θ), y = r * sin(θ)
+        child_angle = i * child_angle_step
+        x_child = radii[1] * math.cos(child_angle)
+        y_child = radii[1] * math.sin(child_angle)
+        
         child_name = child.get("name")
         child_color = "#87CEFA" if child.get("flag") == "1" else "#D3D3D3"
-        
-        # Children节点（第1层）
         nodes['labels'].append(child_name)
         nodes['colors'].append(child_color)
-        nodes['x'].append(1)
-        nodes['y'].append(y_pos_child)
+        nodes['x'].append(x_child)
+        nodes['y'].append(y_child)
         
-        # Root到Child的连线
-        edges['x'].extend([0, 1, None])
-        edges['y'].extend([0, y_pos_child, None])
+        # 添加从 Root 到 Child 的连线
+        edges['x'].extend([0, x_child, None])
+        edges['y'].extend([0, y_child, None])
+
+        # Level 2: Grandchildren 在各自父节点的扇区内分布
+        grandchildren = child.get("grandchildren", [])
+        num_grandchildren = len(grandchildren)
+        if num_grandchildren == 0:
+            continue
+            
+        # 计算父节点（Child）拥有的扇区大小
+        sector_angle = child_angle_step * spread_factor if num_children > 1 else 2 * math.pi
+        start_angle = child_angle - sector_angle / 2
+        gc_angle_step = sector_angle / num_grandchildren
         
-        y_pos_grandchild = y_pos_child
-        
-        for grandchild in child.get("grandchildren", []):
+        for j, grandchild in enumerate(grandchildren):
+            # 将 grandchild 放置在扇区的中间位置
+            gc_angle = start_angle + (j + 0.5) * gc_angle_step
+            x_gc = radii[2] * math.cos(gc_angle)
+            y_gc = radii[2] * math.sin(gc_angle)
+            
             grandchild_name = grandchild.get("name")
             grandchild_color = "#90EE90" if grandchild.get("flag") == "1" else "#D3D3D3"
-            
-            # Grandchildren节点（第2层）
             nodes['labels'].append(grandchild_name)
             nodes['colors'].append(grandchild_color)
-            nodes['x'].append(2)
-            nodes['y'].append(y_pos_grandchild)
+            nodes['x'].append(x_gc)
+            nodes['y'].append(y_gc)
             
-            # Child到Grandchild的连线
-            edges['x'].extend([1, 2, None])
-            edges['y'].extend([y_pos_child, y_pos_grandchild, None])
-            
-            y_pos_great_grandchild = y_pos_grandchild
-            
-            # Great-grandchildren节点（第3层）
-            for great_grandchild in grandchild.get("great-grandchildren", []):
-                ggc_name = great_grandchild.get("name")
-                ggc_color = "#FFD700" if great_grandchild.get("flag") == "1" else "#D3D3D3"  # 金色
-                
+            # 添加从 Child 到 Grandchild 的连线
+            edges['x'].extend([x_child, x_gc, None])
+            edges['y'].extend([y_child, y_gc, None])
+
+            # Level 3: Great-grandchildren 在各自父节点的子扇区内分布
+            great_grandchildren = grandchild.get("great-grandchildren", [])
+            num_ggc = len(great_grandchildren)
+            if num_ggc == 0:
+                continue
+
+            sub_sector_angle = gc_angle_step * spread_factor
+            ggc_start_angle = gc_angle - sub_sector_angle / 2
+            ggc_angle_step = sub_sector_angle / num_ggc
+
+            for k, ggc in enumerate(great_grandchildren):
+                ggc_angle = ggc_start_angle + (k + 0.5) * ggc_angle_step
+                x_ggc = radii[3] * math.cos(ggc_angle)
+                y_ggc = radii[3] * math.sin(ggc_angle)
+
+                ggc_name = ggc.get("name")
+                ggc_color = "#FFD700" if ggc.get("flag") == "1" else "#D3D3D3" # 金色
                 nodes['labels'].append(ggc_name)
                 nodes['colors'].append(ggc_color)
-                nodes['x'].append(3)
-                nodes['y'].append(y_pos_great_grandchild)
+                nodes['x'].append(x_ggc)
+                nodes['y'].append(y_ggc)
                 
-                # Grandchild到Great-grandchild的连线
-                edges['x'].extend([2, 3, None])
-                edges['y'].extend([y_pos_grandchild, y_pos_great_grandchild, None])
-                
-                y_pos_great_grandchild += 0.8
-            
-            y_pos_grandchild += max(1.5, len(grandchild.get("great-grandchildren", [])) * 0.8)
-        
-        y_pos_child += max(2, y_pos_grandchild - y_pos_child + 1)
+                edges['x'].extend([x_gc, x_ggc, None])
+                edges['y'].extend([y_gc, y_ggc, None])
     
-    # 添加连线
     fig.add_trace(go.Scatter(
         x=edges['x'], y=edges['y'],
         mode='lines',
@@ -362,7 +389,6 @@ def create_knowledge_graph_figure(graph_data: dict):
         hoverinfo='none'
     ))
     
-    # 添加节点
     fig.add_trace(go.Scatter(
         x=nodes['x'], y=nodes['y'],
         mode='markers+text',
@@ -385,6 +411,7 @@ def create_knowledge_graph_figure(graph_data: dict):
         margin=dict(l=10, r=10, t=30, b=10)
     )
     
+    fig.update_yaxes(scaleanchor="x", scaleratio=1)
     return fig
 
 def find_resources_for_node(node_name: str, graph_data: dict) -> list:
@@ -496,7 +523,7 @@ def build_interface() -> gr.Blocks:
         knowledge_data_state = gr.State(initial_data)
         selected_grandchild_state = gr.State()
         with gr.Row():
-            # --- 左侧 3/4 主显示区 ---
+            
             with gr.Column(scale=3):
                 knowledge_graph_plot = gr.Plot(label="知识图谱", value=create_knowledge_graph_figure(initial_data),elem_classes=["full-height-plot"])
                 pdf_viewer_html = gr.HTML(visible=False, elem_id="pdf-viewer-container")
@@ -545,9 +572,8 @@ def build_interface() -> gr.Blocks:
                         plan_name = gr.Textbox(label="你的名字")
                         plan_goals = gr.Textbox(label="学习目标 (用分号隔开)")
                         plan_btn = gr.Button("生成计划", variant="primary")
-                        plan_output = gr.Textbox(label="计划输出", interactive=False, elem_classes=["fill-height"]) # 移除了 lines, 添加了 class
-
-                    # MODIFIED: 添加 elem_classes, 移除输出框固定行数
+                        plan_output = gr.Textbox(label="计划输出", interactive=False, elem_classes=["fill-height"]) # 移除了 
+                        
                     with gr.Group(visible=False, elem_classes=["feature-group"]) as summary_group:
                         sum_topic = gr.Textbox(label="主题或材料")
                         sum_btn = gr.Button("生成总结", variant="primary")
