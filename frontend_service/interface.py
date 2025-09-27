@@ -104,7 +104,6 @@ def respond(
             result = f"<div class='fallback'>{notice}<br>{result}</div>"
         elif used_retriever:
             notice = LanguageHandler.ensure_language(
-                # "Wiadomość generowana na podstawie dokumentu",
                 language,
             )
             result = f"<div class='retrieval'>{notice}<br>{result}</div>"
@@ -113,7 +112,6 @@ def respond(
     yield history, logs
 
 def respond_with_retriever(message: str, history: list[dict], lang_choice: str):
-    # """Wrapper injecting the shared retriever into :func:`respond`."""
     yield from respond(message, history, lang_choice, retriever)
 
 def process_knowledge(files: list):
@@ -122,7 +120,6 @@ def process_knowledge(files: list):
         yield "⚠️ No files uploaded."
         return
     yield "⏳ Processing for RAG..."
-    # (此处的 RAG service 调用保持不变)
     yield f"✅ Processed {len(files)} file(s) for RAG."
 
 def _format_question(q: dict) -> str:
@@ -153,9 +150,7 @@ def start_quiz(subject: str, lang_choice: str, retriever=None):
     }
     first_q = _format_question(questions[0])
     notice = (
-        "📄 Quiz generated with document context"
-        # if used_retriever
-        # else "⚠️ Quiz generated without document context"
+        "📄 Quiz 使用文档上下文生成"
     )
     return first_q, state, notice
 
@@ -239,54 +234,11 @@ def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
         topic, language=language, retriever=retriever
     )
     notice = (
-        "📄 Summary generated with document context"
-        # if used_retriever
-        # else "⚠️ Summary generated without document context"
+        "📄 Summary 使用文档上下文生成"
     )
     return f"{notice}\n\n{summary}"
-# --- 新增的辅助函数与布局逻辑 ---
-KNOWLEDGE_JSON_PATH = "data/course/math_modeling.json"
-def setup_app_environment():
-    """初始化应用所需的文件和目录"""
-    os.makedirs("data/course", exist_ok=True)
-    os.makedirs("data/RAG_files", exist_ok=True)
-    
-    if not os.path.exists(KNOWLEDGE_JSON_PATH):
-        print(f"'{KNOWLEDGE_JSON_PATH}' not found. Creating a sample file. 📝")
-        sample_json = {
-          "root_name": "数学基础",
-          "children": [
-            {
-              "flag": "1",
-              "name": "代数",
-              "grandchildren": [
-                {
-                  "flag": "1",
-                  "name": "线性方程",
-                  "resource_path": []
-                },
-                {
-                  "flag": "0",
-                  "name": "二次方程",
-                  "resource_path": []
-                }
-              ]
-            },
-            {
-              "flag": "0",
-              "name": "几何",
-              "grandchildren": [
-                {
-                  "flag": "0",
-                  "name": "平面几何",
-                  "resource_path": []
-                }
-              ]
-            }
-          ]
-        }
-        with open(KNOWLEDGE_JSON_PATH, 'w', encoding='utf-8') as f:
-            json.dump(sample_json, f, indent=2, ensure_ascii=False)
+
+KNOWLEDGE_JSON_PATH = "data/course/big_data.json"
 def load_knowledge_data(json_path: str) -> dict:
     """从JSON文件加载知识图谱数据"""
     try:
@@ -295,67 +247,153 @@ def load_knowledge_data(json_path: str) -> dict:
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
         
-# NEW: Helper function to get all grandchild nodes for the dropdown
-def get_all_grandchildren(graph_data: dict) -> list:
-    """从知识数据中提取所有孙子辈节点的名称"""
-    grandchildren_names = []
+
+def get_all_learning_nodes(graph_data: dict) -> list:
+    """从知识数据中提取所有可学习的节点（grandchildren和great-grandchildren）"""
+    learning_nodes = []
     for child in graph_data.get("children", []):
         for grandchild in child.get("grandchildren", []):
-            grandchildren_names.append(grandchild.get("name"))
-    return grandchildren_names
+            # 添加grandchildren节点
+            gc_name = grandchild.get("name")
+            gc_resources = grandchild.get("resource_path", [])
+            # if gc_resources and isinstance(gc_resources, list) and len(gc_resources) > 0:
+            learning_nodes.append(gc_name)
+            
+            # 添加great-grandchildren节点
+            for great_grandchild in grandchild.get("great-grandchildren", []):
+                ggc_name = great_grandchild.get("name")
+                ggc_resources = great_grandchild.get("resource_path", [])
+                # if ggc_resources and isinstance(ggc_resources, list) and len(ggc_resources) > 0:
+                learning_nodes.append(ggc_name)
+    
+    return learning_nodes
+
 def create_knowledge_graph_figure(graph_data: dict):
-    """使用Plotly创建知识图谱的可视化Figure"""
+    """使用Plotly创建4层知识图谱的可视化Figure"""
     if not graph_data:
         return go.Figure()
+    
     fig = go.Figure()
     nodes = {'labels': [], 'colors': [], 'x': [], 'y': []}
     edges = {'x': [], 'y': []}
+    
+    # Root节点（第0层）
     root_name = graph_data.get("root_name", "Root")
     nodes['labels'].append(root_name)
-    nodes['colors'].append("#FFA07A")
+    nodes['colors'].append("#FFA07A")  # 珊瑚色
     nodes['x'].append(0); nodes['y'].append(0)
-    y_pos_child = len(graph_data.get("children", [])) / 2 * -1.5
+    
+    y_pos_child = 0
+    
     for child in graph_data.get("children", []):
         child_name = child.get("name")
         child_color = "#87CEFA" if child.get("flag") == "1" else "#D3D3D3"
+        
+        # Children节点（第1层）
         nodes['labels'].append(child_name)
         nodes['colors'].append(child_color)
-        nodes['x'].append(1); nodes['y'].append(y_pos_child)
+        nodes['x'].append(1)
+        nodes['y'].append(y_pos_child)
         
-        edges['x'].extend([0, 1, None]); edges['y'].extend([0, y_pos_child, None])
+        # Root到Child的连线
+        edges['x'].extend([0, 1, None])
+        edges['y'].extend([0, y_pos_child, None])
+        
         y_pos_grandchild = y_pos_child
         
         for grandchild in child.get("grandchildren", []):
             grandchild_name = grandchild.get("name")
             grandchild_color = "#90EE90" if grandchild.get("flag") == "1" else "#D3D3D3"
+            
+            # Grandchildren节点（第2层）
             nodes['labels'].append(grandchild_name)
             nodes['colors'].append(grandchild_color)
-            nodes['x'].append(2); nodes['y'].append(y_pos_grandchild)
-            edges['x'].extend([1, 2, None]); edges['y'].extend([y_pos_child, y_pos_grandchild, None])
-            y_pos_grandchild += 1
+            nodes['x'].append(2)
+            nodes['y'].append(y_pos_grandchild)
+            
+            # Child到Grandchild的连线
+            edges['x'].extend([1, 2, None])
+            edges['y'].extend([y_pos_child, y_pos_grandchild, None])
+            
+            y_pos_great_grandchild = y_pos_grandchild
+            
+            # Great-grandchildren节点（第3层）
+            for great_grandchild in grandchild.get("great-grandchildren", []):
+                ggc_name = great_grandchild.get("name")
+                ggc_color = "#FFD700" if great_grandchild.get("flag") == "1" else "#D3D3D3"  # 金色
+                
+                nodes['labels'].append(ggc_name)
+                nodes['colors'].append(ggc_color)
+                nodes['x'].append(3)
+                nodes['y'].append(y_pos_great_grandchild)
+                
+                # Grandchild到Great-grandchild的连线
+                edges['x'].extend([2, 3, None])
+                edges['y'].extend([y_pos_grandchild, y_pos_great_grandchild, None])
+                
+                y_pos_great_grandchild += 0.8
+            
+            y_pos_grandchild += max(1.5, len(grandchild.get("great-grandchildren", [])) * 0.8)
         
-        y_pos_child += 2
-    fig.add_trace(go.Scatter(x=edges['x'], y=edges['y'], mode='lines', line=dict(width=1, color='#888'), hoverinfo='none'))
+        y_pos_child += max(2, y_pos_grandchild - y_pos_child + 1)
+    
+    # 添加连线
+    fig.add_trace(go.Scatter(
+        x=edges['x'], y=edges['y'],
+        mode='lines',
+        line=dict(width=1, color='#888'),
+        hoverinfo='none'
+    ))
+    
+    # 添加节点
     fig.add_trace(go.Scatter(
         x=nodes['x'], y=nodes['y'],
         mode='markers+text',
         text=nodes['labels'],
         textposition="bottom center",
         hoverinfo='text',
-        marker=dict(symbol='circle', size=30, color=nodes['colors'], line=dict(width=2, color='#555'))
+        marker=dict(
+            symbol='circle',
+            size=25,
+            color=nodes['colors'],
+            line=dict(width=2, color='#555')
+        )
     ))
+    
     fig.update_layout(
         showlegend=False,
         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
         plot_bgcolor='white',
-        margin=dict(l=10, r=10, t=10, b=10)
+        margin=dict(l=10, r=10, t=30, b=10)
     )
+    
     return fig
-def upload_and_update_resource(files: list, selected_grandchild: str, current_data: dict):
-    """上传文件，保存，并更新JSON文件"""
-    if not files: return "⚠️ 未选择文件。", current_data, gr.update()
-    if not selected_grandchild: return "❌ 错误：没有选定的学习节点来关联文件。", current_data, gr.update()
+
+def find_resources_for_node(node_name: str, graph_data: dict) -> list:
+    """在4层结构中查找指定节点的资源"""
+    for child in graph_data.get("children", []):
+        for grandchild in child.get("grandchildren", []):
+            # 检查grandchildren层级
+            if grandchild.get("name") == node_name:
+                resources = grandchild.get("resource_path", [])
+                return resources if isinstance(resources, list) else []
+            
+            # 检查great-grandchildren层级
+            for great_grandchild in grandchild.get("great-grandchildren", []):
+                if great_grandchild.get("name") == node_name:
+                    resources = great_grandchild.get("resource_path", [])
+                    return resources if isinstance(resources, list) else []
+    
+    return []
+
+def upload_and_update_resource(files: list, selected_node: str, current_data: dict):
+    """上传文件，保存，并更新JSON文件（支持4层结构）"""
+    if not files:
+        return "⚠️ 未选择文件。", current_data, gr.update()
+    if not selected_node:
+        return "❌ 错误：没有选定的学习节点来关联文件。", current_data, gr.update()
+    
     save_dir = os.path.join("data", "RAG_files")
     os.makedirs(save_dir, exist_ok=True)
     
@@ -366,26 +404,44 @@ def upload_and_update_resource(files: list, selected_grandchild: str, current_da
         shutil.copy2(file.name, dest_path)
         logger.info(f"Saved {file.name} to {dest_path}")
         newly_added_paths.append(dest_path)
+    
     updated = False
     new_choices = []
+    
+    # 在4层结构中查找并更新节点
     for child in current_data.get("children", []):
         for grandchild in child.get("grandchildren", []):
-            if grandchild.get("name") == selected_grandchild:
+            # 检查grandchildren层级
+            if grandchild.get("name") == selected_node:
                 if "resource_path" not in grandchild or not grandchild["resource_path"]:
                     grandchild["resource_path"] = []
                 grandchild["resource_path"].extend(newly_added_paths)
                 new_choices = grandchild.get("resource_path", [])
                 updated = True
                 break
-        if updated: break
             
+            # 检查great-grandchildren层级
+            for great_grandchild in grandchild.get("great-grandchildren", []):
+                if great_grandchild.get("name") == selected_node:
+                    if "resource_path" not in great_grandchild or not great_grandchild["resource_path"]:
+                        great_grandchild["resource_path"] = []
+                    great_grandchild["resource_path"].extend(newly_added_paths)
+                    new_choices = great_grandchild.get("resource_path", [])
+                    updated = True
+                    break
+            
+            if updated:
+                break
+        if updated:
+            break
+    
     if updated:
         with open(KNOWLEDGE_JSON_PATH, 'w', encoding='utf-8') as f:
             json.dump(current_data, f, indent=2, ensure_ascii=False)
-        msg = f"✅ 成功上传 {len(files)} 个文件并关联到 '{selected_grandchild}'."
+        msg = f"✅ 成功上传 {len(files)} 个文件并关联到 '{selected_node}'."
         return msg, current_data, gr.update(choices=new_choices, value=new_choices[0] if new_choices else None)
     else:
-        msg = f"❌ 未能在JSON中找到节点 '{selected_grandchild}'。"
+        msg = f"❌ 未能在JSON中找到节点 '{selected_node}'。"
         return msg, current_data, gr.update()
 # <--- 修改点 2: 添加新的辅助函数来生成 PDF 的 iframe ---
 def show_pdf_in_iframe(pdf_path: str):
@@ -433,8 +489,9 @@ def build_interface() -> gr.Blocks:
                 gr.Markdown("<h1>AI-Education 🎓</h1>")
                 # MODIFIED: New interaction flow starts with this dropdown
                 with gr.Group(visible=True) as node_selection_group:
-                    grandchildren_list = get_all_grandchildren(initial_data)
-                    node_selector = gr.Dropdown(choices=grandchildren_list, label="选择一个知识节点开始学习")
+                    learning_nodes_list = get_all_learning_nodes(initial_data)
+                
+                    node_selector = gr.Dropdown(choices=learning_nodes_list , label="选择一个知识节点开始学习")
                 # 状态2: 显示选中节点的资源
                 with gr.Group(visible=False) as resource_display_group:
                     gr.Markdown("### 📚 学习资源")
@@ -494,20 +551,15 @@ def build_interface() -> gr.Blocks:
         def on_node_select(selected_node_name: str, graph_data: dict):
             if not selected_node_name:
                 return gr.update(visible=False), None, gr.update(), gr.update(visible=False), gr.update(visible=True)
-            resources = []
-            for child in graph_data.get("children", []):
-                for grandchild in child.get("grandchildren", []):
-                    if grandchild.get("name") == selected_node_name:
-                        resources = grandchild.get("resource_path", [])
-                        break
             
-            # 当切换节点时，确保PDF阅读器被隐藏，知识图谱显示出来
+            resources = find_resources_for_node(selected_node_name, graph_data)
+            
             return (
-                gr.update(visible=True),   # 显示资源选择面板
-                selected_node_name,        # 更新状态：选中的节点名
-                gr.update(choices=resources, value=None), # 更新资源列表
-                gr.update(visible=False),  # 隐藏主功能面板
-                gr.update(visible=True)    # 显示知识图谱
+                gr.update(visible=True),
+                selected_node_name,
+                gr.update(choices=resources, value=None),
+                gr.update(visible=False),
+                gr.update(visible=True)
             )
         # MODIFIED: Event handler is now on the dropdown
         node_selector.change(
@@ -581,7 +633,6 @@ def build_interface() -> gr.Blocks:
 
 def launch_gradio() -> None:
     
-    setup_app_environment()
     demo = build_interface()
     demo.queue()
     demo.launch()

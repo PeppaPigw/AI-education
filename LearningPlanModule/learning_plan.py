@@ -1,9 +1,3 @@
-"""Creation and persistence of personalised learning plans.
-
-The module analyses quiz performance or user‑specified goals to schedule study
-sessions.  It can call an LLM to recommend resources and optionally augment
-suggestions with context retrieved from a document store.
-"""
 import json
 import os
 from datetime import date, timedelta, datetime
@@ -19,23 +13,6 @@ api_key=os.environ.get("api_key")
 # TODO: use cases from prompts for edu
 
 class LearningPlan:
-    """Container for generated study activities and resource suggestions.
-
-    Parameters
-    ----------
-    user_name:
-        Name of the learner for whom the plan is generated.
-    quiz_results:
-        Mapping of topics to a ``(correct, total)`` tuple produced by the quiz
-        module.  If omitted, ``generate_plan_from_prompt`` can create a plan
-        from user goals instead.
-    user_goals:
-        Optional user-defined objectives used when quiz results are absent.
-    user_language:
-        Language code for any LLM output.
-    retriever:
-        Optional retriever for RAG‑enhanced material recommendations.
-    """
     def __init__(
         self, user_name, quiz_results=None, user_goals=None, user_language="en", retriever=None
     ):
@@ -50,9 +27,6 @@ class LearningPlan:
         self.retriever = retriever
 
     def analyze_quiz_results(self):
-        """
-        Analyze quiz results and classify topics based on knowledge gaps.
-        """
         critical_areas = []  # Score below 50%
         moderate_areas = []  # Score between 50% and 70%
         good_areas = []      # Score above 70%
@@ -73,9 +47,6 @@ class LearningPlan:
         return critical_areas, moderate_areas, good_areas
 
     def generate_plan(self):
-        """
-        Generate a learning plan based on quiz analysis.
-        """
         critical_areas, moderate_areas, good_areas = self.analyze_quiz_results()
         plan_start_date = date.today()
         plan = []
@@ -113,11 +84,6 @@ class LearningPlan:
         return plan
 
     def recommend_materials(self, topic, retriever=None):
-        """
-        Retrieve recommended materials for a given topic using LLM and optional RAG context.
-        The response should prioritize materials in the user's language,
-        but can include English resources as fallback.
-        """
         retriever = retriever or self.retriever
         if retriever is None:
             retriever = RAGService().get_retriever()
@@ -128,9 +94,9 @@ class LearningPlan:
 
         prompt = (
             f"{ctx}"  # prepend context if available
-            f"You are an AI assistant tasked with recommending study materials.\n"
-            f"Provide a concise, high-quality list of recommended books, articles, or resources to help someone learn about '{topic}'.\n"
-            f"Respond only in {self.user_language}. If resources in this language are limited, you may include a few English ones."
+            f"你是一个人工智能助手，负责推荐学习材料。\n"
+            f"提供一个简明的、高质量的推荐书籍、文章或资源列表，以帮助人们学习'{topic}'.\n"
+            f"Respond only in {self.user_language}. 如果这种语言的资源有限，您可以包括一些英语资源。"
         )
         try:
             response = self.llm.invoke(prompt)
@@ -142,9 +108,6 @@ class LearningPlan:
 
 
     def generate_plan_from_prompt(self, user_input):
-        """
-        Generate a learning plan based on user's custom input.
-        """
         plan_start_date = date.today()
         plan = []
 
@@ -161,9 +124,6 @@ class LearningPlan:
         return plan
 
     def display_plan(self):
-        """
-        Display the generated learning plan.
-        """
         print(f"Learning Plan for {self.user_name}:\n")
         for entry in self.learning_plan:
             print(f"Date: {entry['date']}")
@@ -175,9 +135,6 @@ class LearningPlan:
             print("\n")
 
     def save_to_file(self, base_dir="data/learning_plans/"):
-        """
-        Save the generated learning plan to a JSON file with timestamp and user name.
-        """
         os.makedirs(base_dir, exist_ok=True)
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

@@ -18,16 +18,6 @@ logger = logging.getLogger(__name__)
 def prepare_quiz_questions(
     subject: str, language: str = "en", retriever=None
 ) -> tuple[list[dict], bool]:
-    """Generate a list of quiz questions for ``subject``.
-
-    The function expands the subject into sub-topics and then uses parallel
-    LangChain pipelines to build multiple‑choice questions.  When a retriever is
-    provided, context retrieved from the vector store is prepended to prompts to
-    enable RAG-assisted question generation.
-
-    Returns a tuple of the question dictionaries and a flag indicating whether
-    the retriever was utilised.
-    """
     llm = ChatOpenAI(model=model_name, temperature=0,base_url=base_url,api_key=api_key)
 
     if retriever is None:
@@ -56,7 +46,6 @@ def prepare_quiz_questions(
 
     questions_per_topic = max_questions // max_topics
 
-    # Generate questions in parallel
     if retriever:
         def _topic_ctx(inputs):
             return get_context_or_empty(inputs["topic"], retriever)
@@ -97,11 +86,6 @@ def prepare_quiz_questions(
     return questions_list, used_retriever
 
 def generate_quiz(subject: str, language: str = "en", retriever=None):
-    """Run an interactive quiz in the terminal and return the results.
-
-    A ``retriever`` may be provided to enrich question prompts with additional
-    context.
-    """
     if retriever is None:
         retriever = RAGService().get_retriever()
 
@@ -112,9 +96,9 @@ def generate_quiz(subject: str, language: str = "en", retriever=None):
         if not questions:
             print("\u26a0\ufe0f No quiz topics generated.")
             return {}
-        logger.info("Interactive quiz used RAG: %s", used_retriever)
+        logger.info("小测基于 RAG 生成: %s", used_retriever)
 
-        print("\nStarting the quiz...\n")
+        print("\n开始测验...\n")
         user_scores = {}
         total_questions = 0
         total_correct = 0
@@ -125,47 +109,44 @@ def generate_quiz(subject: str, language: str = "en", retriever=None):
             correct = q["correct"]
             if topic not in user_scores:
                 user_scores[topic] = [0, 0]
-                print(f"Topic: {topic}\n")
+                print(f"主题: {topic}\n")
 
             try:
                 print(question)
                 while True:
-                    user_answer = input("Your answer: ")
+                    user_answer = input("你的作答: ")
                     if not auto_answer(user_answer):
                         break
                 user_answer = user_answer.strip().lower()
                 if user_answer == correct:
-                    print("Correct!\n")
+                    print("正确!\n")
                     user_scores[topic][0] += 1
                 elif correct == "?":
                     user_scores[topic][0] += 1
                 else:
-                    print(f"Wrong! The correct answer is: {correct}\n")
+                    print(f"错误的！正确的答案是： {correct}\n")
                 user_scores[topic][1] += 1
                 total_correct += 1 if user_answer == correct or correct == "?" else 0
                 total_questions += 1
             except Exception as e:
-                print(f"Error parsing question or answer: {e}")
+                print(f"解析问题或答案错误: {e}")
 
-        print("\nFinal Results:")
+        print("\n最终结果:")
         overall_percentage = 0
         for topic, (correct_num, total_num) in user_scores.items():
             percentage = (correct_num / total_num) * 100 if total_num > 0 else 0
             overall_percentage += percentage
-            print(f"Topic: {topic} - Score: {correct_num}/{total_num} ({percentage:.2f}%)")
+            print(f"主题: {topic} - Score: {correct_num}/{total_num} ({percentage:.2f}%)")
         overall_percentage /= len(user_scores) if user_scores else 1
-        print(f"\nOverall Score: {total_correct}/{total_questions} ({overall_percentage:.2f}%)")
+        print(f"\n总分: {total_correct}/{total_questions} ({overall_percentage:.2f}%)")
 
         return user_scores
 
     except Exception as e:
-        print(f"An error occurred while generating the quiz: {e}")
+        print(f"在生成测试时发生错误： {e}")
         return {}
 
 def generate_learning_plan_from_quiz(user_name, quiz_results, language="en"):
-    """
-    Generates a learning plan based on quiz results.
-    """
     plan = LearningPlan(user_name=user_name, quiz_results=quiz_results, user_language=language)
     learning_plan = plan.generate_plan()
     plan.display_plan()

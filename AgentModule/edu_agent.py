@@ -24,7 +24,7 @@ api_key=os.environ.get("api_key")
 
 @tool
 def rag_search(query: str) -> str:
-    """Retrieve relevant document chunks using the RAG service."""
+    """rag_search"""
     try:
         retriever = RAGService().get_retriever()
         return get_context_or_empty(query, retriever)
@@ -32,33 +32,33 @@ def rag_search(query: str) -> str:
         return f"RAG search error: {e}"
 
 DEFAULT_PROMPT = PromptTemplate.from_template(
-    """
-Answer the following question as best as you can using the provided tools.
-You have access to the following tools:
+"""
+使用提供的工具尽可能地回答以下问题。
+
+您可以使用以下工具：
 
 {tools}
 
-Use rag_search to query the document database for additional context.
+使用 rag_search 查询文档数据库以获取其他上下文。
 
-Use the following format:
+使用以下格式：
 Question: {input}
-Thought: you should think about what to do
-Action: the action to take, should be one of [{tool_names}]
-Action Input: the input to the action
-Observation: the result of the action
-... (this Thought/Action/Action Input/Observation can repeat N times)
-Thought: I now know the final answer
-Final Answer: the final answer to the original question
+Thought: 你应该思考要做什么
+Action: 要采取的行动，应该是 {tool_names} 中的一个
+Action Input: 行动的输入
+Observation: 行动的结果
+... (这个 Thought/Action/Action Input/Observation 循环可以重复 N 次)
+Thought: 我现在知道最终答案了
+Final Answer: 对原始问题的最终答案
 
-Always respond in {language}. If any tool returns text in a different language,
-translate it to {language} before giving the final answer.
+始终使用 {language} 回答。如果任何工具返回不同语言的文本，请将其翻译成 {language} 后再给出最终答案。
 
-{agent_scratchpad}"""
+{agent_scratchpad}
+"""
 )
 
 
 def create_agent() -> AgentExecutor:
-    """Create an agent executor with default tools."""
     tools = [
         # wikipedia_search,
         define_word,
@@ -81,16 +81,6 @@ def run_agent(
     retriever=None,
     return_details: bool = False,
 ) -> str | tuple[str, bool, bool]:
-    """Run the default agent on a question and return the answer.
-
-    If a ``retriever`` is supplied, relevant documents are fetched and appended
-    to the question as context before execution. If the agent cannot provide a
-    useful response (e.g. tool errors), the question is answered directly by
-    the LLM as a fallback.
-
-    Set ``return_details=True`` to also return whether the LLM fallback was
-    used and whether document context was retrieved.
-    """
     executor = executor or create_agent()    
 
     used_retriever = False

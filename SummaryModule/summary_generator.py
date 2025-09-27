@@ -7,7 +7,6 @@ from tools.rag_utils import get_context_or_empty
 
 logger = logging.getLogger(__name__)
 
-# TODO: optimize with pipeline, quering, give more detailed contents, maybe more examples :  with ML prompt there are no examples of algorithms ect.
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -16,10 +15,6 @@ base_url=os.environ.get("base_url")
 api_key=os.environ.get("api_key")
 
 class StudySummaryGenerator:
-    """
-    Generates a detailed study guide based on a topic – intended for learning, not just review.
-    Ideal for exam preparation.
-    """
 
     def __init__(self, temperature=0.5, retriever=None):
         self.llm = ChatOpenAI(model=model_name, temperature=0,base_url=base_url,api_key=api_key)
@@ -29,34 +24,35 @@ class StudySummaryGenerator:
 
         self.base_prompt = PromptTemplate.from_template(
             """
-You are an expert university lecturer helping a student prepare for a difficult exam.
+你是一位专业的大学讲师，帮助学生准备一场困难的考试。
 
-Your task is to create a **detailed, well-structured study guide** for the following topic:
+你的任务是为以下主题创建一个详细的、结构良好的学习指南：
 "{input}"
 
-This is not a cheat sheet. Instead, it should be a **multi-section, rich summary** that could span multiple pages.
+这不是小抄。相反，它应该是一个多节，丰富的总结，可以跨越多个页面。
 
-Include:
-- Clear and accurate definitions of core terms
-- Detailed explanations of major concepts
-- Examples for included concepts
-- Theorems and laws, with explanation and usage
-- Key formulas and symbols, written clearly and contextually
-- Representative examples that help explain how the knowledge is applied
-- Bullet lists or bold text to highlight what's most important
-- Contextual usage: Where/why this knowledge is applied in real tasks/tests
-- Where useful: diagrams, formulas, logical steps
 
-Style:
-- Use markdown-like formatting (titles, bullet points, code blocks)
-- Clear separation of sections
-- Friendly and slightly explanatory tone (like a good tutor)
+包括:
+- 核心术语的定义清晰准确
+- 对主要概念的详细解释
+- 包含概念的示例
+- 定理和定律，解释和用法
+- 关键的公式和符号，写得清楚，符合上下文
+- 有助于解释如何应用知识的代表性示例
+- 项目符号列表或粗体文本突出显示最重要的内容
+- 上下文用法：在实际任务/测试中应用这些知识的位置/原因
+- 有用的地方：图表，公式，逻辑步骤
+
+风格:
+- 使用类似标记的格式（标题、项目符号、代码块）
+- 明确分段分隔
+- 友好和略带解释性的语气（像一个好的导师）
 
 IMPORTANT:
-- Make it long enough to cover the topic as if preparing a student to pass an exam
-- Avoid conversational tone – this should be structured content
+- 写得足够长，就像准备学生通过考试一样
+- 避免对话式的语气。应该是结构化的内容
 
-Only output the content. No introductions or commentary.
+只输出内容。没有介绍或评论。
 
 Respond in {language}.
 """
@@ -65,11 +61,6 @@ Respond in {language}.
     def generate_summary(
         self, input_text: str, language: str = "en", retriever=None
     ) -> tuple[str, bool]:
-        """Generate a detailed study summary using the configured LLM and prompt.
-
-        If a ``retriever`` is provided, it will be used to supply additional
-        context for the summary.
-        """
         lang = (
             LanguageHandler.choose_or_detect(input_text)
             if language == "auto"
@@ -83,8 +74,8 @@ Respond in {language}.
         ctx = get_context_or_empty(input_text, retriever)
         used_retriever = bool(ctx)
         if ctx:
-            input_text = f"{ctx}\n\n### Topic:\n{input_text}"
-        logger.info("Summary generation used RAG: %s", used_retriever)
+            input_text = f"{ctx}\n\n### 主题:\n{input_text}"
+        logger.info("总结基于RAG生成: %s", used_retriever)
 
         chain = self.base_prompt | self.llm
         response = chain.invoke({"input": input_text, "language": lang})
