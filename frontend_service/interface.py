@@ -97,7 +97,6 @@ def respond(
         {"role": "assistant", "content": "..."},
     ])
 
-    # 在yield之前，将内部格式转换为Gradio Chatbot接受的格式
     yield convert_history_to_gradio_format(internal_history), ""
 
     code = LanguageHandler.code_from_display(lang_choice)
@@ -111,7 +110,7 @@ def respond(
         result = LanguageHandler.ensure_language(result, language)
         if used_fallback:
             notice = LanguageHandler.ensure_language(
-                "正在使用备用模型生成回复。",
+                "",
                 language,
             )
             result = f"<div class='fallback'>{notice}<br>{result}</div>"
@@ -565,19 +564,19 @@ def build_interface() -> gr.Blocks:
                         gr.Markdown("---")
                         quiz_name = gr.Textbox(label="你的名字 (用于生成学习计划)")
                         plan_quiz_btn = gr.Button("根据测验结果生成学习计划")
-                        plan_quiz_output = gr.Textbox(label="计划输出", interactive=False, elem_classes=["fill-height"]) # 移除了 lines, 添加了 class
+                        plan_quiz_output = gr.Markdown(label="计划输出", elem_classes=["fill-height"]) # 移除了 lines, 添加了 class
                     
                     # MODIFIED: 添加 elem_classes, 移除输出框固定行数
                     with gr.Group(visible=False, elem_classes=["feature-group"]) as plan_group:
                         plan_name = gr.Textbox(label="你的名字")
                         plan_goals = gr.Textbox(label="学习目标 (用分号隔开)")
                         plan_btn = gr.Button("生成计划", variant="primary")
-                        plan_output = gr.Textbox(label="计划输出", interactive=False, elem_classes=["fill-height"]) # 移除了 
+                        plan_output = gr.Markdown(label="计划输出", elem_classes=["fill-height"]) # 移除了 
                         
                     with gr.Group(visible=False, elem_classes=["feature-group"]) as summary_group:
                         sum_topic = gr.Textbox(label="主题或材料")
                         sum_btn = gr.Button("生成总结", variant="primary")
-                        sum_output = gr.Textbox(label="总结内容", interactive=False, elem_classes=["fill-height"]) # 移除了 lines, 添加了 class
+                        sum_output = gr.Markdown(label="总结内容", elem_classes=["fill-height"]) # 移除了 lines, 添加了 class
 
                     # MODIFIED: 添加 elem_classes
                     with gr.Group(visible=False, elem_classes=["feature-group"]) as upload_group:
