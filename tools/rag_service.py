@@ -1,5 +1,3 @@
-"""RAG service for embedding documents and retrieving context."""
-
 from __future__ import annotations
 
 from typing import Iterable, Optional, Tuple, Union

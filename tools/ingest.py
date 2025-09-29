@@ -1,5 +1,3 @@
-"""CLI utility to ingest documents into the RAG vector store."""
-
 from __future__ import annotations
 
 import argparse

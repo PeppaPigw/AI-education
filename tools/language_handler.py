@@ -1,10 +1,3 @@
-"""Utilities for detecting and translating languages.
-
-This module centralizes language-related helpers such as detection,
-configuration handling and translation. It is used across the project to
-ensure consistent language behaviour.
-"""
-
 import os
 import json
 from langdetect import detect
@@ -15,6 +8,7 @@ CONFIG_PATH = os.path.join("data", "user_config.json")
 
 SUPPORTED_LANGUAGES = [
     "auto",
+    "zh",
     "en",
     "pl",
     "cs",
@@ -34,13 +28,13 @@ SUPPORTED_LANGUAGES = [
     "tr",
     "ja",
     "ko",
-    "zh",
     "ar",
     "he"
 ]
 
 LANGUAGE_LABELS = {
     "auto": "\U0001F310 Auto-detect",
+    "zh": "\U0001F1E8\U0001F1F3 ZH 中文",
     "en": "\U0001F1EC\U0001F1E7 EN English",
     "pl": "\U0001F1F5\U0001F1F1 PL Polski",
     "cs": "\U0001F1E8\U0001F1FF CS Čeština",
@@ -60,7 +54,6 @@ LANGUAGE_LABELS = {
     "tr": "\U0001F1F9\U0001F1F7 TR Türkçe",
     "ja": "\U0001F1EF\U0001F1F5 JA 日本語",
     "ko": "\U0001F1F0\U0001F1F7 KO 한국어",
-    "zh": "\U0001F1E8\U0001F1F3 ZH 中文",
     "ar": "\U0001F1F8\U0001F1E6 AR العربية",
     "he": "\U0001F1EE\U0001F1F1 HE עברית",
 }

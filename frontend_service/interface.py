@@ -548,7 +548,7 @@ def build_interface() -> gr.Blocks:
                     
                     # MODIFIED: 添加 elem_classes, 移除 chatbot 固定高度, 移除 logs 和 clear 按钮
                     with gr.Group(visible=True, elem_classes=["feature-group"]) as chat_group:
-                        chatbot = gr.Chatbot(elem_id="chatbot", label="Chat",height=750)
+                        chatbot = gr.Chatbot(elem_id="chatbot", label="Chat",height=600)
                         with gr.Row():
                             msg = gr.Textbox(placeholder="输入你的问题...", container=False, scale=4)
                             send = gr.Button("发送", variant="primary", scale=1)

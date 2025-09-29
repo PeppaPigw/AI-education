@@ -1,5 +1,3 @@
-"""Helper utilities for retrieval-augmented generation."""
-
 from __future__ import annotations
 
 import logging
@@ -8,13 +6,6 @@ from typing import Any
 
 
 def get_context_or_empty(query: str, retriever: Any | None) -> str:
-    """Return joined page contents for ``query`` using ``retriever``.
-
-    If ``retriever`` is ``None``, retrieval fails, or no relevant documents are
-    found, an empty string is returned. Retrieved documents are considered
-    relevant only if they share at least one non-trivial word with the query so
-    that unrelated RAG content does not override the user's request.
-    """
     if not retriever:
         return ""
 
