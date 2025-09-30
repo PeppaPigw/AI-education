@@ -10,7 +10,6 @@ load_dotenv()
 model_name=os.environ.get("model_name")
 base_url=os.environ.get("base_url")
 api_key=os.environ.get("api_key")
-# TODO: use cases from prompts for edu
 
 class LearningPlan:
     def __init__(

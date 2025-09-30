@@ -514,11 +514,9 @@ def show_pdf_in_iframe(pdf_path: str):
         logger.error(f"Error reading PDF {pdf_path}: {e}")
         return f"<div style='text-align: center; padding: 20px;'>❌ 读取 PDF 时出错: {e}</div>"
 def build_interface() -> gr.Blocks:
-    """创建符合新布局要求的 Gradio UI"""
     initial_data = load_knowledge_data(KNOWLEDGE_JSON_PATH)
     
     with gr.Blocks(css=CSS, theme=gr.themes.Soft()) as demo:
-        # --- 状态管理 ---
         knowledge_data_state = gr.State(initial_data)
         selected_grandchild_state = gr.State()
         with gr.Row():
@@ -539,7 +537,6 @@ def build_interface() -> gr.Blocks:
                     resource_selector = gr.Radio(label="选择一个PDF进行阅读", choices=[])
                 
                 # 状态3: PDF阅读时，显示功能面板
-                # MODIFIED: 添加 elem_id 以便 CSS 控制
                 with gr.Group(visible=False, elem_id="main-function-group") as main_function_group:
                     lang_select = gr.Dropdown(choices=LanguageHandler.dropdown_choices(), value=LanguageHandler.dropdown_choices()[0], label="语言选择")
                     feature_choices = ["🤖 AI 助教", "📝 随堂测验", "🗺️ 学习计划", "📜 知识总结", "📤 上传新资源"]
@@ -586,8 +583,6 @@ def build_interface() -> gr.Blocks:
                         upload_btn_new = gr.Button("上传并关联", variant="primary")
                         upload_status_new = gr.Markdown()
         
-        # --- UI 事件处理与逻辑流 ---
-        # (这部分没有功能性改动，除了下面标记的地方)
         def on_node_select(selected_node_name: str, graph_data: dict):
             if not selected_node_name:
                 return gr.update(visible=False), None, gr.update(), gr.update(visible=False), gr.update(visible=True)

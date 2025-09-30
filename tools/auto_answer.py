@@ -80,13 +80,6 @@ def looks_like_question(text: str) -> bool:
 
 
 def auto_answer(text: str, agent: Optional[AgentExecutor] = None) -> bool:
-    """Run the agent if ``text`` looks like a question.
-
-    The detection is heuristic and checks for a trailing question mark or the
-    use of common question words in several popular languages. When activated,
-    the agent's reply is printed and ``True`` is returned. Otherwise ``False`` is
-    returned.
-    """
     if looks_like_question(text):
         agent = agent or create_agent()
         language = LanguageHandler.choose_or_detect(text)
@@ -94,18 +87,7 @@ def auto_answer(text: str, agent: Optional[AgentExecutor] = None) -> bool:
             text, executor=agent, return_details=True
         )
         answer = LanguageHandler.ensure_language(answer, language)
-        if used_fallback:
-            notice = LanguageHandler.ensure_language(
-                "This response may not be accurate. It was created using a LMM fallback mechanism.",
-                language,
-            )
-            answer = f"{notice}\n{answer}"
-        elif used_retriever:
-            notice = LanguageHandler.ensure_language(
-                "This response was created using a document retrieval mechanism.",
-                language,
-            )
-            answer = f"{notice}\n{answer}"
+        answer = f"{answer}"
         print(f"\n\U0001f916 Agent Answer:\n{answer}\n")
         return True
     return False
