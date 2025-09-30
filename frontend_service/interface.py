@@ -23,13 +23,11 @@ from tools.rag_service import get_rag_service
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 load_dotenv(dotenv_path)
 
-if not os.environ.get("api_key"):
-    raise RuntimeError("api_key is not set. Create a .env file or export the variable.")
-# 初始化服务
 agent = create_agent()
 rag_service = get_rag_service()
 retriever = rag_service.get_retriever()
     
+CURRENT_NODE:str
 
 logger = logging.getLogger(__name__)
 
@@ -425,6 +423,7 @@ def find_resources_for_node(node_name: str, graph_data: dict) -> list:
             # 检查great-grandchildren层级
             for great_grandchild in grandchild.get("great-grandchildren", []):
                 if great_grandchild.get("name") == node_name:
+                    
                     resources = great_grandchild.get("resource_path", [])
                     return resources if isinstance(resources, list) else []
     
@@ -432,6 +431,9 @@ def find_resources_for_node(node_name: str, graph_data: dict) -> list:
 
 def upload_and_update_resource(files: list, selected_node: str, current_data: dict):
     """上传文件，保存，并更新JSON文件（支持4层结构）"""
+    print('Current Node: ',CURRENT_NODE)
+
+    selected_node=CURRENT_NODE
     if not files:
         return "⚠️ 未选择文件。", current_data, gr.update()
     if not selected_node:
@@ -486,12 +488,8 @@ def upload_and_update_resource(files: list, selected_node: str, current_data: di
     else:
         msg = f"❌ 未能在JSON中找到节点 '{selected_node}'。"
         return msg, current_data, gr.update()
-# <--- 修改点 2: 添加新的辅助函数来生成 PDF 的 iframe ---
+    
 def show_pdf_in_iframe(pdf_path: str):
-    """
-    读取PDF文件，编码为Base64，并返回一个HTML iframe字符串。
-    如果文件不存在，则返回错误消息。
-    """
     if not pdf_path or not os.path.exists(pdf_path):
         return "<div style='text-align: center; padding: 20px;'>❌ PDF 文件未找到或路径无效。</div>"
     
@@ -542,14 +540,12 @@ def build_interface() -> gr.Blocks:
                     feature_choices = ["🤖 AI 助教", "📝 随堂测验", "🗺️ 学习计划", "📜 知识总结", "📤 上传新资源"]
                     feature_select = gr.Dropdown(choices=feature_choices, value=feature_choices[0], label="功能选择")
                     
-                    # MODIFIED: 添加 elem_classes, 移除 chatbot 固定高度, 移除 logs 和 clear 按钮
                     with gr.Group(visible=True, elem_classes=["feature-group"]) as chat_group:
                         chatbot = gr.Chatbot(elem_id="chatbot", label="Chat",height=600)
                         with gr.Row():
                             msg = gr.Textbox(placeholder="输入你的问题...", container=False, scale=4)
                             send = gr.Button("发送", variant="primary", scale=1)
                     
-                    # MODIFIED: 添加 elem_classes, 移除输出框固定行数
                     with gr.Group(visible=False, elem_classes=["feature-group"]) as quiz_group:
                         quiz_subject = gr.Textbox(label="测验主题")
                         start_btn = gr.Button("开始测验", variant="primary")
@@ -561,21 +557,19 @@ def build_interface() -> gr.Blocks:
                         gr.Markdown("---")
                         quiz_name = gr.Textbox(label="你的名字 (用于生成学习计划)")
                         plan_quiz_btn = gr.Button("根据测验结果生成学习计划")
-                        plan_quiz_output = gr.Markdown(label="计划输出", elem_classes=["fill-height"]) # 移除了 lines, 添加了 class
+                        plan_quiz_output = gr.Markdown(label="计划输出", elem_classes=["fill-height"]) 
                     
-                    # MODIFIED: 添加 elem_classes, 移除输出框固定行数
                     with gr.Group(visible=False, elem_classes=["feature-group"]) as plan_group:
                         plan_name = gr.Textbox(label="你的名字")
                         plan_goals = gr.Textbox(label="学习目标 (用分号隔开)")
                         plan_btn = gr.Button("生成计划", variant="primary")
-                        plan_output = gr.Markdown(label="计划输出", elem_classes=["fill-height"]) # 移除了 
+                        plan_output = gr.Markdown(label="计划输出", elem_classes=["fill-height"]) 
                         
                     with gr.Group(visible=False, elem_classes=["feature-group"]) as summary_group:
                         sum_topic = gr.Textbox(label="主题或材料")
                         sum_btn = gr.Button("生成总结", variant="primary")
-                        sum_output = gr.Markdown(label="总结内容", elem_classes=["fill-height"]) # 移除了 lines, 添加了 class
+                        sum_output = gr.Markdown(label="总结内容", elem_classes=["fill-height"]) 
 
-                    # MODIFIED: 添加 elem_classes
                     with gr.Group(visible=False, elem_classes=["feature-group"]) as upload_group:
                         gr.Markdown("上传文件到当前学习节点：")
                         current_node_display = gr.Markdown()
@@ -608,7 +602,8 @@ def build_interface() -> gr.Blocks:
                 return gr.update(), gr.update(), gr.update(), gr.update(), gr.update(), gr.update()
             
             pdf_html_content = show_pdf_in_iframe(selected_pdf)
-            
+            # print('line 605: ',selected_grandchild)
+            CURRENT_NODE=selected_grandchild
             return (
                 gr.update(visible=False),
                 gr.update(visible=True, value=pdf_html_content),
