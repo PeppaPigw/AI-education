@@ -388,12 +388,9 @@ def find_resources_for_node(node_name: str, graph_data: dict) -> list:
                     return resources if isinstance(resources, list) else []
    
     return []
-
 def upload_and_update_resource(files: list, current_data: dict):
-    """上传文件，对 Office 文档进行 PDF 转换，保存，并更新JSON文件（支持4层结构）"""
     global CURRENT_NODE
     selected_node = CURRENT_NODE
-
     if not files:
         return "⚠️ 未选择文件。", current_data, gr.update()
     if not selected_node:
@@ -401,21 +398,18 @@ def upload_and_update_resource(files: list, current_data: dict):
     
     save_dir = os.path.join("data", "RAG_files")
     os.makedirs(save_dir, exist_ok=True)
-    
-    # 支持转换的 Office 文件扩展名
     supported_conversion_exts = ['.doc', '.docx', '.ppt', '.pptx']
     
     newly_added_paths = []
     processed_files_count = 0
     
     for file in files:
-        # Gradio 上传的文件对象有一个 .name 属性，是其在磁盘上的临时路径
+        
         original_temp_path = file.name
         filename = os.path.basename(original_temp_path)
         file_ext = os.path.splitext(filename)[1].lower()
-
         try:
-            # 1. 如果是 PDF，直接复制
+            
             if file_ext == '.pdf':
                 dest_path = os.path.join(save_dir, filename)
                 shutil.copy2(original_temp_path, dest_path)
@@ -423,30 +417,26 @@ def upload_and_update_resource(files: list, current_data: dict):
                 newly_added_paths.append(dest_path)
                 processed_files_count += 1
             
-            # 2. 如果是支持的 Office 格式，进行转换
             elif file_ext in supported_conversion_exts:
-                # 调用转换函数，它会返回新生成的 PDF 路径
+                
                 pdf_path = convert_to_pdf(original_temp_path, save_dir)
                 if pdf_path:
                     newly_added_paths.append(pdf_path)
                     processed_files_count += 1
                 else:
-                    # 如果转换失败，记录日志但继续处理其他文件
+                    
                     logger.warning(f"⚠️ 文件 '{filename}' 转换失败，已跳过。")
             
-            # 3. 其他不支持的格式
+            
             else:
                 logger.warning(f"Unsupported file type '{file_ext}' for file '{filename}'. Skipping. 🤷")
-
         except Exception as e:
-            # 捕获 convert_to_pdf 抛出的异常或其他错误
+            
             logger.error(f"处理文件 '{filename}' 时发生严重错误: {e}")
             return f"❌ 处理 '{filename}' 时出错，请检查日志。", current_data, gr.update()
-
     if not newly_added_paths:
         return "🤷‍♀️ 没有成功处理任何文件（可能因为格式不支持或转换失败）。", current_data, gr.update()
-
-    # --- 后续的 JSON 更新逻辑保持不变 ---
+    
     updated = False
     new_choices = []
     
@@ -643,7 +633,7 @@ def build_interface() -> gr.Blocks:
         sum_btn.click(lambda t, l: run_summary_interface(t, l, retriever), [sum_topic, lang_select], sum_output)
        
         # --- MODIFICATION START 3 ---
-        # 更新 click 事件的 inputs，移除 selected_grandchild_state
+        
         upload_btn_new.click(
             fn=upload_and_update_resource,
             inputs=[upload_files_new, knowledge_data_state],

@@ -17,7 +17,8 @@
               "resource_path": [
                 "data/RAG_files/test.pdf",
                 "data/RAG_files/test2.pdf",
-                "data/RAG_files/123.pdf"
+                "data/RAG_files/test_doc.pdf",
+                "data/RAG_files/testPPT.pdf"
               ]
             },
             {
