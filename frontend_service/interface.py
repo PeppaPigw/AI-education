@@ -19,20 +19,15 @@ from QuizModule import generate_learning_plan_from_quiz, prepare_quiz_questions
 from SummaryModule import StudySummaryGenerator
 from tools.language_handler import LanguageHandler
 from tools.rag_service import get_rag_service
-
+from tools.covert_resource import convert_to_pdf
 CURRENT_NODE = None
-
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 load_dotenv(dotenv_path)
-
 agent = create_agent()
 rag_service = get_rag_service()
 retriever = rag_service.get_retriever()
-
 logger = logging.getLogger(__name__)
-
 CSS = """
-
 * { font-family: 'Segoe UI', Tahoma, sans-serif; }
 .gradio-container {
     max-width: none !important;
@@ -69,14 +64,12 @@ CSS = """
     height: 98vh !important;
     width: 100%;
 }
-
 """
 def convert_history_to_gradio_format(history: list[dict]) -> list[list[str]]:
     return [
         [history[i]["content"], history[i+1]["content"]]
         for i in range(0, len(history), 2)
     ]
-
 def respond(
     message: str,
     history: list[list[str]], 
@@ -89,18 +82,14 @@ def respond(
         internal_history.append({"role": "user", "content": user_msg})
         if assistant_msg is not None:
             internal_history.append({"role": "assistant", "content": assistant_msg})
-
     internal_history.extend([
         {"role": "user", "content": message},
         {"role": "assistant", "content": "..."},
     ])
-
     yield convert_history_to_gradio_format(internal_history), ""
-
     code = LanguageHandler.code_from_display(lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(message)
     buffer = io.StringIO()
-
     with redirect_stdout(buffer):
         result, used_fallback, used_retriever = run_agent(
             message, executor=agent, retriever=retriever, return_details=True
@@ -113,17 +102,13 @@ def respond(
             )
             result = f"<div class='fallback'>{notice}<br>{result}</div>"
         elif used_retriever:
-
             result = f"<div class='retrieval'>{result}</div>"
-
     internal_history[-1] = {"role": "assistant", "content": result}
     logs = buffer.getvalue()
    
     yield convert_history_to_gradio_format(internal_history), logs
-
 def respond_with_retriever(message: str, history: list[list[str]], lang_choice: str):
     yield from respond(message, history, lang_choice, retriever)
-
 def stream_chat_only(message: str, history: list[list[str]], lang_choice: str):
     response_generator = respond_with_retriever(message, history, lang_choice)
     for response_tuple in response_generator:
@@ -137,13 +122,11 @@ def process_knowledge(files: list):
         return
     yield "⏳ Processing for RAG..."
     yield f"✅ Processed {len(files)} file(s) for RAG."
-
 def _format_question(q: dict) -> str:
     text = q["question"]
     text = re.sub(r"\s*([abcd]\))", r"\n\1", text, flags=re.I)
     text = text.strip()
     return f"**{q['topic']}**\n\n{text}"
-
 def start_quiz(subject: str, lang_choice: str, retriever=None):
     if not agent:
         return "Quiz is disabled.", {}, "Quiz is disabled."
@@ -167,7 +150,6 @@ def start_quiz(subject: str, lang_choice: str, retriever=None):
         "📄 Quiz 使用文档上下文生成"
     )
     return first_q, state, notice
-
 def answer_quiz(choice: str, state: dict) -> tuple[str, dict, str]:
     """Process an answer button click and return next question or results."""
     if not state or state.get("index") is None:
@@ -189,7 +171,6 @@ def answer_quiz(choice: str, state: dict) -> tuple[str, dict, str]:
         return "", state, _compile_results(state)
     next_q = _format_question(questions[state["index"]])
     return next_q, state, ""
-
 def _compile_results(state: dict) -> str:
     lines = []
     total_questions = 0
@@ -209,7 +190,6 @@ def _compile_results(state: dict) -> str:
     result = "\n".join(lines)
     lang = state.get("language", "auto")
     return LanguageHandler.ensure_language(result, lang)
-
 def run_learning_plan_interface(name: str, goals: str, lang_choice: str) -> str:
     if not agent: return "Learning plan is disabled."
     code = LanguageHandler.code_from_display(lang_choice)
@@ -223,7 +203,6 @@ def run_learning_plan_interface(name: str, goals: str, lang_choice: str) -> str:
         plan.display_plan()
         plan.save_to_file()
     return buffer.getvalue()
-
 def run_learning_plan_from_quiz(name: str, state: dict, lang_choice: str) -> str:
     if not agent: return "Learning plan is disabled."
     if not state or not state.get("scores"):
@@ -238,7 +217,6 @@ def run_learning_plan_from_quiz(name: str, state: dict, lang_choice: str) -> str
     with redirect_stdout(buffer):
         generate_learning_plan_from_quiz(name, state["scores"], language)
     return buffer.getvalue()
-
 def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
     if not agent: return "Summary is disabled."
     code = LanguageHandler.code_from_display(lang_choice)
@@ -251,7 +229,6 @@ def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
         "📄 Summary 使用文档上下文生成"
     )
     return f"{notice}\n\n{summary}"
-
 KNOWLEDGE_JSON_PATH = "data/course/big_data.json"
 def load_knowledge_data(json_path: str) -> dict:
     """从JSON文件加载知识图谱数据"""
@@ -261,7 +238,6 @@ def load_knowledge_data(json_path: str) -> dict:
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
        
-
 def get_all_learning_nodes(graph_data: dict) -> list:
     """从知识数据中提取所有可学习的节点（grandchildren和great-grandchildren）"""
     learning_nodes = []
@@ -279,7 +255,6 @@ def get_all_learning_nodes(graph_data: dict) -> list:
                 learning_nodes.append(ggc_name)
    
     return learning_nodes
-
 def create_knowledge_graph_figure(graph_data: dict):
     """使用Plotly创建4层知识图谱的圆形辐射状可视化Figure"""
     if not graph_data:
@@ -288,25 +263,19 @@ def create_knowledge_graph_figure(graph_data: dict):
     fig = go.Figure()
     nodes = {'labels': [], 'colors': [], 'x': [], 'y': []}
     edges = {'x': [], 'y': []}
-   
-    # --- 1. 坐标计算（核心修改部分） ---
-   
-    # 中心Root节点 (Level 0)
+    
     root_name = graph_data.get("root_name", "Root")
     nodes['labels'].append(root_name)
     nodes['colors'].append("#FFA07A") # 珊瑚色
     nodes['x'].append(0)
     nodes['y'].append(0)
-
     # 定义每层的半径和角度扩散因子
     radii = [0, 1.5, 3.0, 4.5] 
     spread_factor = 0.95 # 子节点在其父节点扇区中的占比
-
     # Level 1: Children 围绕中心分布
     children = graph_data.get("children", [])
     num_children = len(children)
     child_angle_step = 2 * math.pi / num_children if num_children > 0 else 0
-
     for i, child in enumerate(children):
         # 使用极坐标转笛卡尔坐标：x = r * cos(θ), y = r * sin(θ)
         child_angle = i * child_angle_step
@@ -323,7 +292,6 @@ def create_knowledge_graph_figure(graph_data: dict):
         # 添加从 Root 到 Child 的连线
         edges['x'].extend([0, x_child, None])
         edges['y'].extend([0, y_child, None])
-
         # Level 2: Grandchildren 在各自父节点的扇区内分布
         grandchildren = child.get("grandchildren", [])
         num_grandchildren = len(grandchildren)
@@ -351,22 +319,18 @@ def create_knowledge_graph_figure(graph_data: dict):
             # 添加从 Child 到 Grandchild 的连线
             edges['x'].extend([x_child, x_gc, None])
             edges['y'].extend([y_child, y_gc, None])
-
             # Level 3: Great-grandchildren 在各自父节点的子扇区内分布
             great_grandchildren = grandchild.get("great-grandchildren", [])
             num_ggc = len(great_grandchildren)
             if num_ggc == 0:
                 continue
-
             sub_sector_angle = gc_angle_step * spread_factor
             ggc_start_angle = gc_angle - sub_sector_angle / 2
             ggc_angle_step = sub_sector_angle / num_ggc
-
             for k, ggc in enumerate(great_grandchildren):
                 ggc_angle = ggc_start_angle + (k + 0.5) * ggc_angle_step
                 x_ggc = radii[3] * math.cos(ggc_angle)
                 y_ggc = radii[3] * math.sin(ggc_angle)
-
                 ggc_name = ggc.get("name")
                 ggc_color = "#FFD700" if ggc.get("flag") == "1" else "#D3D3D3" # 金色
                 nodes['labels'].append(ggc_name)
@@ -408,7 +372,6 @@ def create_knowledge_graph_figure(graph_data: dict):
    
     fig.update_yaxes(scaleanchor="x", scaleratio=1)
     return fig
-
 def find_resources_for_node(node_name: str, graph_data: dict) -> list:
     """在4层结构中查找指定节点的资源"""
     for child in graph_data.get("children", []):
@@ -426,11 +389,8 @@ def find_resources_for_node(node_name: str, graph_data: dict) -> list:
    
     return []
 
-# --- MODIFICATION START 2 ---
-# 修改函数签名，移除 selected_node 参数
 def upload_and_update_resource(files: list, current_data: dict):
-    """上传文件，保存，并更新JSON文件（支持4层结构）"""
-    # 声明并使用全局变量
+    """上传文件，对 Office 文档进行 PDF 转换，保存，并更新JSON文件（支持4层结构）"""
     global CURRENT_NODE
     selected_node = CURRENT_NODE
 
@@ -438,25 +398,60 @@ def upload_and_update_resource(files: list, current_data: dict):
         return "⚠️ 未选择文件。", current_data, gr.update()
     if not selected_node:
         return "❌ 错误：没有选定的学习节点来关联文件。", current_data, gr.update()
-   
+    
     save_dir = os.path.join("data", "RAG_files")
     os.makedirs(save_dir, exist_ok=True)
-   
+    
+    # 支持转换的 Office 文件扩展名
+    supported_conversion_exts = ['.doc', '.docx', '.ppt', '.pptx']
+    
     newly_added_paths = []
+    processed_files_count = 0
+    
     for file in files:
-        filename = os.path.basename(file.name)
-        dest_path = os.path.join(save_dir, filename)
-        shutil.copy2(file.name, dest_path)
-        logger.info(f"Saved {file.name} to {dest_path}")
-        newly_added_paths.append(dest_path)
-   
+        # Gradio 上传的文件对象有一个 .name 属性，是其在磁盘上的临时路径
+        original_temp_path = file.name
+        filename = os.path.basename(original_temp_path)
+        file_ext = os.path.splitext(filename)[1].lower()
+
+        try:
+            # 1. 如果是 PDF，直接复制
+            if file_ext == '.pdf':
+                dest_path = os.path.join(save_dir, filename)
+                shutil.copy2(original_temp_path, dest_path)
+                logger.info(f"📄 PDF文件已直接保存到: {dest_path}")
+                newly_added_paths.append(dest_path)
+                processed_files_count += 1
+            
+            # 2. 如果是支持的 Office 格式，进行转换
+            elif file_ext in supported_conversion_exts:
+                # 调用转换函数，它会返回新生成的 PDF 路径
+                pdf_path = convert_to_pdf(original_temp_path, save_dir)
+                if pdf_path:
+                    newly_added_paths.append(pdf_path)
+                    processed_files_count += 1
+                else:
+                    # 如果转换失败，记录日志但继续处理其他文件
+                    logger.warning(f"⚠️ 文件 '{filename}' 转换失败，已跳过。")
+            
+            # 3. 其他不支持的格式
+            else:
+                logger.warning(f"Unsupported file type '{file_ext}' for file '{filename}'. Skipping. 🤷")
+
+        except Exception as e:
+            # 捕获 convert_to_pdf 抛出的异常或其他错误
+            logger.error(f"处理文件 '{filename}' 时发生严重错误: {e}")
+            return f"❌ 处理 '{filename}' 时出错，请检查日志。", current_data, gr.update()
+
+    if not newly_added_paths:
+        return "🤷‍♀️ 没有成功处理任何文件（可能因为格式不支持或转换失败）。", current_data, gr.update()
+
+    # --- 后续的 JSON 更新逻辑保持不变 ---
     updated = False
     new_choices = []
-   
-    # 在4层结构中查找并更新节点
+    
     for child in current_data.get("children", []):
         for grandchild in child.get("grandchildren", []):
-            # 检查grandchildren层级
             if grandchild.get("name") == selected_node:
                 if "resource_path" not in grandchild or not grandchild["resource_path"]:
                     grandchild["resource_path"] = []
@@ -464,8 +459,7 @@ def upload_and_update_resource(files: list, current_data: dict):
                 new_choices = grandchild.get("resource_path", [])
                 updated = True
                 break
-           
-            # 检查great-grandchildren层级
+            
             for great_grandchild in grandchild.get("great-grandchildren", []):
                 if great_grandchild.get("name") == selected_node:
                     if "resource_path" not in great_grandchild or not great_grandchild["resource_path"]:
@@ -474,22 +468,22 @@ def upload_and_update_resource(files: list, current_data: dict):
                     new_choices = great_grandchild.get("resource_path", [])
                     updated = True
                     break
-           
+            
             if updated:
                 break
         if updated:
             break
-   
+    
     if updated:
         with open(KNOWLEDGE_JSON_PATH, 'w', encoding='utf-8') as f:
             json.dump(current_data, f, indent=2, ensure_ascii=False)
-        msg = f"✅ 成功上传 {len(files)} 个文件并关联到 '{selected_node}'."
+        msg = f"✅ 成功处理并上传 {processed_files_count} 个文件，并关联到 '{selected_node}'。"
         return msg, current_data, gr.update(choices=new_choices, value=new_choices[0] if new_choices else None)
     else:
         msg = f"❌ 未能在JSON中找到节点 '{selected_node}'。"
         return msg, current_data, gr.update()
-# --- MODIFICATION END 2 ---
-   
+    
+       
 def show_pdf_in_iframe(pdf_path: str):
     if not pdf_path or not os.path.exists(pdf_path):
         return "<div style='text-align: center; padding: 20px;'>❌ PDF 文件未找到或路径无效。</div>"
@@ -571,7 +565,6 @@ def build_interface() -> gr.Blocks:
                         sum_topic = gr.Textbox(label="主题或材料")
                         sum_btn = gr.Button("生成总结", variant="primary")
                         sum_output = gr.Markdown(label="总结内容", elem_classes=["fill-height"]) 
-
                     with gr.Group(visible=False, elem_classes=["feature-group"]) as upload_group:
                         gr.Markdown("上传文件到当前学习节点：")
                         current_node_display = gr.Markdown()
@@ -592,7 +585,6 @@ def build_interface() -> gr.Blocks:
                 gr.update(visible=False),
                 gr.update(visible=True)
             )
-
         node_selector.change(
             fn=on_node_select,
             inputs=[node_selector, knowledge_data_state],
@@ -617,7 +609,6 @@ def build_interface() -> gr.Blocks:
                 gr.update(visible=True), 
                 f"**当前节点**: {selected_grandchild}"
             )
-
         resource_selector.change(
             fn=on_pdf_select,
             inputs=[resource_selector, selected_grandchild_state],
@@ -639,7 +630,6 @@ def build_interface() -> gr.Blocks:
             outputs=[chat_group, quiz_group, plan_group, summary_group, upload_group],
             queue=False
         )
-
         msg.submit(stream_chat_only, [msg, chatbot, lang_select], [chatbot]).then(lambda: "", outputs=msg)
         send.click(stream_chat_only, [msg, chatbot, lang_select], [chatbot]).then(lambda: "", outputs=msg)
                    
@@ -662,7 +652,6 @@ def build_interface() -> gr.Blocks:
         # --- MODIFICATION END 3 ---
        
     return demo
-
 def launch_gradio() -> None:
    
     demo = build_interface()
