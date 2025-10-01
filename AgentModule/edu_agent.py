@@ -125,7 +125,7 @@ def run_agent(
         try:
             msg = llm.invoke(question)
             output = getattr(msg, "content", str(msg))
-        except Exception as e:  # pragma: no cover - API errors
+        except Exception as e: 
             output = f"LLM error: {e}"
         finally:
             used_fallback = True

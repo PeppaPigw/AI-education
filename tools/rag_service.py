@@ -19,13 +19,12 @@ from langchain_community.document_loaders import (
     Docx2txtLoader,
 )
 
-# 设置日志级别以忽略 pypdf 和 pdfminer 的警告
 logging.getLogger("pypdf").setLevel(logging.ERROR)
 logging.getLogger("pdfminer").setLevel(logging.ERROR)
 
 from dotenv import load_dotenv
 import os
-# 确保你有一个 .env 文件来加载配置，例如 model_name, base_url, api_key, embedding_model
+
 load_dotenv()
 
 # 从环境变量中获取配置
