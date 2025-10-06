@@ -372,6 +372,7 @@ def create_knowledge_graph_figure(graph_data: dict):
    
     fig.update_yaxes(scaleanchor="x", scaleratio=1)
     return fig
+
 def find_resources_for_node(node_name: str, graph_data: dict) -> list:
     """在4层结构中查找指定节点的资源"""
     for child in graph_data.get("children", []):
@@ -388,6 +389,7 @@ def find_resources_for_node(node_name: str, graph_data: dict) -> list:
                     return resources if isinstance(resources, list) else []
    
     return []
+
 def upload_and_update_resource(files: list, current_data: dict):
     global CURRENT_NODE
     selected_node = CURRENT_NODE
@@ -426,8 +428,7 @@ def upload_and_update_resource(files: list, current_data: dict):
                 else:
                     
                     logger.warning(f"⚠️ 文件 '{filename}' 转换失败，已跳过。")
-            
-            
+                    
             else:
                 logger.warning(f"Unsupported file type '{file_ext}' for file '{filename}'. Skipping. 🤷")
         except Exception as e:
