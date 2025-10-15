@@ -112,12 +112,15 @@ def run_agent(
             "unable to",
             "sorry",
             "unfortunately",
-            "niestety",
-            "nie uda",
-            "nie mog",
-            "brak",
+            "错误", 
+            "找不到", 
+            "无法", 
+            "抱歉",
+            "对不起",
+            "不确定"
         ]
         text = text.lower()
+        print("need fallback:   ",text)
         return any(m in text for m in markers)
 
     if _needs_fallback(output):

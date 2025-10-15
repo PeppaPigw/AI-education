@@ -1,0 +1,51 @@
+二、判断题
+基于项目的协同过滤算法根据项目特征计算项目相似度。   ( × )
+在客户协同过滤中，相似用户是根据他们购买的共同物品来定义的 ( √ )
+
+单选题
+1.TensorFlow 允许开发者创建 (  )结构来描述数据是如何沿着 (   ), 或者是一系列处理节点. 图中的每一个节点代表 (   ), 节点之间的连接或者边代表(  )。 ( C ).     
+Dataflow Graphs, Graph (DAG), multidimensional data array or tensor, mathematical operation
+Graph (DAG), Dataflow Graphs, mathematical operation, multidimensional data array or tensor
+Dataflow Graphs, Graph (DAG), mathematical operation, multidimensional data array or tensor
+Graph (DAG), Dataflow Graphs, mathematical operation, multidimensional data array or tensor
+2. 以下哪项关于TensorFlow描述是错误的?   ( C ) 
+采用Keras作为高级API;
+图的快速执行Eager Execution;
+TensorFlow中的节点和张量是Python对象，TensorFlow应用程序本身是c++应用程序；
+它使用Python提供了一个方便的前端API，用于使用该框架构建应用程序，同时使用高性能c++执行这些应用程序
+3. (   )是一个用户友好的机器学习API标准，将是用于构建和训练模型的核心高级API  ( D )
+SaveModel          
+TensorFlowHub     
+Premade Estimators     
+Tf.keras 
+4. (     )注释annotation将Python程序透明地转换为TensorFlow图 (B)
+A. Tf.keras          
+B. tf.function       
+C. Premade Estimators     
+D. tf.data
+5. 以下哪一个不可以用作TensorFlow硬件加速器?    ( C )
+CPUs                
+GPUs            
+NPUs              
+TPUs
+6. 一旦您训练并保存了模型，您可以直接在应用程序中执行它，或使用其中一个部署库为它提供服务，哪一个不适合此任务? ( D )
+TensorFlow Serving  
+TensorFlow Lite  
+TensorFlow.js    
+TensorFlow Hub
+一、单选题
+1. 在Spark的众多组件中，哪一个是为机器学习设计的 ? ( C )  
+Spark SQL                          
+Spark streaming       
+C. MLlib                             
+D. Graph X
+2. MLlib 主要组件不包括以下哪一个 ( B )  
+A. Featurization        
+B. Transformation     
+C. Pipeline     
+D. Utilities.  
+3．Spark MLlib 的管道流水线过程是 ( A )   
+1.加载和清洗数据, 2. 转换Transformer, 3. 预测Estimator 4. 评估Evaluator
+1. 加载和清洗数据, 2. 特征提取Feature extraction, 3.模型训练Model training 4.模型评估Model evaluation
+1.加载和清洗数据, 2.特征提取Feature extraction, 3.预测Estimator 4.模型评估Model evaluation
+1.加载和清洗数据, 2.转换Transformer, 3.模型训练Model training 4.评估Evaluator

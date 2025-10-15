@@ -1,0 +1,237 @@
+一、单选题
+在图计算中最基本的计算单元是节点，节点包含( C ) 
+
+节点属性, 外弧outward arcs及其属性, 一个来接受发来的所有消息的逻辑收件箱
+节点属性, 外弧outward arcs及其属性, 外弧所指向的节点ID
+节点属性, 外弧outward arcs及其属性, 外弧所指向的节点ID, 一个来接受发来的所有消息的逻辑收件箱
+外弧outward arcs及其属性, 外弧所指向的节点ID, 一个来接受发来的所有消息的逻辑收件箱 
+2. 下面哪项关于图并行计算架构的描述是不正确的 ( D )
+整个图被分解为多个“分区” 
+每个分区包含大量的节点
+分区是一个执行单元并且通常有一个执行线程与之关联
+一个 "worker" 机器上运行一个 "partitions"
+超步Superstep 执行过程是下面哪个顺序 ( A )     
+1) 向其他节点发送消息，使它们处于活动状态; 
+2) 修改节点和弧的属性;  
+3) 去掉现在的弧或者创建一个新的弧;  
+4) 从收件箱接收消息;
+5) 自我停止直到收到新的信息;
+A. 42513
+B. 12345
+C. 42135
+D. 42351
+4. 执行模型基于BSP (Bulk Synchronous Processing)模型。在该模型中，多个处理单元在一系列“superstep”中并行进行。在每个“Superstep”中，处理序列应该是( B )
+每个处理单元首先接收来自上一个“superstep”发送给它们的所有消息
+当所有处理单元完成消息传递 (即同步点)
+可以将它打算发送给其他处理单元的消息排队
+排队的消息将被交付给指定的处理单元，但直到下一个“superstep”才能看到。. 
+操作本地数据 
+可以启动下一个superstep, 
+循环重复，直到达到终止条件.
+aedcbfg       
+aecdbfg        
+acedbfg     
+adecbfg 
+5. 图并行计算的每个superstep分为两个阶段 ( C )
+遍历Travers 和转换transform                
+遍历Travers和计算compute   
+C. 计算Compute和交互communicate             
+D. 转换Transform和交互communicate 
+6. 在执行图并行计算时，下列哪个不是1:n关系? ( D )
+Master: worker    
+worker: partition    
+partition: node    
+partition: thread
+7. 在执行图并行计算时，以下哪些描述了master的作用?  ( D  )
+协调superstep的顺序执行
+在知道所有worker都完成了上一个superstep之后，向所有worker发出信号，告知新的superstep要开始了
+ping每个worker以了解其处理状态
+定期向所有worker发出“checkpoint”命令，然后worker将其分区保存到持久图存储中
+123
+134
+124
+1234一、单选题
+1. 下列哪项不是数据处理系统的一部分? ( D )
+计算算法                        
+计算模型.   
+C. 计算平台和引擎.                
+D. 数据采集与建模.
+2. 有代表性的批处理计算平台，流处理计算平台。大规模并行处理MPP计算平台，内存计算平台，图并行处理计算平台是( B )
+A. Hadoop, Greenplum, Storm, Spark, Pregel     
+B. Hadoop, Storm, Greenplum, Spark, Pregel
+C. Hadoop, Storm, Pregel, Spark, Greenplum      
+D. Hadoop, Spark, Greenplum, Storm, Pregel
+3. 在下面的内容中，哪一个是共享一切架构.  ( A ) 
+SMP     
+NUMA     
+MPP     
+以上都不是
+4. 以下哪一个是无共享架构. ( C ) 
+SMP     
+NUMA     
+MPP     
+以上都不是
+5. 当CPU增加时，哪种方法可以实现近似线性的性能扩展? （C）
+SMP     
+NUMA     
+MPP     
+以上都不能
+6. 在 OLTP, 用户访问中心数据库, 并且如果采用（ ）系统架构, 会更加高效. 从(  )架构的角度, 可以在一个物理服务器中集成很多 CPU, 因此系统有更高的事务处理能力. 由于远程访问的延迟时间比本地内存访问时间长，必须减少不同CPU模块之间的交互，显然, ( ) 架构更加适合OLTP业务处理的环境. 在数据仓库环境中, 由于大量的复杂数据处理不可避免的导致大量的数据交互, 这将明显降低CPU的利用率, 所以(  ) 架构是一个比较好的解决方案.  ( A )
+SMP, NUMA, NUMA, MPP             
+MPP, NUMA, NUMA, SMP
+C. SMP, SMP, NUMA, MPP                
+D. SMP, NUMA, MPP, MPP一、单选题
+1. 用户编写的MapReduce程序通过(   )提交给(    )。用户可以通过(    )提供的一些接口查看作业的运行状态.   ( B)
+JobTracker, Client, Task tracker 
+JobTracker, Client, Client
+JobTracker, Task tracker, Client
+Task tracker, Client, JobTracker
+2. (   )负责资源监控和作业调度，(    )监控所有(     )和作业的健康状态，如果发现故障，会将相应的任务转移到其他节点。(    )将跟踪任务执行进度、资源使用情况和其他信息，并通知 (   )，而(    )将在资源变为空闲时选择使用这些资源的适当任务。( A ) 
+A. JobTracker, JobTracker, TaskTrackers, JobTracker ,TaskScheduler, TaskScheduler
+B. JobTracker, TaskTrackers, JobTracker, JobTracker ,TaskScheduler, TaskScheduler
+C. JobTracker, JobTracker, JobTracker , TaskTrackers,TaskScheduler, TaskScheduler
+D. JobTracker, JobTracker, TaskTrackers, TaskScheduler, JobTracker ,TaskScheduler
+3. (   )会通过“心跳”周期性地向(   )报告节点上的资源使用情况和任务的进度，同时接收(   )发送的命令并执行相应的操作(如启动新任务、终止任务等)。( C )
+A. JobTracker, TaskTracker, JobTracker
+B. TaskTracker, TaskTracker, JobTracker
+C. TaskTracker, JobTracker, JobTracker
+D. JobTracker, JobTracker, TaskTracker
+4. (    )使用(     )来划分该节点上的资源数量(CPU、内存等)。任务在获得(  )后有机会运行，(   )的作用是在每个(    )上为任务分配idle(   )。 ( B )
+JobTracker, slot, slot, Hadoop scheduler, slots, TaskTracker; 
+TaskTracker, slot, slot, Hadoop scheduler, slots, TaskTracker;
+TaskTracker, slot, slot, Task scheduler, slots, TaskTracker;
+TaskTracker, slot, slot, Hadoop scheduler, task, TaskTracker;一、单选题
+机器学习和深度学习之间的区别，机器学习算法使用(   )进行模式识别，深度学习使用(   )建模，两者都可以以有监督或无监督的方式学习. ( A )
+统计分析技术，神经网络
+神经网络, 统计分析技术
+统计分析技术，统计分析技术
+神经网络, 神经网络
+比较机器学习ML和深度学习DL，哪一种描述是正确的?(B)
+ML需要( )数据，DL需要( )数据;
+ML给出( )精度，DL给出( )精度;
+ML需要( )训练时间，DL需要( )训练时间;
+ML 需要 ( )设备来计算， DL需要 ( ) 设备来计算;
+较少, 更多; 更多, 较少; 较少, 更多; CPU, GPU
+较少, 更多; 较少, 更多; 较少, 更多; CPU, GPU
+较少, 更多; 较少, 更多; 更多, less; CPU, GPU
+较少, 更多; 较少, 更多; 较少, 更多; GPU, CPU
+分类属于 (  ) 算法类别.    （A）
+A.监督学习             
+B.无监督学习 
+C.半监督学习
+D.增强学习
+
+聚类属于 (  ) 算法类别.  （B） 
+A.监督学习             
+B.无监督学习 
+C.半监督学习
+D.增强学习
+Self-training属于 (  ) 算法类别.   （C）
+A.监督学习             
+B.无监督学习 
+C.半监督学习
+D.增强学习
+蒙特卡洛方法Monte Carlo属于 (  ) 算法类别. （D）
+A.监督学习             
+B.无监督学习 
+C.半监督学习
+D.增强学习单选题
+1.内存数据库HANA 可以快速地处理数据, 主要因为 ( D )
+HANA 的多核架构     
+HANA 部署在高性能服务器上
+HANA 设计了快速索引机制
+HANA 把主要的数据存储在内存中
+
+2.HANA 在数据仓库中提升了数据分析的性能，以下哪一个不是性能提升的原因 ( D  )  
+HANA消除了不必要的复杂结构和延迟
+通过简化进行加速
+由于内存计算的优势，支持HANA 把OLTP业务处理, 和OLAP数据分析, 集成在一个数据库中。
+用于报告和分析的专用数据仓库需要对事务性数据进行移动、转换和预处理，这带来了巨大的复杂性:有时一个企业可能拥有相同数据的三个不同副本一、单选题
+1.基于内存计算模型的并行处理框架spark可以构建在Hadoop平台上，并使用HDFS文件系统存储数据，但为了支持高效的分布式内存计算，在文件系统之上构建了(    )  ( B ) 
+Data chunk  
+Resilient Distributed dataset (RDD)   
+Data Block  
+dataset
+RDD (Resilient Distributed Dataset)只有两种操作(    )。在(    )中可以对数据进行filter、join、map、reduce等操作，但不进行计算，只有在(   )才能进行计算，并生成结果值. ( C)
+A. map and reduce, map, reduce
+B. transformations and action, action, transformation 
+C. transformations and action, transformation, action
+D. map and reduce, reduce, map
+3. (     )返回给驱动程序或者存储在文件中的返回值，是从RDD到result的转换过程，而(    )是从RDD到RDD的转换过程。只有当(   )被执行时，RDD才会被计算和生成，这是RDD延迟执行的根源。 ( A )
+Action, Transformation, Action 
+Transformation, Action, Action 
+C. Transformation, Transformation, Action 
+D. Action, Transformation, Transformation
+4. 在Spark中，(     )负责将应用的计算任务转换为(    )。(   )负责在工作节点上完成计算和数据存储。在每个worker上，(     )为分配给它的每个数据分区生成任务线程，以完成并行计算。(B) 
+Executor, topology，Executor, Driver
+Driver, Directed acyclic graph (DAG)，Executor, Executor
+Executor, Directed acyclic graph (DAG)，Executor, Driver
+Driver, topology，Executor, Executor
+5.Spark的特征包括以下哪些 ( B )
+内存计算
+硬盘中计算
+延迟评估Lazy Evaluation
+立即评估Immediately Evaluation
+容错Fault Tolerant
+不可修改Immutability
+分区Partitioning
+持久性Persistence
+粗力度操作Coarse-Grained Operation
+细粒度操作Fine-Grained Operation 
+2346789            
+1356789       
+135678,10       
+235678,10
+6. Spark的组件可以方便地处理不同类型的计算任务，比如机器学习、流计算、图计算等，这些组件包括 ( C )
+Spark Core API                          2) Resilient distributed dataset (RDD),
+Spark SQL                             4）Spark topology
+Spark Streaming                         6）MLlib (Machine Learning Library)
+GraphX                                8）Sklearn
+12345           
+13456            
+13567         
+13578 
+7.以下哪些属于Spark的优势 ( B )
+快速处理 
+灵活性 
+内存计算 
+实时处理 
+更好的分析 
+容错
+需要额外的持久化存储
+123567             
+123456         
+134567     
+234567一、单选题
+对流计算特性和需求的正确描述包括( B) 
+数据不再是分批到达，而是动态地连续到达   
+计算分析需要实时、快速响应和低延迟 
+数据量大，不重视数据的存储，但强调对数据的即时处理和分析
+注重整体数据的计算和分析结果，而不注重个别数据
+数据元素到达的顺序和时间无法预测或控制，计算程序必须能够响应
+动态连续数据流的实时分析计算
+得到计算结果后，数据要么导入静态数据库，要么丢弃，即一次性使用
+12347           
+1234567              
+124567        
+123567
+Storm是一个原生的流处理系统，即流数据的处理是基于每条数据进行的，其并行计算是基于有向拓扑图实现的。由数据源-(   )和处理单元-(   )组成的拓扑结构。Topology定义了并行计算的(    )，即从功能和结构的角度设计计算步骤和过程。( D )
+Bolt, Spout, 物理模型           
+Spout, Bolt, 物理模型
+C. Bolt, Spout, 逻辑模型           
+D. Spout, Bolt, 逻辑模型
+在Storm中，(   )通过一组(    )来管理许多工作节点，每个工作节点运行一个()守护进程，监控本地节点的状态，并在必要时根据(    )指令启动和关闭该节点的(   )进程。In Storm, ( ) manages many worker nodes through a group of (  ), Each worker node runs a (  ) daemon, monitors the status of the local node, and starts and shuts down the (  ) process of the node when necessary according to (  ) instructions.   ( C )
+Zookeeper, Nimbus, Supervisor, worker, Nimbus
+Nimbus, Zookeeper, Supervisor, worker, Zookeeper
+Nimbus, Zookeeper, Supervisor, Nimbus, worker 
+Supervisor, Zookeeper, Supervisor, worker, Nimbus一、单选题
+MPP数据库过程从(   )开始，发出一个查询，然后传递给(   )。 (  )包含数据字典和会话信息等信息，用于生成一个(   )，以便从每个底层节点检索所需的信息。并行执行表示通过节点1到节点n的并行计算实现(    )，查询结果返回到主节点。(A)
+Client, Master Node, Master Node, 执行计划execution plan, 执行计划execution plan
+Master Node, Client, Master Node, 执行计划 execution plan, 存储计划storing plan
+Client, Master Node, Client, 执行计划execution plan, 执行计划execution plan
+Master Node, Client, Master Node, 执行计划execution plan, 存储计划storing plan
+大规模并行处理MPP (Massively Parallel Processing) 通过 (   ) 的并行来提升性能. (    ) 与 (  )合作, (   ) 与一个或者多个 (   )合作。 (   ) 并行处理查询. (  ) 在无共享架构下有自己的 CPU，硬盘，内存。为持续的数据处理流水线高速进行交互。 ( B )
+segment hosts, Master, segment host, Segment host, segment instances, Segment instances, Segment hosts
+segment instance, Master, segment host, Segment host, segment instances, Segment instances, Segment hosts
+segment instance, Master, segment host, Segment host, segment instances, Segment instances, Segment instances
+segment hosts, Master, segment host, Segment host, segment instances, Segment hosts, Segment hosts
