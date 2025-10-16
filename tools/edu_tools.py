@@ -6,7 +6,6 @@ from datetime import datetime
 import logging
 import nltk
 
-# Lazy import wikipedia to avoid unnecessary dependency at runtime
 try:
     import wikipedia  # type: ignore
 except Exception:  # pragma: no cover - wikipedia may not be installed

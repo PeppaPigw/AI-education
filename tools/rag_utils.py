@@ -21,14 +21,12 @@ def get_context_or_empty(query: str, retriever: Any | None) -> str:
     if not docs:
         return ""
 
-    # Build a set of meaningful query words (length >= 3) to check relevance.
-    keywords = set(re.findall(r"\b\w{3,}\b", query.lower()))
+    # 🔥 修复：直接返回检索到的文档，信任向量相似度
+    # 移除关键词过滤，因为对中文支持不好
     relevant_contents = []
     for doc in docs:
         text = getattr(doc, "page_content", str(doc))
-        lower = text.lower()
-        if not keywords or any(word in lower for word in keywords):
-            relevant_contents.append(text)
+        relevant_contents.append(text)
 
     if not relevant_contents:
         return ""

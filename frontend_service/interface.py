@@ -1,8 +1,6 @@
-import io
 import os
 import random
 import sys
-from contextlib import redirect_stdout
 import shutil
 import logging
 import re
@@ -23,7 +21,7 @@ from tools.covert_resource import convert_to_pdf
 CURRENT_NODE = None
 dotenv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 load_dotenv(dotenv_path)
-agent = create_agent()
+
 rag_service = get_rag_service()
 retriever = rag_service.get_retriever()
 logger = logging.getLogger(__name__)
@@ -89,22 +87,24 @@ def respond(
     yield convert_history_to_gradio_format(internal_history), ""
     code = LanguageHandler.code_from_display(lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(message)
-    buffer = io.StringIO()
-    with redirect_stdout(buffer):
-        result, used_fallback, used_retriever = run_agent(
-            message, executor=agent, retriever=retriever, return_details=True
+    
+    agent = create_agent()
+    
+    result, used_fallback, used_retriever = run_agent(
+        message, executor=agent, retriever=retriever, return_details=True
+    )
+    result = LanguageHandler.ensure_language(result, language)
+    if used_fallback:
+        notice = LanguageHandler.ensure_language(
+            "",
+            language,
         )
-        result = LanguageHandler.ensure_language(result, language)
-        if used_fallback:
-            notice = LanguageHandler.ensure_language(
-                "",
-                language,
-            )
-            result = f"<div class='fallback'>{notice}<br>{result}</div>"
-        elif used_retriever:
-            result = f"<div class='retrieval'>{result}</div>"
+        result = f"<div class='fallback'>{notice}<br>{result}</div>"
+    elif used_retriever:
+        result = f"<div class='retrieval'>{result}</div>"
+    
     internal_history[-1] = {"role": "assistant", "content": result}
-    logs = buffer.getvalue()
+    logs = ""
    
     yield convert_history_to_gradio_format(internal_history), logs
 def respond_with_retriever(message: str, history: list[list[str]], lang_choice: str):
@@ -128,8 +128,6 @@ def _format_question(q: dict) -> str:
     text = text.strip()
     return f"**{q['topic']}**\n\n{text}"
 def start_quiz(subject: str, lang_choice: str, retriever=None):
-    if not agent:
-        return "Quiz is disabled.", {}, "Quiz is disabled."
     code = LanguageHandler.code_from_display(lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(subject)
     questions, used_retriever = prepare_quiz_questions(
@@ -191,20 +189,20 @@ def _compile_results(state: dict) -> str:
     lang = state.get("language", "auto")
     return LanguageHandler.ensure_language(result, lang)
 def run_learning_plan_interface(name: str, goals: str, lang_choice: str) -> str:
-    if not agent: return "Learning plan is disabled."
     code = LanguageHandler.code_from_display(lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(goals)
     plan = LearningPlan(user_name=name, user_language=language)
     goals_list = [g.strip() for g in goals.split(";") if g.strip()]
     user_input = {"goals": goals_list}
-    buffer = io.StringIO()
-    with redirect_stdout(buffer):
-        plan.generate_plan_from_prompt(user_input)
-        plan.display_plan()
-        plan.save_to_file()
-    return buffer.getvalue()
+    
+    print("\n" + "="*80)
+    print("📝 生成学习计划...")
+    print("="*80)
+    plan.generate_plan_from_prompt(user_input)
+    plan.display_plan()
+    plan.save_to_file()
+    return f"✅ 学习计划已生成并保存！请查看terminal获取详细信息。"
 def run_learning_plan_from_quiz(name: str, state: dict, lang_choice: str) -> str:
-    if not agent: return "Learning plan is disabled."
     if not state or not state.get("scores"):
         return "No quiz results available."
     code = LanguageHandler.code_from_display(lang_choice)
@@ -213,12 +211,14 @@ def run_learning_plan_from_quiz(name: str, state: dict, lang_choice: str) -> str
         if code != "auto"
         else state.get("language") or LanguageHandler.choose_or_detect(name)
     )
-    buffer = io.StringIO()
-    with redirect_stdout(buffer):
-        generate_learning_plan_from_quiz(name, state["scores"], language)
-    return buffer.getvalue()
+    
+    print("\n" + "="*80)
+    print("📝 根据测验结果生成学习计划...")
+    print("="*80)
+    generate_learning_plan_from_quiz(name, state["scores"], language)
+    return f"✅ 基于测验的学习计划已生成！请查看terminal获取详细信息。"
 def run_summary_interface(topic: str, lang_choice: str, retriever=None) -> str:
-    if not agent: return "Summary is disabled."
+    
     code = LanguageHandler.code_from_display(lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(topic)
     summarizer = StudySummaryGenerator(retriever=retriever)
@@ -298,13 +298,12 @@ def create_knowledge_graph_figure(graph_data: dict):
         if num_grandchildren == 0:
             continue
            
-        # 计算父节点（Child）拥有的扇区大小
         sector_angle = child_angle_step * spread_factor if num_children > 1 else 2 * math.pi
         start_angle = child_angle - sector_angle / 2
         gc_angle_step = sector_angle / num_grandchildren
        
         for j, grandchild in enumerate(grandchildren):
-            # 将 grandchild 放置在扇区的中间位置
+            
             gc_angle = start_angle + (j + 0.5) * gc_angle_step
             x_gc = radii[2] * math.cos(gc_angle)
             y_gc = radii[2] * math.sin(gc_angle)
@@ -316,7 +315,6 @@ def create_knowledge_graph_figure(graph_data: dict):
             nodes['x'].append(x_gc)
             nodes['y'].append(y_gc)
            
-            # 添加从 Child 到 Grandchild 的连线
             edges['x'].extend([x_child, x_gc, None])
             edges['y'].extend([y_child, y_gc, None])
             # Level 3: Great-grandchildren 在各自父节点的子扇区内分布
@@ -468,7 +466,17 @@ def upload_and_update_resource(files: list, current_data: dict):
     if updated:
         with open(KNOWLEDGE_JSON_PATH, 'w', encoding='utf-8') as f:
             json.dump(current_data, f, indent=2, ensure_ascii=False)
-        msg = f"✅ 成功处理并上传 {processed_files_count} 个文件，并关联到 '{selected_node}'。"
+        
+        # 🔥 关键修复：将新上传的PDF文件ingest到RAG向量数据库
+        logger.info(f"📥 正在将 {len(newly_added_paths)} 个PDF文件加入RAG向量数据库...")
+        ingest_error = rag_service.ingest_paths(newly_added_paths)
+        if ingest_error:
+            logger.error(f"❌ RAG ingest失败: {ingest_error}")
+            msg = f"⚠️ 文件已保存但RAG索引失败: {ingest_error}"
+        else:
+            logger.info(f"✅ 成功将 {len(newly_added_paths)} 个PDF文件加入RAG数据库")
+            msg = f"✅ 成功处理并上传 {processed_files_count} 个文件，并关联到 '{selected_node}'，已加入RAG数据库。"
+        
         return msg, current_data, gr.update(choices=new_choices, value=new_choices[0] if new_choices else None)
     else:
         msg = f"❌ 未能在JSON中找到节点 '{selected_node}'。"
@@ -587,6 +595,17 @@ def build_interface() -> gr.Blocks:
                 return gr.update(), gr.update(), gr.update(), gr.update(), gr.update(), gr.update()
            
             pdf_html_content = show_pdf_in_iframe(selected_pdf)
+            
+            # 🔥 关键修复：确保选中的PDF已经在RAG数据库中
+            if os.path.exists(selected_pdf):
+                logger.info(f"📚 确保PDF已加载到RAG: {selected_pdf}")
+                ingest_error = rag_service.ingest_paths([selected_pdf])
+                if ingest_error:
+                    logger.error(f"❌ 加载PDF到RAG失败: {ingest_error}")
+                else:
+                    logger.info(f"✅ PDF已在RAG数据库中: {selected_pdf}")
+            else:
+                logger.warning(f"⚠️ PDF文件不存在: {selected_pdf}")
             
             # 这个函数是设置当前节点的关键
             global CURRENT_NODE

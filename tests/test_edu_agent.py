@@ -50,7 +50,8 @@ def test_rag_search(monkeypatch):
 
 def test_create_agent_includes_rag_search(monkeypatch):
     class DummyAgentExecutor:
-        def __init__(self, agent, tools, verbose):
+        # 🔥 修复：接受新的参数
+        def __init__(self, agent, tools, verbose, **kwargs):
             self.agent = agent
             self.tools = tools
 
@@ -75,7 +76,8 @@ def test_run_agent_no_fallback(patched_agent):
 
 
 def test_run_agent_with_fallback(patched_agent):
-    executor = patched_agent("error: something broke")
+    # 🔥 修复：使用更明确的错误标志触发fallback
+    executor = patched_agent("Agent error: something broke")
     output, used_fallback, used_retriever = ea.run_agent(
         "Question", executor=executor, return_details=True
     )
@@ -92,7 +94,8 @@ def test_run_agent_injects_retriever_context(monkeypatch):
 
         def invoke(self, inputs):
             self.last_input = inputs["input"]
-            return {"output": "ok"}
+            # 🔥 修复：返回更长的回答以避免触发fallback
+            return {"output": "The answer is based on the retrieved context."}
 
     class DummyRetriever:
         def invoke(self, query):
@@ -107,6 +110,6 @@ def test_run_agent_injects_retriever_context(monkeypatch):
         "Question", executor=exec_, retriever=DummyRetriever(), return_details=True
     )
     assert "context from retriever" in exec_.last_input
-    assert output == "ok"
+    assert output == "The answer is based on the retrieved context."
     assert used_fallback is False
     assert used_retriever is True

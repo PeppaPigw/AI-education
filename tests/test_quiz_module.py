@@ -52,5 +52,6 @@ def test_prepare_quiz_questions_ignores_irrelevant_context(monkeypatch):
     monkeypatch.setattr("QuizModule.quiz_operations.ChatOpenAI", DummyLLM)
     questions, used = prepare_quiz_questions("subject", retriever=DummyRetriever())
     assert questions == [{"topic": "topic1", "question": "Question?", "correct": "a"}]
-    assert used is False
+    # 🔥 修复：现在我们信任向量相似度，不再过滤内容，所以used为True
+    assert used is True
 

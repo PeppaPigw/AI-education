@@ -44,10 +44,8 @@ def test_get_rag_service_lazy_singleton(monkeypatch):
 
 
 def test_ingest_and_retrieve(tmp_path):
+    # 🔥 修复：RAGService不接受base_url, model_name, api_key参数
     service = RAGService(
-        base_url=base_url+"/v1",
-        model_name=embedding_model,
-        api_key=api_key,
         embeddings=FakeEmbeddings(size=32),
         persist_directory=str(tmp_path),
         use_multiquery=False,
@@ -66,10 +64,8 @@ def test_ingest_paths_lookup_error(monkeypatch, tmp_path, caplog):
     monkeypatch.setattr(UnstructuredFileLoader, "load", bad_load)
     file_path = tmp_path / "f.txt"
     file_path.write_text("test")
+    # 🔥 修复：RAGService不接受base_url, model_name, api_key参数
     service = RAGService(
-        base_url=base_url+"/v1",
-        model_name=embedding_model,
-        api_key=api_key,
         embeddings=FakeEmbeddings(size=32),
         persist_directory=str(tmp_path / "db"),
         use_multiquery=False,
@@ -88,10 +84,8 @@ def test_ingest_paths_import_error(monkeypatch, tmp_path, caplog):
     monkeypatch.setattr(UnstructuredFileLoader, "load", bad_load)
     file_path = tmp_path / "f.txt"
     file_path.write_text("test")
+    # 🔥 修复：RAGService不接受base_url, model_name, api_key参数
     service = RAGService(
-        base_url=base_url+"/v1",
-        model_name=embedding_model,
-        api_key=api_key,
         embeddings=FakeEmbeddings(size=32),
         persist_directory=str(tmp_path / "db2"),
         use_multiquery=False,
@@ -119,10 +113,8 @@ def test_ingest_pdf(tmp_path):
     )
     pdf_path = tmp_path / "cats.pdf"
     pdf_path.write_bytes(base64.b64decode(pdf_b64))
+    # 🔥 修复：RAGService不接受base_url, model_name, api_key参数
     service = RAGService(
-        base_url=base_url+"/v1",
-        model_name=embedding_model,
-        api_key=api_key,
         embeddings=FakeEmbeddings(size=32),
         persist_directory=str(tmp_path / "db3"),
         use_multiquery=False,
@@ -138,10 +130,8 @@ def test_ingest_docx(tmp_path):
     doc = DocxDocument()
     doc.add_paragraph("Cats are playful animals")
     doc.save(docx_path)
+    # 🔥 修复：RAGService不接受base_url, model_name, api_key参数
     service = RAGService(
-        base_url=base_url+"/v1",
-        model_name=embedding_model,
-        api_key=api_key,
         embeddings=FakeEmbeddings(size=32),
         persist_directory=str(tmp_path / "db4"),
         use_multiquery=False,
