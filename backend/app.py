@@ -42,6 +42,7 @@ retriever = rag_service.get_retriever()
 logger = logging.getLogger(__name__)
 KNOWLEDGE_JSON_PATH = "data/course/big_data.json"
 CURRENT_NODE = None
+CURRENT_PDF_PATH = None  # 追踪当前选择的PDF
 
 
 # Pydantic 模型
@@ -82,6 +83,10 @@ class NodeSelection(BaseModel):
     node_name: str
 
 
+class PDFSelection(BaseModel):
+    pdf_path: str
+
+
 # API 路由
 @app.get("/")
 async def root():
@@ -90,12 +95,15 @@ async def root():
 
 @app.post("/api/chat")
 async def chat(data: ChatMessage):
-    """处理聊天消息"""
+    """处理聊天消息 - 启用RAG检索"""
+    global CURRENT_PDF_PATH
     message = data.message
     history = data.history
     lang_choice = data.lang_choice
 
-    # 转换历史记录
+    logger.info(f"📨 Chat request: {message[:50]}...")
+    logger.info(f"📄 Current PDF: {CURRENT_PDF_PATH}")
+
     internal_history = []
     for user_msg, assistant_msg in history:
         internal_history.append({"role": "user", "content": user_msg})
@@ -105,10 +113,51 @@ async def chat(data: ChatMessage):
     code = LanguageHandler.code_from_display(lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(message)
 
+    # 创建针对当前PDF的retriever
+    current_retriever = None
+    if CURRENT_PDF_PATH and os.path.exists(CURRENT_PDF_PATH):
+        from langchain_core.vectorstores import VectorStoreRetriever
+        from langchain_core.callbacks import CallbackManagerForRetrieverRun
+
+        class FilteredRetriever(VectorStoreRetriever):
+            """只检索当前PDF的retriever"""
+
+            pdf_path: str
+
+            def _get_relevant_documents(
+                self, query: str, *, run_manager: CallbackManagerForRetrieverRun = None
+            ):
+                # 获取向量存储
+                vectorstore = rag_service._get_vectorstore()
+                # 使用metadata过滤，只检索当前PDF
+                docs = vectorstore.similarity_search(
+                    query, k=4, filter={"source": self.pdf_path}
+                )
+                logger.info(
+                    f"🔍 Filtered retrieval: found {len(docs)} docs from {self.pdf_path}"
+                )
+                return docs
+
+        # 创建过滤后的retriever
+        current_retriever = FilteredRetriever(
+            vectorstore=rag_service._get_vectorstore(),
+            search_kwargs={"k": 4},
+            pdf_path=CURRENT_PDF_PATH,
+        )
+        logger.info(f"✅ Created filtered retriever for: {CURRENT_PDF_PATH}")
+    else:
+        current_retriever = retriever
+        logger.info(f"⚠️ No current PDF, using global retriever")
+
     agent = create_agent()
     result, used_fallback, used_retriever = run_agent(
-        message, executor=agent, retriever=retriever, return_details=True
+        message, executor=agent, retriever=current_retriever, return_details=True
     )
+
+    logger.info(
+        f"✅ Response generated. Used RAG: {used_retriever}, Fallback: {used_fallback}"
+    )
+
     result = LanguageHandler.ensure_language(result, language)
 
     return {
@@ -418,14 +467,34 @@ async def upload_files(files: List[UploadFile] = File(...), node_name: str = "")
     raise HTTPException(status_code=404, detail=f"Node '{node_name}' not found")
 
 
+@app.post("/api/pdf/select")
+async def select_pdf(data: PDFSelection):
+    """选择当前阅读的PDF"""
+    global CURRENT_PDF_PATH
+    pdf_path = data.pdf_path
+
+    if not os.path.exists(pdf_path):
+        raise HTTPException(status_code=404, detail="PDF not found")
+
+    # 设置当前PDF
+    CURRENT_PDF_PATH = pdf_path
+    logger.info(f"📄 Selected PDF: {pdf_path}")
+
+    # 确保PDF已经在RAG数据库中
+    ingest_error = rag_service.ingest_paths([pdf_path])
+    if ingest_error:
+        logger.error(f"❌ Failed to ingest PDF: {ingest_error}")
+        return {"success": False, "error": ingest_error}
+
+    logger.info(f"✅ PDF ingested successfully: {pdf_path}")
+    return {"success": True, "pdf_path": pdf_path}
+
+
 @app.get("/api/pdf/{path:path}")
 async def get_pdf(path: str):
     """获取 PDF 文件"""
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="PDF not found")
-
-    # 确保 PDF 在 RAG 中
-    rag_service.ingest_paths([path])
 
     return FileResponse(path, media_type="application/pdf")
 

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Test</title>
+    <style>
+      #knowledge-graph {
+        width: 800px;
+        height: 600px;
+        border: 1px solid #ccc;
+      }
+    </style>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <h1>Test Knowledge Graph</h1>
+    <div id="knowledge-graph"></div>
+
+    <script>
+      console.log("D3 version:", d3.version);
+      console.log("D3 loaded:", typeof d3);
+
+      const testData = {
+        root_name: "测试根节点",
+        children: [
+          {
+            name: "子节点1",
+            flag: "1",
+            resource_path: [],
+            grandchildren: [
+              {
+                name: "孙节点1-1",
+                flag: "0",
+                resource_path: [],
+                "great-grandchildren": [],
+              },
+            ],
+          },
+        ],
+      };
+
+      console.log("Test data:", testData);
+
+      // 测试D3
+      d3.select("#knowledge-graph")
+        .append("svg")
+        .attr("width", 800)
+        .attr("height", 600)
+        .append("circle")
+        .attr("cx", 400)
+        .attr("cy", 300)
+        .attr("r", 50)
+        .style("fill", "blue");
+
+      console.log("D3 test complete");
+    </script>
+  </body>
+</html>

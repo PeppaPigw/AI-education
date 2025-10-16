@@ -21,8 +21,6 @@ def get_context_or_empty(query: str, retriever: Any | None) -> str:
     if not docs:
         return ""
 
-    # 🔥 修复：直接返回检索到的文档，信任向量相似度
-    # 移除关键词过滤，因为对中文支持不好
     relevant_contents = []
     for doc in docs:
         text = getattr(doc, "page_content", str(doc))

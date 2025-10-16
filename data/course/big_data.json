@@ -4,45 +4,40 @@
     {
       "name": "大数据基础概念",
       "flag": "1",
-      "resource_path": "",
+      "resource_path": [
+        "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/3c44996d-195b-4668-9a4a-8e117630594e_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d0b3814a5405c0ae3472bb37afc653e713059f726dc7bb86b92adbc3d5b34b13286f6d485b7c68159a2ee6658b6cb1e67aabef62f6a5b7f74a41ca7132f31ab87",
+        "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/a728c394-8eab-4d39-a25c-e6e4d00dc4cc_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d8bd12ae30bac355ee905d1d74e2fe38b3059f726dc7bb86b92adbc3d5b34b13286f6d485b7c68159a2ee6658b6cb1e674cca709eeec35724f15d3e6a182e04cb",
+        "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/53c55891-045e-4ea9-a3ae-6913be213d90_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632da3bdcd36986c3d8f1b442c0e38643caa3059f726dc7bb86b92adbc3d5b34b1325ed6037fbf0a290d18831c48a2935f57b108680c195ae7aedbefcbd824e55924",
+        "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/93c23ba6-3555-4e43-b233-c29043b61fcb_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632dcd84727413c966781f18979dbddbc6673059f726dc7bb86b92adbc3d5b34b13286f6d485b7c68159a2ee6658b6cb1e67b108680c195ae7aedbefcbd824e55924",
+        "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/495e4775-81f7-4be1-886a-a7873c1a5b98_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632dc82d75fb5186349be7a43f0664d916a23059f726dc7bb86b92adbc3d5b34b132bc3c599e763a957161a864807d3127addf69454fe54d63664bd5297860cdfa3d",
+        "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/01496e07-29da-4d1b-b5bd-cc574cb89fc9_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d8b8bbb3f04c11a335320877459af798a3059f726dc7bb86b92adbc3d5b34b132bc3c599e763a957161a864807d3127ad623591d5e74d0640a136e4a4f0e4eb71",
+        "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/2ad2314b-de8d-4944-a6a8-192109a6d4df_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d770344757a98f20d50b8028b6b02b2883059f726dc7bb86b92adbc3d5b34b132bc3c599e763a957161a864807d3127ad4426afeac364f76a817da3b2623cd41e"
+      ],
       "grandchildren": [
         {
           "name": "大数据生命周期与应用",
           "flag": "0",
-          "resource_path": [
-            "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/3c44996d-195b-4668-9a4a-8e117630594e_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d0b3814a5405c0ae3472bb37afc653e713059f726dc7bb86b92adbc3d5b34b13286f6d485b7c68159a2ee6658b6cb1e67aabef62f6a5b7f74a41ca7132f31ab87",
-            "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/a728c394-8eab-4d39-a25c-e6e4d00dc4cc_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d8bd12ae30bac355ee905d1d74e2fe38b3059f726dc7bb86b92adbc3d5b34b13286f6d485b7c68159a2ee6658b6cb1e674cca709eeec35724f15d3e6a182e04cb",
-            "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/53c55891-045e-4ea9-a3ae-6913be213d90_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632da3bdcd36986c3d8f1b442c0e38643caa3059f726dc7bb86b92adbc3d5b34b1325ed6037fbf0a290d18831c48a2935f57b108680c195ae7aedbefcbd824e55924",
-            "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/93c23ba6-3555-4e43-b233-c29043b61fcb_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632dcd84727413c966781f18979dbddbc6673059f726dc7bb86b92adbc3d5b34b13286f6d485b7c68159a2ee6658b6cb1e67b108680c195ae7aedbefcbd824e55924",
-            "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/495e4775-81f7-4be1-886a-a7873c1a5b98_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632dc82d75fb5186349be7a43f0664d916a23059f726dc7bb86b92adbc3d5b34b132bc3c599e763a957161a864807d3127addf69454fe54d63664bd5297860cdfa3d",
-            "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/01496e07-29da-4d1b-b5bd-cc574cb89fc9_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d8b8bbb3f04c11a335320877459af798a3059f726dc7bb86b92adbc3d5b34b132bc3c599e763a957161a864807d3127ad623591d5e74d0640a136e4a4f0e4eb71",
-            "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/2ad2314b-de8d-4944-a6a8-192109a6d4df_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d770344757a98f20d50b8028b6b02b2883059f726dc7bb86b92adbc3d5b34b132bc3c599e763a957161a864807d3127ad4426afeac364f76a817da3b2623cd41e"
-          ],
+          "resource_path": "",
           "great-grandchildren": [
             {
               "name": "大数据生命周期",
               "flag": "0",
-              "resource_path": [
-                "data/RAG_files/test.pdf",
-                "data/RAG_files/test2.pdf",
-                "data/RAG_files/test_doc.pdf",
-                "data/RAG_files/testPPT.pdf"
-              ]
+              "resource_path": ["data/SpeechPDF/1-1-cn.pdf"]
             },
             {
               "name": "大数据驱动因素",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": ["data/SpeechPDF/1-2-cn.pdf"]
             },
             {
               "name": "DIKW金字塔模型",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/1-3-cn.pdf"
             },
             {
               "name": "商务智能的发展过程",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/1-4-cn.pdf"
             }
           ]
         },
@@ -59,19 +54,19 @@
                 {
                   "name": "大数据定义、特征、生命周期等",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/1-5-cn.pdf"
                 }
               ]
             },
             {
               "name": "大数据的渗透与影响",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/1-6-cn.pdf"
             },
             {
               "name": "大数据的量化进程",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/1-7-cn.pdf"
             },
             {
               "name": "数据的价值与原油的类比",
@@ -228,22 +223,22 @@
             {
               "name": "结构化数据",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/2-1-cn.pdf"
             },
             {
               "name": "非结构化数据",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/2-2-cn.pdf"
             },
             {
               "name": "半结构化数据和准结构化数据",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/2-3-cn.pdf"
             },
             {
               "name": "内部数据与外部数据",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/2-4-cn.pdf"
             }
           ]
         },
@@ -331,7 +326,7 @@
                 {
                   "name": "数据管理的过程",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/3-1-cn.pdf"
                 }
               ]
             },
@@ -343,17 +338,17 @@
                 {
                   "name": "数据规约",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/3-2-cn.pdf"
                 },
                 {
                   "name": "属性子集选择",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/3-3-cn.pdf"
                 },
                 {
                   "name": "数据压缩",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/3-4-cn.pdf"
                 }
               ]
             },
@@ -365,7 +360,7 @@
                 {
                   "name": "多数据源数据质量",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/3-5-cn.pdf"
                 }
               ]
             },
@@ -418,7 +413,7 @@
                 {
                   "name": "数据存储与数据清洗",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/4-1-cn.pdf"
                 }
               ]
             },
@@ -430,12 +425,12 @@
                 {
                   "name": "缺失值处理",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/4-2-cn.pdf"
                 },
                 {
                   "name": "重复记录清洗",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/4-3-cn.pdf"
                 },
                 {
                   "name": "噪声数据清洗",
@@ -445,21 +440,21 @@
                     {
                       "name": "分箱算法",
                       "flag": "0",
-                      "resource_path": ""
+                      "resource_path": "data/SpeechPDF/4-4-cn.pdf"
                     }
                   ]
                 },
                 {
                   "name": "数据清洗和建模",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/4-5-cn.pdf"
                 }
               ]
             },
             {
               "name": "数据转换",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/4-6-cn.pdf"
             },
             {
               "name": "数据集成",
@@ -497,22 +492,22 @@
             {
               "name": "数据访问层",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/5-1-cn.pdf"
             },
             {
               "name": "数据建模",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/5-2-cn.pdf"
             },
             {
               "name": "ACID与BASE模型",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/5-3-cn.pdf"
             },
             {
               "name": "数据建模层级",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/5-4-cn.pdf"
             },
             {
               "name": "统一数据访问接口",
@@ -522,7 +517,7 @@
                 {
                   "name": "数据源包装器",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/5-5-cn.pdf"
                 }
               ]
             }
@@ -541,19 +536,19 @@
                 {
                   "name": "基于列存储的表",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/5-6-cn.pdf"
                 }
               ]
             },
             {
               "name": "数据压缩与分区",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/5-7-cn.pdf"
             },
             {
               "name": "数据存储架构",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/5-8-cn.pdf"
             }
           ]
         },
@@ -653,7 +648,7 @@
                 {
                   "name": "键值数据库",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/5-22-cn.pdf"
                 },
                 {
                   "name": "图数据库",
@@ -730,31 +725,31 @@
                 {
                   "name": "MapReduce计算模型",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/6-1-cn.pdf"
                 },
                 {
                   "name": "任务调度与资源管理",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/6-2-cn.pdf"
                 },
                 {
                   "name": "MapReduce工作流程",
                   "flag": "0",
-                  "resource_path": ""
+                  "resource_path": "data/SpeechPDF/6-3-cn.pdf"
                 }
               ]
             },
             {
               "name": "微量批处理系统",
               "flag": "0",
-              "resource_path": ""
+              "resource_path": "data/SpeechPDF/6-4-cn.pdf"
             }
           ]
         },
         {
           "name": "图计算与消息传递",
           "flag": "0",
-          "resource_path": "",
+          "resource_path": "data/SpeechPDF/6-5-cn.pdf",
           "great-grandchildren": [
             {
               "name": "并行图计算模型",

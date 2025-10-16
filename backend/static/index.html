@@ -3,10 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI-Education 🎓</title>
+    <title>AI-Education 🎓 - 智能教育平台</title>
     <link rel="stylesheet" href="/static/style.css" />
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   </head>
   <body>
     <div class="container">
@@ -18,19 +19,21 @@
         <div id="pdf-viewer-container" style="display: none">
           <iframe id="pdf-viewer" width="100%" height="100%"></iframe>
         </div>
+        <div
+          id="video-player-container"
+          style="display: none; width: 100%; height: 100%"
+        >
+          <video
+            id="video-player"
+            controls
+            style="width: 100%; height: 100%"
+          ></video>
+        </div>
       </div>
 
       <!-- 右侧：功能面板 -->
       <div class="right-panel">
-        <h1>AI-Education 🎓</h1>
-
-        <!-- 节点选择 -->
-        <div id="node-selection-group">
-          <label>选择一个知识节点开始学习</label>
-          <select id="node-selector">
-            <option value="">请选择...</option>
-          </select>
-        </div>
+        <h1>🎓 AI-Education</h1>
 
         <!-- 资源显示 -->
         <div id="resource-display-group" style="display: none">
@@ -41,12 +44,12 @@
         <!-- 主功能面板 -->
         <div id="main-function-group" style="display: none">
           <div class="controls">
-            <label>语言选择</label>
+            <label>🌐 语言设置</label>
             <select id="lang-select">
               <option>🌐 Auto-detect</option>
             </select>
 
-            <label>功能选择</label>
+            <label>⚙️ 功能选择</label>
             <select id="feature-select">
               <option>🤖 AI 助教</option>
               <option>📝 随堂测验</option>
@@ -63,7 +66,7 @@
               <input
                 type="text"
                 id="chat-input"
-                placeholder="输入你的问题..."
+                placeholder="💬 输入你的问题..."
               />
               <button id="send-btn">发送</button>
             </div>
@@ -71,8 +74,12 @@
 
           <!-- 随堂测验 -->
           <div id="quiz-group" class="feature-group" style="display: none">
-            <input type="text" id="quiz-subject" placeholder="测验主题" />
-            <button id="start-quiz-btn">开始测验</button>
+            <input
+              type="text"
+              id="quiz-subject"
+              placeholder="📝 输入测验主题"
+            />
+            <button id="start-quiz-btn">🚀 开始测验</button>
             <div id="quiz-question"></div>
             <div class="quiz-buttons">
               <button class="quiz-choice" data-choice="a">A</button>
@@ -82,37 +89,38 @@
             </div>
             <div id="quiz-result"></div>
             <hr />
-            <input
-              type="text"
-              id="quiz-name"
-              placeholder="你的名字 (用于生成学习计划)"
-            />
-            <button id="plan-from-quiz-btn">根据测验结果生成学习计划</button>
+            <h3>📊 生成学习计划</h3>
+            <input type="text" id="quiz-name" placeholder="👤 输入你的名字" />
+            <button id="plan-from-quiz-btn">📋 根据测验生成计划</button>
             <div id="plan-quiz-output"></div>
           </div>
 
           <!-- 学习计划 -->
           <div id="plan-group" class="feature-group" style="display: none">
-            <input type="text" id="plan-name" placeholder="你的名字" />
+            <input type="text" id="plan-name" placeholder="👤 输入你的名字" />
             <input
               type="text"
               id="plan-goals"
-              placeholder="学习目标 (用分号隔开)"
+              placeholder="🎯 学习目标 (用分号隔开)"
             />
-            <button id="plan-btn">生成计划</button>
+            <button id="plan-btn">🚀 生成个性化计划</button>
             <div id="plan-output"></div>
           </div>
 
           <!-- 知识总结 -->
           <div id="summary-group" class="feature-group" style="display: none">
-            <input type="text" id="summary-topic" placeholder="主题或材料" />
-            <button id="summary-btn">生成总结</button>
+            <input
+              type="text"
+              id="summary-topic"
+              placeholder="📖 输入主题或材料"
+            />
+            <button id="summary-btn">✨ 生成智能总结</button>
             <div id="summary-output"></div>
           </div>
 
           <!-- 上传资源 -->
           <div id="upload-group" class="feature-group" style="display: none">
-            <h3>上传文件到当前学习节点</h3>
+            <h3>📤 上传学习资源</h3>
             <div id="current-node-display"></div>
             <input
               type="file"
@@ -120,13 +128,20 @@
               multiple
               accept=".pdf,.doc,.docx,.ppt,.pptx"
             />
-            <button id="upload-btn">上传并关联</button>
+            <button id="upload-btn">⬆️ 上传并关联到节点</button>
             <div id="upload-status"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <script src="/static/app.js"></script>
+    <script
+      src="/static/graph.js"
+      onerror="console.error('Failed to load graph.js')"
+    ></script>
+    <script
+      src="/static/app.js"
+      onerror="console.error('Failed to load app.js')"
+    ></script>
   </body>
 </html>

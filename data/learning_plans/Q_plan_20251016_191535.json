@@ -1,0 +1,39 @@
+[
+    {
+        "date": "2025-10-16",
+        "priority": "User-defined",
+        "topic": "学会数学建模",
+        "materials": [
+            "当然，以下是一个简明的高质量推荐书籍、文章或资源列表，以帮助人们学习“学会数学建模”：",
+            "### 中文资源",
+            "1. **《数学建模》** - 编者：司守奎",
+            "   - 这本书是“数学建模”课程的教材，内容丰富，理论完整，实用性强。",
+            "2. **《数学建模方法与分析》** - 编者：姜启源、谢金星、叶俊",
+            "   - 该书详细介绍了数学建模的各种方法和分析技巧，适合初学者和进阶学习者。",
+            "3. **《数学建模案例与分析》** - 编者：李传中",
+            "   - 通过具体案例的分析，帮助读者理解和掌握数学建模的基本步骤和方法。",
+            "### 英文资源",
+            "1. **\"Mathematical Modeling\" by Mark M. Meerschaert**",
+            "   - 这本书提供了全面的数学建模介绍，适合各个层次的学习者。",
+            "2. **\"SIAM Review\" - Society for Industrial and Applied Mathematics**",
+            "   - 这份期刊经常发表关于数学建模和应用的最新研究文章，是了解前沿动态的好资源。",
+            "3. **\"Using MATLAB to Solve Problems in Mathematics\" by Anders Hammarkrantz**",
+            "   - 该书通过MATLAB编程解决数学问题，适合希望结合编程和数学建模的学习者。",
+            "### 在线资源",
+            "1. **[麻省理工学院数学建模公开课](https://ocw.mit.edu/courses/mathematics/18-085-seminar-in-computational-applied-mathematics-fall-2007/)**",
+            "   - MIT提供的免费在线课程，涵盖数学建模的基本概念和方法。",
+            "2. **[Coursera上的数学建模课程](https://www.coursera.org/courses?query=数学建模)**",
+            "   - Coursera上有多个关于数学建模的课程，由世界顶级大学的教授讲授。",
+            "3. **[MathModeler.com](http://www.mathmodeler.com/)**",
+            "   - 一个专注于数学建模的在线资源平台，提供大量的案例和教程。",
+            "### 实践工具",
+            "1. **MATLAB**",
+            "   - 一个强大的数学计算和可视化软件，适合进行数学实验和建模。",
+            "2. **Python with SciPy and NumPy**",
+            "   - Python编程语言结合SciPy和NumPy库，可以进行高效的数学计算和建模。",
+            "3. **Lingo**",
+            "   - 一种专门用于求解优化问题的软件，适合进行数学建模中的优化问题求解。",
+            "希望这些资源能帮助您更好地学习“学会数学建模”。如果有任何具体问题或需要进一步的推荐，请随时告诉我。"
+        ]
+    }
+]

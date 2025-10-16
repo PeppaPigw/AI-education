@@ -10,10 +10,15 @@ let knowledgeGraphData = null;
 
 // 初始化
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadLanguages();
-  await loadKnowledgeGraph();
-  await loadLearningNodes();
-  setupEventListeners();
+  console.log("DOM loaded, starting initialization...");
+  try {
+    await loadLanguages();
+    await loadKnowledgeGraph();
+    setupEventListeners();
+    console.log("Initialization complete");
+  } catch (error) {
+    console.error("Initialization error:", error);
+  }
 });
 
 // 加载语言列表
@@ -33,164 +38,156 @@ async function loadLanguages() {
 // 加载知识图谱
 async function loadKnowledgeGraph() {
   try {
+    console.log("Loading knowledge graph...");
     const response = await fetch(`${API_BASE}/api/knowledge-graph`);
     knowledgeGraphData = await response.json();
-    renderKnowledgeGraph(knowledgeGraphData);
+    console.log("Knowledge graph data loaded:", knowledgeGraphData);
+
+    if (typeof initializeGraph === "function") {
+      initializeGraph(knowledgeGraphData);
+    } else {
+      console.error("initializeGraph function not found!");
+    }
   } catch (error) {
     console.error("Error loading knowledge graph:", error);
   }
 }
 
-// 渲染知识图谱
-function renderKnowledgeGraph(data) {
-  if (!data || !data.root_name) {
+// 处理节点点击，显示资源
+window.handleNodeClick = function (nodeData) {
+  console.log("handleNodeClick called with:", nodeData);
+  console.log("Node type:", nodeData.type);
+  console.log("Raw resource_path:", nodeData.resource_path);
+
+  currentNode = nodeData.name;
+  const resources = nodeData.resource_path;
+
+  // 处理resource_path可能是字符串或数组的情况
+  let resourceArray = [];
+  if (typeof resources === "string") {
+    if (resources.trim()) {
+      resourceArray = [resources.trim()];
+    }
+  } else if (Array.isArray(resources)) {
+    resourceArray = resources.filter((r) => r && r.trim());
+  }
+
+  console.log("Processed resources array:", resourceArray);
+
+  if (!resourceArray || resourceArray.length === 0) {
+    console.log("No resources found for node:", nodeData.name);
+    // 清空资源列表但不隐藏容器
+    const resourceGroup = document.getElementById("resource-display-group");
+    const resourceList = document.getElementById("resource-list");
+    resourceList.innerHTML =
+      '<div style="padding: 10px; color: #718096;">该节点暂无学习资源</div>';
+    resourceGroup.style.display = "block";
     return;
   }
 
-  const nodes = { labels: [], colors: [], x: [], y: [], ids: [] };
-  const edges = { x: [], y: [] };
+  // 判断是视频还是PDF
+  const isVideo =
+    resourceArray[0].startsWith("http://") ||
+    resourceArray[0].startsWith("https://");
 
-  // 根节点
-  nodes.labels.push(data.root_name);
-  nodes.colors.push("#FFA07A");
-  nodes.x.push(0);
-  nodes.y.push(0);
-  nodes.ids.push("root");
+  const resourceGroup = document.getElementById("resource-display-group");
+  const resourceList = document.getElementById("resource-list");
 
-  const radii = [0, 1.5, 3.0, 4.5];
-  const children = data.children || [];
-  const numChildren = children.length;
-  const childAngleStep = numChildren > 0 ? (2 * Math.PI) / numChildren : 0;
+  if (isVideo) {
+    // 视频资源 - 使用great-grandchildren名字
+    const videoNames = getGrandchildrenNames(nodeData.name);
+    console.log("Video names from great-grandchildren:", videoNames);
+    resourceList.innerHTML = resourceArray
+      .map((url, i) => {
+        const name = videoNames[i] || `视频 ${i + 1}`;
+        return `<div class="resource-item" data-path="${url}" data-type="video">🎬 ${name}</div>`;
+      })
+      .join("");
+  } else {
+    // PDF资源 - 去掉后缀
+    resourceList.innerHTML = resourceArray
+      .map((path) => {
+        const filename = path
+          .split("/")
+          .pop()
+          .replace(/\.pdf$/i, "");
+        return `<div class="resource-item" data-path="${path}" data-type="pdf">📄 ${filename}</div>`;
+      })
+      .join("");
+  }
 
-  children.forEach((child, i) => {
-    const childAngle = i * childAngleStep;
-    const xChild = radii[1] * Math.cos(childAngle);
-    const yChild = radii[1] * Math.sin(childAngle);
-
-    nodes.labels.push(child.name);
-    nodes.colors.push(child.flag === "1" ? "#87CEFA" : "#D3D3D3");
-    nodes.x.push(xChild);
-    nodes.y.push(yChild);
-    nodes.ids.push(`child-${i}`);
-
-    edges.x.push(0, xChild, null);
-    edges.y.push(0, yChild, null);
-
-    const grandchildren = child.grandchildren || [];
-    const numGrandchildren = grandchildren.length;
-
-    if (numGrandchildren === 0) return;
-
-    const sectorAngle = numChildren > 1 ? childAngleStep * 0.95 : 2 * Math.PI;
-    const startAngle = childAngle - sectorAngle / 2;
-    const gcAngleStep = sectorAngle / numGrandchildren;
-
-    grandchildren.forEach((gc, j) => {
-      const gcAngle = startAngle + (j + 0.5) * gcAngleStep;
-      const xGc = radii[2] * Math.cos(gcAngle);
-      const yGc = radii[2] * Math.sin(gcAngle);
-
-      nodes.labels.push(gc.name);
-      nodes.colors.push(gc.flag === "1" ? "#90EE90" : "#D3D3D3");
-      nodes.x.push(xGc);
-      nodes.y.push(yGc);
-      nodes.ids.push(`gc-${i}-${j}`);
-
-      edges.x.push(xChild, xGc, null);
-      edges.y.push(yChild, yGc, null);
-
-      const greatGrandchildren = gc["great-grandchildren"] || [];
-      const numGgc = greatGrandchildren.length;
-
-      if (numGgc === 0) return;
-
-      const subSectorAngle = gcAngleStep * 0.95;
-      const ggcStartAngle = gcAngle - subSectorAngle / 2;
-      const ggcAngleStep = subSectorAngle / numGgc;
-
-      greatGrandchildren.forEach((ggc, k) => {
-        const ggcAngle = ggcStartAngle + (k + 0.5) * ggcAngleStep;
-        const xGgc = radii[3] * Math.cos(ggcAngle);
-        const yGgc = radii[3] * Math.sin(ggcAngle);
-
-        nodes.labels.push(ggc.name);
-        nodes.colors.push(ggc.flag === "1" ? "#FFD700" : "#D3D3D3");
-        nodes.x.push(xGgc);
-        nodes.y.push(yGgc);
-        nodes.ids.push(`ggc-${i}-${j}-${k}`);
-
-        edges.x.push(xGc, xGgc, null);
-        edges.y.push(yGc, yGgc, null);
-      });
+  resourceList.querySelectorAll(".resource-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      if (item.dataset.type === "video") {
+        selectVideo(item.dataset.path);
+      } else {
+        selectResource(item.dataset.path);
+      }
     });
   });
 
-  const edgeTrace = {
-    x: edges.x,
-    y: edges.y,
-    mode: "lines",
-    line: { width: 1, color: "#888" },
-    hoverinfo: "none",
-  };
+  resourceGroup.style.display = "block";
+};
 
-  const nodeTrace = {
-    x: nodes.x,
-    y: nodes.y,
-    mode: "markers+text",
-    text: nodes.labels,
-    textposition: "bottom center",
-    textfont: { size: 10 },
-    hoverinfo: "text",
-    marker: {
-      symbol: "circle",
-      size: 25,
-      color: nodes.colors,
-      line: { width: 2, color: "#555" },
-    },
-  };
+function getGrandchildrenNames(childName) {
+  if (!knowledgeGraphData || !knowledgeGraphData.children) return [];
 
-  const layout = {
-    showlegend: false,
-    xaxis: { showgrid: false, zeroline: false, showticklabels: false },
-    yaxis: {
-      showgrid: false,
-      zeroline: false,
-      showticklabels: false,
-      scaleanchor: "x",
-      scaleratio: 1,
-    },
-    plot_bgcolor: "rgba(0,0,0,0)",
-    paper_bgcolor: "rgba(0,0,0,0)",
-    margin: { l: 10, r: 10, t: 30, b: 10 },
-    hovermode: "closest",
-  };
+  const child = knowledgeGraphData.children.find((c) => c.name === childName);
+  if (!child || !child.grandchildren) return [];
 
-  Plotly.newPlot("knowledge-graph", [edgeTrace, nodeTrace], layout, {
-    responsive: true,
-  });
+  const names = [];
+  for (const gc of child.grandchildren) {
+    if (gc["great-grandchildren"] && gc["great-grandchildren"].length > 0) {
+      for (const ggc of gc["great-grandchildren"]) {
+        names.push(ggc.name);
+      }
+    }
+  }
+
+  return names;
 }
 
-// 加载学习节点
-async function loadLearningNodes() {
-  try {
-    const response = await fetch(`${API_BASE}/api/learning-nodes`);
-    const nodes = await response.json();
-    const select = document.getElementById("node-selector");
-    select.innerHTML =
-      '<option value="">请选择...</option>' +
-      nodes.map((node) => `<option value="${node}">${node}</option>`).join("");
-  } catch (error) {
-    console.error("Error loading learning nodes:", error);
+function selectVideo(videoUrl) {
+  currentPdfPath = null;
+
+  // 更新资源列表样式
+  document.querySelectorAll(".resource-item").forEach((item) => {
+    item.classList.toggle("active", item.dataset.path === videoUrl);
+  });
+
+  // 隐藏知识图谱和PDF
+  document.getElementById("knowledge-graph-container").style.display = "none";
+  document.getElementById("pdf-viewer-container").style.display = "none";
+
+  // 显示视频播放器
+  const videoContainer = document.getElementById("video-player-container");
+  const video = document.getElementById("video-player");
+  videoContainer.style.display = "block";
+
+  // 使用HLS.js播放m3u8
+  if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(videoUrl);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+      video.play();
+    });
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = videoUrl;
+    video.addEventListener("loadedmetadata", function () {
+      video.play();
+    });
   }
+
+  // 显示功能面板
+  document.getElementById("main-function-group").style.display = "block";
+  document.getElementById(
+    "current-node-display"
+  ).textContent = `当前节点: ${currentNode}`;
 }
 
 // 设置事件监听器
 function setupEventListeners() {
-  // 节点选择
-  document
-    .getElementById("node-selector")
-    .addEventListener("change", handleNodeSelection);
-
   // 功能切换
   document
     .getElementById("feature-select")
@@ -229,50 +226,8 @@ function setupEventListeners() {
   document.getElementById("upload-btn").addEventListener("click", uploadFiles);
 }
 
-// 处理节点选择
-async function handleNodeSelection(e) {
-  const nodeName = e.target.value;
-  if (!nodeName) return;
-
-  currentNode = nodeName;
-
-  try {
-    const response = await fetch(`${API_BASE}/api/node/resources`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ node_name: nodeName }),
-    });
-    const resources = await response.json();
-
-    const resourceGroup = document.getElementById("resource-display-group");
-    const resourceList = document.getElementById("resource-list");
-
-    if (resources.length > 0) {
-      resourceList.innerHTML = resources
-        .map(
-          (path, i) =>
-            `<div class="resource-item" data-path="${path}">${path
-              .split("/")
-              .pop()}</div>`
-        )
-        .join("");
-
-      resourceList.querySelectorAll(".resource-item").forEach((item) => {
-        item.addEventListener("click", () => selectResource(item.dataset.path));
-      });
-
-      resourceGroup.style.display = "block";
-    } else {
-      resourceList.innerHTML = "<p>暂无资源</p>";
-      resourceGroup.style.display = "block";
-    }
-  } catch (error) {
-    console.error("Error loading resources:", error);
-  }
-}
-
 // 选择资源
-function selectResource(path) {
+async function selectResource(path) {
   currentPdfPath = path;
 
   // 更新资源列表样式
@@ -280,8 +235,26 @@ function selectResource(path) {
     item.classList.toggle("active", item.dataset.path === path);
   });
 
+  // 通知后端当前选择的PDF
+  try {
+    const response = await fetch(`${API_BASE}/api/pdf/select`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pdf_path: path }),
+    });
+    const data = await response.json();
+    if (data.success) {
+      console.log("✅ PDF selected and ingested:", path);
+    } else {
+      console.error("❌ Failed to select PDF:", data.error);
+    }
+  } catch (error) {
+    console.error("Error selecting PDF:", error);
+  }
+
   // 显示 PDF
   document.getElementById("knowledge-graph-container").style.display = "none";
+  document.getElementById("video-player-container").style.display = "none";
   document.getElementById("pdf-viewer-container").style.display = "block";
   document.getElementById(
     "pdf-viewer"
