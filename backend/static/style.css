@@ -1,0 +1,287 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+body {
+  background-color: #1a1a2e;
+  color: #ffffff;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.left-panel {
+  flex: 3;
+  background-color: #16213e;
+  overflow: hidden;
+}
+
+.right-panel {
+  flex: 1;
+  background-color: #0f3460;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+h1 {
+  color: #33ffcc;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+h3 {
+  color: #33ffcc;
+  margin: 15px 0;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+select,
+input[type="text"],
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  background-color: #1a1a2e;
+  color: #ffffff;
+  border: 1px solid #33ffcc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #4a90e2;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #357abd;
+}
+
+.feature-group {
+  margin-top: 20px;
+}
+
+#chatbot {
+  height: 400px;
+  overflow-y: auto;
+  background-color: #1a1a2e;
+  border: 1px solid #33ffcc;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  border-radius: 15px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.message.user {
+  background-color: #4a90e2;
+  color: #ffffff;
+  margin-left: auto;
+  text-align: right;
+}
+
+.message.bot {
+  background-color: #7d2a8b;
+  color: #ffffff;
+}
+
+.message.bot.fallback {
+  background-color: #33ffcc;
+  color: #1a1a2e;
+  font-weight: bold;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.input-row input {
+  flex: 1;
+}
+
+.input-row button {
+  width: auto;
+  padding: 10px 20px;
+}
+
+.quiz-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.quiz-choice {
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#quiz-question {
+  background-color: #1a1a2e;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 10px 0;
+  min-height: 100px;
+}
+
+#quiz-result,
+#plan-output,
+#plan-quiz-output,
+#summary-output,
+#upload-status {
+  background-color: #1a1a2e;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 10px;
+  min-height: 50px;
+  white-space: pre-wrap;
+}
+
+#knowledge-graph,
+#pdf-viewer-container {
+  width: 100%;
+  height: 100vh;
+}
+
+#resource-list {
+  margin-top: 10px;
+}
+
+.resource-item {
+  background-color: #1a1a2e;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 1px solid #33ffcc;
+  transition: background-color 0.3s;
+}
+
+.resource-item:hover {
+  background-color: #2a2a4e;
+}
+
+.resource-item.active {
+  background-color: #4a90e2;
+}
+
+hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #33ffcc;
+}
+
+.controls {
+  margin-bottom: 20px;
+}
+
+#current-node-display {
+  background-color: #1a1a2e;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  color: #33ffcc;
+  font-weight: bold;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #33ffcc;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2ad9b0;
+}
+
+/* Loading spinner */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #33ffcc;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Markdown styles */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+  color: #33ffcc;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.markdown-content p {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+.markdown-content code {
+  background-color: #2a2a4e;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: "Courier New", monospace;
+}
+
+.markdown-content pre {
+  background-color: #2a2a4e;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  margin-bottom: 10px;
+}
+
+.markdown-content pre code {
+  background: none;
+  padding: 0;
+}

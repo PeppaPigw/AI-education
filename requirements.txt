@@ -1,5 +1,6 @@
 deep_translator==1.11.4
 docx==0.2.4
+fastapi==0.115.0
 gradio==5.49.0
 langchain==0.3.27
 langchain_chroma==0.2.6
@@ -12,8 +13,11 @@ langid==1.1.6
 neo4j==5.15.0
 nltk==3.9.1
 plotly==6.3.0
+pypdf==5.1.0
 pytest==8.3.2
 python-dotenv==1.1.1
+python-multipart==0.0.17
 python_docx==0.8.11
 pyvis==0.3.2
+uvicorn==0.32.0
 wikipedia==1.4.0
