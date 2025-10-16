@@ -9,10 +9,14 @@ class FakeLLM(Runnable):
     def invoke(self, prompt, config=None):
         class Msg:
             content = "Algebra\nGeometry"
+
         return Msg()
 
     def batch(self, prompts, config=None, **kwargs):
-        return [type("Msg", (), {"content": "What is 2+2?\nCorrect Answer: a"}) for _ in prompts]
+        return [
+            type("Msg", (), {"content": "What is 2+2?\nCorrect Answer: a"})
+            for _ in prompts
+        ]
 
 
 def test_prepare_quiz_questions(monkeypatch):
@@ -41,6 +45,7 @@ class EmptyLLM(Runnable):
     def invoke(self, prompt, config=None):
         class Msg:
             content = ""
+
         return Msg()
 
     def batch(self, prompts, config=None, **kwargs):

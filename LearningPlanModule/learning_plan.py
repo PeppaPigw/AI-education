@@ -6,21 +6,30 @@ from tools.rag_service import RAGService
 from tools.rag_utils import get_context_or_empty
 from dotenv import load_dotenv
 import os
+
 load_dotenv()
-model_name=os.environ.get("model_name")
-base_url=os.environ.get("base_url")
-api_key=os.environ.get("api_key")
+model_name = os.environ.get("model_name")
+base_url = os.environ.get("base_url")
+api_key = os.environ.get("api_key")
+
 
 class LearningPlan:
     def __init__(
-        self, user_name, quiz_results=None, user_goals=None, user_language="en", retriever=None
+        self,
+        user_name,
+        quiz_results=None,
+        user_goals=None,
+        user_language="en",
+        retriever=None,
     ):
         self.user_name = user_name
         self.quiz_results = quiz_results if quiz_results else {}
         self.user_goals = user_goals if user_goals else {}
         self.user_language = user_language
         self.learning_plan = []
-        self.llm = ChatOpenAI(model=model_name, temperature=0,base_url=base_url,api_key=api_key)
+        self.llm = ChatOpenAI(
+            model=model_name, temperature=0, base_url=base_url, api_key=api_key
+        )
         if retriever is None:
             retriever = RAGService().get_retriever()
         self.retriever = retriever
@@ -28,7 +37,7 @@ class LearningPlan:
     def analyze_quiz_results(self):
         critical_areas = []  # Score below 50%
         moderate_areas = []  # Score between 50% and 70%
-        good_areas = []      # Score above 70%
+        good_areas = []  # Score above 70%
 
         for topic, (correct_answers, total_questions) in self.quiz_results.items():
             if total_questions == 0:  # Uniknięcie dzielenia przez zero
@@ -52,32 +61,38 @@ class LearningPlan:
 
         # Critical areas (High priority)
         for i, topic in enumerate(critical_areas):
-            plan.append({
-                'date': plan_start_date + timedelta(days=i * 2),
-                'priority': 'High priority',
-                'topic': topic,
-                'materials': self.recommend_materials(topic)
-            })
+            plan.append(
+                {
+                    "date": plan_start_date + timedelta(days=i * 2),
+                    "priority": "High priority",
+                    "topic": topic,
+                    "materials": self.recommend_materials(topic),
+                }
+            )
 
         # Moderate areas (Medium priority)
         offset = len(critical_areas)
         for i, topic in enumerate(moderate_areas, start=offset):
-            plan.append({
-                'date': plan_start_date + timedelta(days=i * 2),
-                'priority': 'Medium priority',
-                'topic': topic,
-                'materials': self.recommend_materials(topic)
-            })
+            plan.append(
+                {
+                    "date": plan_start_date + timedelta(days=i * 2),
+                    "priority": "Medium priority",
+                    "topic": topic,
+                    "materials": self.recommend_materials(topic),
+                }
+            )
 
         # Good areas (Low priority)
         offset += len(moderate_areas)
         for i, topic in enumerate(good_areas, start=offset):
-            plan.append({
-                'date': plan_start_date + timedelta(days=i * 2),
-                'priority': 'Low priority',
-                'topic': topic,
-                'materials': self.recommend_materials(topic)
-            })
+            plan.append(
+                {
+                    "date": plan_start_date + timedelta(days=i * 2),
+                    "priority": "Low priority",
+                    "topic": topic,
+                    "materials": self.recommend_materials(topic),
+                }
+            )
 
         self.learning_plan = plan
         return plan
@@ -105,19 +120,20 @@ class LearningPlan:
             print(f"Error while generating materials for topic '{topic}': {e}")
             return ["No materials available"]
 
-
     def generate_plan_from_prompt(self, user_input):
         plan_start_date = date.today()
         plan = []
 
         goals = user_input.get("goals", [])
         for i, goal in enumerate(goals):
-            plan.append({
-                'date': plan_start_date + timedelta(days=i * 2),
-                'priority': 'User-defined',
-                'topic': goal,
-                'materials': self.recommend_materials(goal)
-            })
+            plan.append(
+                {
+                    "date": plan_start_date + timedelta(days=i * 2),
+                    "priority": "User-defined",
+                    "topic": goal,
+                    "materials": self.recommend_materials(goal),
+                }
+            )
 
         self.learning_plan = plan
         return plan
@@ -129,7 +145,7 @@ class LearningPlan:
             print(f"Topic: {entry['topic']}")
             print(f"Priority: {entry['priority']}")
             print("Recommended Materials:")
-            for material in entry['materials']:
+            for material in entry["materials"]:
                 print(f" - {material}")
             print("\n")
 
@@ -142,10 +158,7 @@ class LearningPlan:
 
         try:
             plan_serializable = [
-                {
-                    **entry,
-                    "date": entry["date"].isoformat()
-                }
+                {**entry, "date": entry["date"].isoformat()}
                 for entry in self.learning_plan
             ]
 

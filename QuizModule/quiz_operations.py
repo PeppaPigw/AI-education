@@ -8,17 +8,20 @@ from tools.rag_utils import get_context_or_empty
 import logging
 from dotenv import load_dotenv
 import os
+
 load_dotenv()
-model_name=os.environ.get("model_name")
-base_url=os.environ.get("base_url")
-api_key=os.environ.get("api_key")
+model_name = os.environ.get("model_name")
+base_url = os.environ.get("base_url")
+api_key = os.environ.get("api_key")
 logger = logging.getLogger(__name__)
 
 
 def prepare_quiz_questions(
     subject: str, language: str = "en", retriever=None
 ) -> tuple[list[dict], bool]:
-    llm = ChatOpenAI(model=model_name, temperature=0,base_url=base_url,api_key=api_key)
+    llm = ChatOpenAI(
+        model=model_name, temperature=0, base_url=base_url, api_key=api_key
+    )
 
     if retriever is None:
         retriever = RAGService().get_retriever()
@@ -47,6 +50,7 @@ def prepare_quiz_questions(
     questions_per_topic = max_questions // max_topics
 
     if retriever:
+
         def _topic_ctx(inputs):
             return get_context_or_empty(inputs["topic"], retriever)
 
@@ -58,15 +62,21 @@ def prepare_quiz_questions(
         )
         question_chain = (
             RunnableParallel({"ctx": context_chain, "prompt": prompt_chain})
-            | RunnableLambda(lambda d: (d["ctx"] + "\n\n" if d["ctx"] else "") + d["prompt"].to_string())
+            | RunnableLambda(
+                lambda d: (d["ctx"] + "\n\n" if d["ctx"] else "")
+                + d["prompt"].to_string()
+            )
             | llm
         )
     else:
-        question_chain = RunnableLambda(
-            lambda inputs: generate_questions_prompt(
-                inputs["topic"], language=language
-            ).format_prompt(topic=inputs["topic"])
-        ) | llm
+        question_chain = (
+            RunnableLambda(
+                lambda inputs: generate_questions_prompt(
+                    inputs["topic"], language=language
+                ).format_prompt(topic=inputs["topic"])
+            )
+            | llm
+        )
 
     question_sets = question_chain.batch([{"topic": t} for t in topics])
 
@@ -81,9 +91,12 @@ def prepare_quiz_questions(
                 else "?"
             )
             text = q.rsplit("Correct Answer", 1)[0].strip()
-            questions_list.append({"topic": topic, "question": text, "correct": correct})
+            questions_list.append(
+                {"topic": topic, "question": text, "correct": correct}
+            )
 
     return questions_list, used_retriever
+
 
 def generate_quiz(subject: str, language: str = "en", retriever=None):
     if retriever is None:
@@ -136,7 +149,9 @@ def generate_quiz(subject: str, language: str = "en", retriever=None):
         for topic, (correct_num, total_num) in user_scores.items():
             percentage = (correct_num / total_num) * 100 if total_num > 0 else 0
             overall_percentage += percentage
-            print(f"主题: {topic} - Score: {correct_num}/{total_num} ({percentage:.2f}%)")
+            print(
+                f"主题: {topic} - Score: {correct_num}/{total_num} ({percentage:.2f}%)"
+            )
         overall_percentage /= len(user_scores) if user_scores else 1
         print(f"\n总分: {total_correct}/{total_questions} ({overall_percentage:.2f}%)")
 
@@ -146,8 +161,11 @@ def generate_quiz(subject: str, language: str = "en", retriever=None):
         print(f"在生成测试时发生错误： {e}")
         return {}
 
+
 def generate_learning_plan_from_quiz(user_name, quiz_results, language="en"):
-    plan = LearningPlan(user_name=user_name, quiz_results=quiz_results, user_language=language)
+    plan = LearningPlan(
+        user_name=user_name, quiz_results=quiz_results, user_language=language
+    )
     learning_plan = plan.generate_plan()
     plan.display_plan()
     return learning_plan

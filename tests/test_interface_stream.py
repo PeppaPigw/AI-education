@@ -1,5 +1,6 @@
 import importlib
 
+
 def test_respond_with_retriever_stream(monkeypatch):
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
 
@@ -14,6 +15,7 @@ def test_respond_with_retriever_stream(monkeypatch):
     class DummyRag:
         def get_retriever(self, *_, **__):
             return None
+
         def ingest_paths(self, *args, **kwargs):
             return None
 
@@ -25,13 +27,10 @@ def test_respond_with_retriever_stream(monkeypatch):
     monkeypatch.setattr(interface.LanguageHandler, "ensure_language", lambda t, l: t)
     gen = interface.respond_with_retriever("hello", [], "en")
     first_history, _ = next(gen)
-    # 🔥 修复：respond返回的是Gradio格式 [["user_msg", "assistant_msg"], ...]
-    # 第一次yield应该返回包含用户消息和"..."占位符的历史
     assert len(first_history) == 1
     assert first_history[0][0] == "hello"  # user message
-    assert first_history[0][1] == "..."    # placeholder
+    assert first_history[0][1] == "..."  # placeholder
     second_history, _ = next(gen)
-    # 第二次yield应该返回包含真实回答的历史
     assert len(second_history) == 1
     assert second_history[0][0] == "hello"  # user message
     assert second_history[0][1] == "answer"  # actual answer

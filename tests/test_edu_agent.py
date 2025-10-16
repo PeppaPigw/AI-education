@@ -19,6 +19,7 @@ class FakeLLM:
     def invoke(self, prompt):
         class Msg:
             content = "Fallback answer"
+
         return Msg()
 
     def bind(self, **kwargs):
@@ -37,7 +38,10 @@ def test_rag_search(monkeypatch):
     class DummyRetriever:
         def invoke(self, query):
             assert query == "cats"
-            return [Document(page_content="cats one"), Document(page_content="cats two")]
+            return [
+                Document(page_content="cats one"),
+                Document(page_content="cats two"),
+            ]
 
     class DummyService:
         def get_retriever(self):

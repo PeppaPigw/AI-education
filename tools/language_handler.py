@@ -29,38 +29,39 @@ SUPPORTED_LANGUAGES = [
     "ja",
     "ko",
     "ar",
-    "he"
+    "he",
 ]
 
 LANGUAGE_LABELS = {
-    "auto": "\U0001F310 Auto-detect",
-    "zh": "\U0001F1E8\U0001F1F3 ZH 中文",
-    "en": "\U0001F1EC\U0001F1E7 EN English",
-    "pl": "\U0001F1F5\U0001F1F1 PL Polski",
-    "cs": "\U0001F1E8\U0001F1FF CS Čeština",
-    "sk": "\U0001F1F8\U0001F1F0 SK Slovenčina",
-    "de": "\U0001F1E9\U0001F1EA DE Deutsch",
-    "fr": "\U0001F1EB\U0001F1F7 FR Français",
-    "es": "\U0001F1EA\U0001F1F8 ES Español",
-    "it": "\U0001F1EE\U0001F1F9 IT Italiano",
-    "pt": "\U0001F1F5\U0001F1F9 PT Português",
-    "ru": "\U0001F1F7\U0001F1FA RU Русский",
-    "uk": "\U0001F1FA\U0001F1E6 UK Українська",
-    "nl": "\U0001F1F3\U0001F1F1 NL Nederlands",
-    "sv": "\U0001F1F8\U0001F1EA SV Svenska",
-    "fi": "\U0001F1EB\U0001F1EE FI Suomi",
-    "no": "\U0001F1F3\U0001F1F4 NO Norsk",
-    "da": "\U0001F1E9\U0001F1F0 DA Dansk",
-    "tr": "\U0001F1F9\U0001F1F7 TR Türkçe",
-    "ja": "\U0001F1EF\U0001F1F5 JA 日本語",
-    "ko": "\U0001F1F0\U0001F1F7 KO 한국어",
-    "ar": "\U0001F1F8\U0001F1E6 AR العربية",
-    "he": "\U0001F1EE\U0001F1F1 HE עברית",
+    "auto": "\U0001f310 Auto-detect",
+    "zh": "\U0001f1e8\U0001f1f3 ZH 中文",
+    "en": "\U0001f1ec\U0001f1e7 EN English",
+    "pl": "\U0001f1f5\U0001f1f1 PL Polski",
+    "cs": "\U0001f1e8\U0001f1ff CS Čeština",
+    "sk": "\U0001f1f8\U0001f1f0 SK Slovenčina",
+    "de": "\U0001f1e9\U0001f1ea DE Deutsch",
+    "fr": "\U0001f1eb\U0001f1f7 FR Français",
+    "es": "\U0001f1ea\U0001f1f8 ES Español",
+    "it": "\U0001f1ee\U0001f1f9 IT Italiano",
+    "pt": "\U0001f1f5\U0001f1f9 PT Português",
+    "ru": "\U0001f1f7\U0001f1fa RU Русский",
+    "uk": "\U0001f1fa\U0001f1e6 UK Українська",
+    "nl": "\U0001f1f3\U0001f1f1 NL Nederlands",
+    "sv": "\U0001f1f8\U0001f1ea SV Svenska",
+    "fi": "\U0001f1eb\U0001f1ee FI Suomi",
+    "no": "\U0001f1f3\U0001f1f4 NO Norsk",
+    "da": "\U0001f1e9\U0001f1f0 DA Dansk",
+    "tr": "\U0001f1f9\U0001f1f7 TR Türkçe",
+    "ja": "\U0001f1ef\U0001f1f5 JA 日本語",
+    "ko": "\U0001f1f0\U0001f1f7 KO 한국어",
+    "ar": "\U0001f1f8\U0001f1e6 AR العربية",
+    "he": "\U0001f1ee\U0001f1f1 HE עברית",
 }
 
 
 class LanguageHandler:
     """High level helpers for language detection and translation."""
+
     @staticmethod
     def detect_language(text: str) -> str:
         """Return a language code detected from ``text``.

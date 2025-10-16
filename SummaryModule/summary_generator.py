@@ -9,15 +9,19 @@ logger = logging.getLogger(__name__)
 
 from dotenv import load_dotenv
 import os
+
 load_dotenv()
-model_name=os.environ.get("model_name")
-base_url=os.environ.get("base_url")
-api_key=os.environ.get("api_key")
+model_name = os.environ.get("model_name")
+base_url = os.environ.get("base_url")
+api_key = os.environ.get("api_key")
+
 
 class StudySummaryGenerator:
 
     def __init__(self, temperature=0.5, retriever=None):
-        self.llm = ChatOpenAI(model=model_name, temperature=0,base_url=base_url,api_key=api_key)
+        self.llm = ChatOpenAI(
+            model=model_name, temperature=0, base_url=base_url, api_key=api_key
+        )
         if retriever is None:
             retriever = RAGService().get_retriever()
         self.retriever = retriever  # optional document retriever

@@ -16,11 +16,13 @@ def test_prepare_quiz_questions_with_retriever(monkeypatch):
         def invoke(self, prompt, **kwargs):
             class Msg:
                 content = "topic1"
+
             return Msg()
 
         def batch(self, prompts, config=None, **kwargs):
             class Msg:
                 content = "Question?\nCorrect Answer: a"
+
             return [Msg() for _ in prompts]
 
     monkeypatch.setattr("QuizModule.quiz_operations.ChatOpenAI", DummyLLM)
@@ -42,11 +44,13 @@ def test_prepare_quiz_questions_ignores_irrelevant_context(monkeypatch):
         def invoke(self, prompt, **kwargs):
             class Msg:
                 content = "topic1"
+
             return Msg()
 
         def batch(self, prompts, config=None, **kwargs):
             class Msg:
                 content = "Question?\nCorrect Answer: a"
+
             return [Msg() for _ in prompts]
 
     monkeypatch.setattr("QuizModule.quiz_operations.ChatOpenAI", DummyLLM)
@@ -54,4 +58,3 @@ def test_prepare_quiz_questions_ignores_irrelevant_context(monkeypatch):
     assert questions == [{"topic": "topic1", "question": "Question?", "correct": "a"}]
     # 🔥 修复：现在我们信任向量相似度，不再过滤内容，所以used为True
     assert used is True
-

@@ -28,10 +28,10 @@ import os
 load_dotenv()
 
 # 从环境变量中获取配置
-model_name=os.environ.get("model_name")
-base_url=os.environ.get("base_url")
-api_key=os.environ.get("api_key")
-embedding_model=os.environ.get("embedding_model")
+model_name = os.environ.get("model_name")
+base_url = os.environ.get("base_url")
+api_key = os.environ.get("api_key")
+embedding_model = os.environ.get("embedding_model")
 logger = logging.getLogger(__name__)
 
 
@@ -50,7 +50,11 @@ class RAGService:
         mq_include_original: Optional[bool] = None,
     ) -> None:
         # 初始化 OpenAI 嵌入模型
-        self._embeddings= OpenAIEmbeddings(openai_api_base=base_url+"/v1",model=embedding_model,openai_api_key=api_key)
+        self._embeddings = OpenAIEmbeddings(
+            openai_api_base=base_url + "/v1",
+            model=embedding_model,
+            openai_api_key=api_key,
+        )
         self._persist_directory = persist_directory
         self._vectorstore: Optional[Chroma] = None
         self._retriever = None
@@ -60,17 +64,23 @@ class RAGService:
         self._default_k = retriever_k or int(os.getenv("RAG_K", 4))
         env_mmr = os.getenv("RAG_USE_MMR")
         self._default_mmr = (
-            use_mmr if use_mmr is not None else (env_mmr is None or env_mmr.lower() in {"1", "true", "yes"})
+            use_mmr
+            if use_mmr is not None
+            else (env_mmr is None or env_mmr.lower() in {"1", "true", "yes"})
         )
         env_multi = os.getenv("RAG_USE_MULTIQUERY")
         self._use_multiquery = (
-            use_multiquery if use_multiquery is not None else (env_multi is None or env_multi.lower() in {"1", "true", "yes"})
+            use_multiquery
+            if use_multiquery is not None
+            else (env_multi is None or env_multi.lower() in {"1", "true", "yes"})
         )
         self._mq_llm_model = mq_llm_model or os.getenv("RAG_MQ_MODEL")
         self._mq_num_queries = mq_num_queries or int(os.getenv("RAG_MQ_NUM_QUERIES", 3))
         env_inc = os.getenv("RAG_MQ_INCLUDE_ORIGINAL", "false")
         self._mq_include_original = (
-            mq_include_original if mq_include_original is not None else env_inc.lower() in {"1", "true", "yes"}
+            mq_include_original
+            if mq_include_original is not None
+            else env_inc.lower() in {"1", "true", "yes"}
         )
 
     def _get_vectorstore(self) -> Chroma:
@@ -81,9 +91,7 @@ class RAGService:
                     persist_directory=self._persist_directory,
                 )
             except Exception:
-                logger.warning(
-                    "Chroma persistence appears corrupted; rebuilding store"
-                )
+                logger.warning("Chroma persistence appears corrupted; rebuilding store")
                 shutil.rmtree(self._persist_directory, ignore_errors=True)
                 try:
                     self._vectorstore = Chroma(
@@ -104,25 +112,30 @@ class RAGService:
         k = k or self._default_k
         mmr = self._default_mmr if mmr is None else mmr
         params = (k, mmr)
-        
+
         if self._retriever is None or self._retriever_params != params:
             search_type = "mmr" if mmr else "similarity"
             base = self._get_vectorstore().as_retriever(
                 search_type=search_type, search_kwargs={"k": k}
             )
             self._retriever_params = params
-            
+
             if self._use_multiquery:
                 try:
-                    llm = ChatOpenAI(model=model_name, temperature=0,base_url=base_url,api_key=api_key)
-                    
+                    llm = ChatOpenAI(
+                        model=model_name,
+                        temperature=0,
+                        base_url=base_url,
+                        api_key=api_key,
+                    )
+
                     # 🎉 关键修改：使用中文的 PromptTemplate 🎉
                     prompt = PromptTemplate.from_template(
                         "你是一个AI语言模型助手。你的任务是\n    为给定的用户问题生成{n}个不同版本，\n    以便从向量数据库中检索相关文档。\n    通过为用户问题生成多种视角，\n    你的目标是帮助用户克服基于距离的相似性搜索的某些局限性。\n    请将这些替代问题用换行符分隔。原始问题：{question}".replace(
                             "{n}", str(self._mq_num_queries)
                         )
                     )
-                    
+
                     self._retriever = MultiQueryRetriever.from_llm(
                         retriever=base,
                         llm=llm,
@@ -130,7 +143,8 @@ class RAGService:
                         include_original=self._mq_include_original,
                     )
                     logger.info(
-                        "Initialized MultiQueryRetriever with model %s", self._mq_llm_model
+                        "Initialized MultiQueryRetriever with model %s",
+                        self._mq_llm_model,
                     )
                 except Exception as exc:  # pragma: no cover - network issues
                     logger.warning("MultiQueryRetriever unavailable: %s", exc)
@@ -187,14 +201,15 @@ class RAGService:
         seen_hashes: set[str] = set()
         for doc in documents:
             # 使用内容哈希值进行去重
-            doc_hash = doc.metadata.get("doc_hash") or sha256(
-                doc.page_content.encode("utf-8")
-            ).hexdigest()
+            doc_hash = (
+                doc.metadata.get("doc_hash")
+                or sha256(doc.page_content.encode("utf-8")).hexdigest()
+            )
             doc.metadata["doc_hash"] = doc_hash
             if doc_hash in seen_hashes:
                 continue
             seen_hashes.add(doc_hash)
-            
+
             # 检查 Chroma 中是否已存在此哈希值的文档
             if not store.get(where={"doc_hash": doc_hash}, limit=1)["ids"]:
                 to_add.append(doc)

@@ -17,10 +17,12 @@ from tools.edu_tools import (
 )
 from dotenv import load_dotenv
 import os
+
 load_dotenv()
-model_name=os.environ.get("model_name")
-base_url=os.environ.get("base_url")
-api_key=os.environ.get("api_key")
+model_name = os.environ.get("model_name")
+base_url = os.environ.get("base_url")
+api_key = os.environ.get("api_key")
+
 
 @tool
 def rag_search(query: str) -> str:
@@ -28,11 +30,12 @@ def rag_search(query: str) -> str:
     try:
         retriever = RAGService().get_retriever()
         return get_context_or_empty(query, retriever)
-    except Exception as e:  
+    except Exception as e:
         return f"RAG search error: {e}"
 
+
 DEFAULT_PROMPT = PromptTemplate.from_template(
-"""Answer the following questions as best you can. You have access to the following tools:
+    """Answer the following questions as best you can. You have access to the following tools:
 
 {tools}
 
@@ -100,18 +103,19 @@ def create_agent() -> AgentExecutor:
         detect_language,
         rag_search,
     ]
-    
-  
-    llm = ChatOpenAI(model=model_name, temperature=0,base_url=base_url,api_key=api_key)
+
+    llm = ChatOpenAI(
+        model=model_name, temperature=0, base_url=base_url, api_key=api_key
+    )
     agent = create_react_agent(llm, tools, DEFAULT_PROMPT)
     # 🔥 修复：限制max_iterations为3，避免不必要的重复
     return AgentExecutor(
-        agent=agent, 
-        tools=tools, 
+        agent=agent,
+        tools=tools,
         verbose=True,
         max_iterations=3,  # 最多3次迭代
         handle_parsing_errors=True,
-        early_stopping_method="force"
+        early_stopping_method="force",
     )
 
 
@@ -121,11 +125,11 @@ def run_agent(
     retriever=None,
     return_details: bool = False,
 ) -> str | tuple[str, bool, bool]:
-    executor = executor or create_agent()    
-    
+    executor = executor or create_agent()
+
     logger = logging.getLogger(__name__)
-    
-    print("\n" + "="*80)
+
+    print("\n" + "=" * 80)
     print("🤔 用户问题:")
     print(f"   {question}")
     logger.info(f"User Question: {question}")
@@ -138,7 +142,7 @@ def run_agent(
             print(f"\n📚 从RAG检索到的上下文 (长度: {len(context)} 字符):")
             print(f"   {context[:200]}..." if len(context) > 200 else f"   {context}")
             logger.info(f"Retrieved context (length: {len(context)}): {context[:500]}")
-            
+
             question = f"{question}\n\nContext:\n{context}"
             used_retriever = True
         else:
@@ -148,14 +152,14 @@ def run_agent(
     lang = LanguageHandler.choose_or_detect(question)
     print(f"\n🌐 检测到的语言: {lang}")
     logger.info(f"Detected language: {lang}")
-    
+
     try:
         print("\n🤖 Agent正在处理...")
         print("-" * 80)
         logger.info("Agent processing started")
-        
+
         result = executor.invoke({"input": question, "language": lang})
-        
+
         output = result["output"]
         print("-" * 80)
         print("✅ Agent回答:")
@@ -170,10 +174,10 @@ def run_agent(
 
     def _needs_fallback(text: str) -> bool:
         text_stripped = text.strip()
-        
+
         if not text_stripped:
             return True
-        
+
         error_markers = [
             "agent error",
             "agent stopped",
@@ -193,14 +197,16 @@ def run_agent(
     if _needs_fallback(output):
         print("\n⚠️  检测到需要fallback，直接调用LLM...")
         logger.info("Fallback triggered, calling LLM directly")
-        
-        llm = ChatOpenAI(model=model_name, temperature=0,base_url=base_url,api_key=api_key)
+
+        llm = ChatOpenAI(
+            model=model_name, temperature=0, base_url=base_url, api_key=api_key
+        )
         try:
             msg = llm.invoke(question)
             output = getattr(msg, "content", str(msg))
             print(f"✅ Fallback LLM回答: {output}")
             logger.info(f"Fallback LLM output: {output}")
-        except Exception as e: 
+        except Exception as e:
             output = f"LLM error: {e}"
             print(f"❌ Fallback LLM错误: {e}")
             logger.error(f"Fallback LLM error: {e}")
@@ -208,8 +214,8 @@ def run_agent(
             used_fallback = True
 
     output = LanguageHandler.ensure_language(output, lang)
-    print("="*80 + "\n")
-    
+    print("=" * 80 + "\n")
+
     if return_details:
         return output, used_fallback, used_retriever
     return output

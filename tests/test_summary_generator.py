@@ -9,6 +9,7 @@ class FakeLLM(Runnable):
     def invoke(self, prompt, config=None):
         class Msg:
             content = "summary"
+
         return Msg()
 
 

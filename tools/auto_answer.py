@@ -36,32 +36,10 @@ QUESTION_WORDS = {
         "która",
         "które",
     },
-    "es": {
-        "qué",
-        "quién",
-        "quien",
-        "dónde",
-        "cuándo",
-        "cómo",
-        "por qué"
-    },
-    "fr": {
-        "qui",
-        "quoi",
-        "où",
-        "quand",
-        "pourquoi",
-        "comment"
-    },
-    "de": {
-        "wer",
-        "was",
-        "wo",
-        "wann",
-        "warum",
-        "wie"
-    },
-    "zh": { 
+    "es": {"qué", "quién", "quien", "dónde", "cuándo", "cómo", "por qué"},
+    "fr": {"qui", "quoi", "où", "quand", "pourquoi", "comment"},
+    "de": {"wer", "was", "wo", "wann", "warum", "wie"},
+    "zh": {
         "什么",
         "谁",
         "哪里",
@@ -69,9 +47,9 @@ QUESTION_WORDS = {
         "何时",
         "怎么",
         "为什么",
-        "几", 
+        "几",
         "多少",
-        "吗", 
+        "吗",
         "嘛",
         "呢",
         "要不要",
@@ -81,7 +59,7 @@ QUESTION_WORDS = {
         "该不该",
         "为什么说",
         "你是",
-    }
+    },
 }
 
 

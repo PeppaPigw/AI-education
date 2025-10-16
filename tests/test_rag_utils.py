@@ -1,5 +1,6 @@
 import os
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from langchain_core.documents import Document
 from tools.rag_utils import get_context_or_empty
@@ -33,4 +34,3 @@ def test_get_context_or_empty_filters_irrelevant():
     retriever = DummyRetriever([Document(page_content="quantum physics notes")])
     # 测试retriever返回的内容会被保留（信任相似度搜索）
     assert get_context_or_empty("art history", retriever) == "quantum physics notes"
-
