@@ -33,16 +33,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 静态文件
 app.mount("/static", StaticFiles(directory="backend/static"), name="static")
 
-# 全局变量
 rag_service = get_rag_service()
 retriever = rag_service.get_retriever()
 logger = logging.getLogger(__name__)
 KNOWLEDGE_JSON_PATH = "data/course/big_data.json"
 CURRENT_NODE = None
-CURRENT_PDF_PATH = None  # 追踪当前选择的PDF
+CURRENT_PDF_PATH = None
 
 
 # Pydantic 模型
@@ -87,10 +85,31 @@ class PDFSelection(BaseModel):
     pdf_path: str
 
 
-# API 路由
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
 @app.get("/")
 async def root():
+    return FileResponse("backend/static/login.html")
+
+
+@app.get("/index.html")
+async def get_index_page():
     return FileResponse("backend/static/index.html")
+
+
+@app.post("/api/login")
+async def login(data: LoginRequest):
+    TARGET_USERNAME = "wangqiyu"
+    TARGET_PASSWORD = "123456"
+
+    if data.username == TARGET_USERNAME and data.password == TARGET_PASSWORD:
+        return {"message": "Login successful", "redirect_url": "/index.html"}
+    else:
+        logger.warning(f"❌ Login failed for user: {data.username}")
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
 
 @app.post("/api/chat")
@@ -138,7 +157,6 @@ async def chat(data: ChatMessage):
                 )
                 return docs
 
-        # 创建过滤后的retriever
         current_retriever = FilteredRetriever(
             vectorstore=rag_service._get_vectorstore(),
             search_kwargs={"k": 4},
@@ -167,15 +185,122 @@ async def chat(data: ChatMessage):
     }
 
 
+def find_children_index_for_pdf(pdf_path: str) -> Optional[int]:
+    """根据PDF路径找到它属于big_data.json的哪个children"""
+    if not pdf_path:
+        return None
+
+    try:
+        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+            graph_data = json.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load knowledge graph: {e}")
+        return None
+
+    for i, child in enumerate(graph_data.get("children", [])):
+        for grandchild in child.get("grandchildren", []):
+            resources = grandchild.get("resource_path", [])
+            if isinstance(resources, str):
+                resources = [resources] if resources else []
+            if pdf_path in resources:
+                return i
+
+            for great_grandchild in grandchild.get("great-grandchildren", []):
+                resources = great_grandchild.get("resource_path", [])
+                if isinstance(resources, str):
+                    resources = [resources] if resources else []
+                if pdf_path in resources:
+                    return i
+
+                for ggc in great_grandchild.get("great-grandchildren", []):
+                    resources = ggc.get("resource_path", [])
+                    if isinstance(resources, str):
+                        resources = [resources] if resources else []
+                    if pdf_path in resources:
+                        return i
+
+    return None
+
+
 @app.post("/api/quiz/start")
 async def start_quiz(data: QuizStart):
     """开始测验"""
+    global CURRENT_PDF_PATH
+
     code = LanguageHandler.code_from_display(data.lang_choice)
     language = (
         code if code != "auto" else LanguageHandler.choose_or_detect(data.subject)
     )
+
+    current_retriever = None
+    if CURRENT_PDF_PATH and os.path.exists(CURRENT_PDF_PATH):
+        from langchain_core.vectorstores import VectorStoreRetriever
+        from langchain_core.callbacks import CallbackManagerForRetrieverRun
+
+        children_index = find_children_index_for_pdf(CURRENT_PDF_PATH)
+        logger.info(f"🔍 Current PDF belongs to children[{children_index}]")
+
+        question_file_path = None
+        if children_index is not None and 0 <= children_index <= 5:
+            question_file_path = f"data/Question/Q{children_index + 1}.txt"
+            if os.path.exists(question_file_path):
+                logger.info(f"📄 Using question file: {question_file_path}")
+            else:
+                logger.warning(f"⚠️ Question file not found: {question_file_path}")
+                question_file_path = None
+
+        class QuizFilteredRetriever(VectorStoreRetriever):
+            """Quiz专用retriever：检索当前PDF和对应的Question文件"""
+
+            pdf_path: str
+            question_file_content: str = ""
+
+            def _get_relevant_documents(
+                self, query: str, *, run_manager: CallbackManagerForRetrieverRun = None
+            ):
+                # 获取向量存储
+                vectorstore = rag_service._get_vectorstore()
+
+                # 检索当前PDF
+                docs = vectorstore.similarity_search(
+                    query, k=3, filter={"source": self.pdf_path}
+                )
+                logger.info(f"🔍 Found {len(docs)} docs from current PDF")
+
+                # 如果有Question文件内容，添加相关问题到上下文
+                if self.question_file_content:
+                    from langchain.schema import Document
+
+                    # 将Question文件内容作为额外文档
+                    question_doc = Document(
+                        page_content=self.question_file_content[:2000],  # 限制长度
+                        metadata={"source": "question_bank"},
+                    )
+                    docs.append(question_doc)
+                    logger.info("✅ Added question bank content to context")
+
+                return docs
+
+        # 读取Question文件内容
+        question_content = ""
+        if question_file_path and os.path.exists(question_file_path):
+            with open(question_file_path, "r", encoding="utf-8") as f:
+                question_content = f.read()
+
+        # 创建过滤后的retriever
+        current_retriever = QuizFilteredRetriever(
+            vectorstore=rag_service._get_vectorstore(),
+            search_kwargs={"k": 3},
+            pdf_path=CURRENT_PDF_PATH,
+            question_file_content=question_content,
+        )
+        logger.info(f"✅ Created quiz retriever for: {CURRENT_PDF_PATH}")
+    else:
+        current_retriever = retriever
+        logger.info(f"⚠️ No current PDF, using global retriever")
+
     questions, used_retriever = prepare_quiz_questions(
-        data.subject, language=language, retriever=retriever
+        data.subject, language=language, retriever=current_retriever
     )
 
     if not questions:

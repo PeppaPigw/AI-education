@@ -16,4 +16,7 @@ open on localhost
 python main-fastapi.py
 ```
 
-open on localhost
+open on http://localhost:8000/
+
+username:wangqiyu
+password:123456
