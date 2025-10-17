@@ -281,13 +281,11 @@ async def start_quiz(data: QuizStart):
 
                 return docs
 
-        # 读取Question文件内容
         question_content = ""
         if question_file_path and os.path.exists(question_file_path):
             with open(question_file_path, "r", encoding="utf-8") as f:
                 question_content = f.read()
 
-        # 创建过滤后的retriever
         current_retriever = QuizFilteredRetriever(
             vectorstore=rag_service._get_vectorstore(),
             search_kwargs={"k": 3},
@@ -601,11 +599,8 @@ async def select_pdf(data: PDFSelection):
     if not os.path.exists(pdf_path):
         raise HTTPException(status_code=404, detail="PDF not found")
 
-    # 设置当前PDF
     CURRENT_PDF_PATH = pdf_path
     logger.info(f"📄 Selected PDF: {pdf_path}")
-
-    # 确保PDF已经在RAG数据库中
     ingest_error = rag_service.ingest_paths([pdf_path])
     if ingest_error:
         logger.error(f"❌ Failed to ingest PDF: {ingest_error}")

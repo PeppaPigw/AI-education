@@ -1,14 +1,11 @@
-// API 基础 URL
 const API_BASE = "";
 
-// 全局状态
 let currentNode = null;
 let currentPdfPath = null;
 let chatHistory = [];
 let quizState = null;
 let knowledgeGraphData = null;
 
-// 初始化
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("DOM loaded, starting initialization...");
   try {
@@ -21,7 +18,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// 加载语言列表
 async function loadLanguages() {
   try {
     const response = await fetch(`${API_BASE}/api/languages`);
@@ -35,7 +31,6 @@ async function loadLanguages() {
   }
 }
 
-// 加载知识图谱
 async function loadKnowledgeGraph() {
   try {
     console.log("Loading knowledge graph...");
@@ -53,7 +48,6 @@ async function loadKnowledgeGraph() {
   }
 }
 
-// 处理节点点击，显示资源
 window.handleNodeClick = function (nodeData) {
   console.log("handleNodeClick called with:", nodeData);
   console.log("Node type:", nodeData.type);
@@ -62,7 +56,6 @@ window.handleNodeClick = function (nodeData) {
   currentNode = nodeData.name;
   const resources = nodeData.resource_path;
 
-  // 处理resource_path可能是字符串或数组的情况
   let resourceArray = [];
   if (typeof resources === "string") {
     if (resources.trim()) {
@@ -76,7 +69,7 @@ window.handleNodeClick = function (nodeData) {
 
   if (!resourceArray || resourceArray.length === 0) {
     console.log("No resources found for node:", nodeData.name);
-    // 清空资源列表但不隐藏容器
+
     const resourceGroup = document.getElementById("resource-display-group");
     const resourceList = document.getElementById("resource-list");
     resourceList.innerHTML =
@@ -85,7 +78,6 @@ window.handleNodeClick = function (nodeData) {
     return;
   }
 
-  // 判断是视频还是PDF
   const isVideo =
     resourceArray[0].startsWith("http://") ||
     resourceArray[0].startsWith("https://");
@@ -94,7 +86,6 @@ window.handleNodeClick = function (nodeData) {
   const resourceList = document.getElementById("resource-list");
 
   if (isVideo) {
-    // 视频资源 - 使用great-grandchildren名字
     const videoNames = getGrandchildrenNames(nodeData.name);
     console.log("Video names from great-grandchildren:", videoNames);
     resourceList.innerHTML = resourceArray
@@ -104,7 +95,6 @@ window.handleNodeClick = function (nodeData) {
       })
       .join("");
   } else {
-    // PDF资源 - 去掉后缀
     resourceList.innerHTML = resourceArray
       .map((path) => {
         const filename = path
@@ -150,21 +140,17 @@ function getGrandchildrenNames(childName) {
 function selectVideo(videoUrl) {
   currentPdfPath = null;
 
-  // 更新资源列表样式
   document.querySelectorAll(".resource-item").forEach((item) => {
     item.classList.toggle("active", item.dataset.path === videoUrl);
   });
 
-  // 隐藏知识图谱和PDF
   document.getElementById("knowledge-graph-container").style.display = "none";
   document.getElementById("pdf-viewer-container").style.display = "none";
 
-  // 显示视频播放器
   const videoContainer = document.getElementById("video-player-container");
   const video = document.getElementById("video-player");
   videoContainer.style.display = "block";
 
-  // 使用HLS.js播放m3u8
   if (Hls.isSupported()) {
     const hls = new Hls();
     hls.loadSource(videoUrl);
@@ -179,21 +165,17 @@ function selectVideo(videoUrl) {
     });
   }
 
-  // 显示功能面板
   document.getElementById("main-function-group").style.display = "block";
   document.getElementById(
     "current-node-display"
   ).textContent = `当前节点: ${currentNode}`;
 }
 
-// 设置事件监听器
 function setupEventListeners() {
-  // 功能切换
   document
     .getElementById("feature-select")
     .addEventListener("change", handleFeatureSwitch);
 
-  // 聊天
   document
     .getElementById("send-btn")
     .addEventListener("click", sendChatMessage);
@@ -201,7 +183,6 @@ function setupEventListeners() {
     if (e.key === "Enter") sendChatMessage();
   });
 
-  // 测验
   document
     .getElementById("start-quiz-btn")
     .addEventListener("click", startQuiz);
@@ -212,30 +193,24 @@ function setupEventListeners() {
     .getElementById("plan-from-quiz-btn")
     .addEventListener("click", generatePlanFromQuiz);
 
-  // 学习计划
   document
     .getElementById("plan-btn")
     .addEventListener("click", generateLearningPlan);
 
-  // 总结
   document
     .getElementById("summary-btn")
     .addEventListener("click", generateSummary);
 
-  // 上传
   document.getElementById("upload-btn").addEventListener("click", uploadFiles);
 }
 
-// 选择资源
 async function selectResource(path) {
   currentPdfPath = path;
 
-  // 更新资源列表样式
   document.querySelectorAll(".resource-item").forEach((item) => {
     item.classList.toggle("active", item.dataset.path === path);
   });
 
-  // 通知后端当前选择的PDF
   try {
     const response = await fetch(`${API_BASE}/api/pdf/select`, {
       method: "POST",
@@ -252,7 +227,6 @@ async function selectResource(path) {
     console.error("Error selecting PDF:", error);
   }
 
-  // 显示 PDF
   document.getElementById("knowledge-graph-container").style.display = "none";
   document.getElementById("video-player-container").style.display = "none";
   document.getElementById("pdf-viewer-container").style.display = "block";
@@ -260,14 +234,12 @@ async function selectResource(path) {
     "pdf-viewer"
   ).src = `${API_BASE}/api/pdf/${encodeURIComponent(path)}`;
 
-  // 显示功能面板
   document.getElementById("main-function-group").style.display = "block";
   document.getElementById(
     "current-node-display"
   ).textContent = `当前节点: ${currentNode}`;
 }
 
-// 处理功能切换
 function handleFeatureSwitch(e) {
   const feature = e.target.value;
   const groups = [
@@ -291,7 +263,6 @@ function handleFeatureSwitch(e) {
   });
 }
 
-// 发送聊天消息
 async function sendChatMessage() {
   const input = document.getElementById("chat-input");
   const message = input.value.trim();
@@ -300,11 +271,9 @@ async function sendChatMessage() {
   const langChoice = document.getElementById("lang-select").value;
   const chatbot = document.getElementById("chatbot");
 
-  // 添加用户消息
   appendMessage("user", message);
   input.value = "";
 
-  // 显示加载状态
   const loadingId = "loading-" + Date.now();
   appendMessage("bot", '<span class="loading"></span>', loadingId);
 
@@ -321,10 +290,8 @@ async function sendChatMessage() {
 
     const data = await response.json();
 
-    // 移除加载状态
     document.getElementById(loadingId)?.remove();
 
-    // 添加助手消息
     const cssClass = data.used_fallback ? "bot fallback" : "bot";
     appendMessage(cssClass, data.response);
 
@@ -336,18 +303,15 @@ async function sendChatMessage() {
   }
 }
 
-// 添加消息到聊天框
 function appendMessage(type, content, id = null) {
   const chatbot = document.getElementById("chatbot");
   const messageDiv = document.createElement("div");
   messageDiv.className = `message ${type}`;
   if (id) messageDiv.id = id;
 
-  // 如果内容包含 HTML 标签，直接设置
   if (content.includes("<")) {
     messageDiv.innerHTML = content;
   } else {
-    // 否则使用 marked 渲染 Markdown
     messageDiv.innerHTML = marked.parse(content);
     messageDiv.classList.add("markdown-content");
   }
@@ -356,7 +320,6 @@ function appendMessage(type, content, id = null) {
   chatbot.scrollTop = chatbot.scrollHeight;
 }
 
-// 开始测验
 async function startQuiz() {
   const subject = document.getElementById("quiz-subject").value.trim();
   if (!subject) {
