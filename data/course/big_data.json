@@ -16,12 +16,12 @@
       "grandchildren": [
         {
           "name": "大数据生命周期与应用",
-          "flag": "0",
+          "flag": "1",
           "resource_path": "",
           "great-grandchildren": [
             {
               "name": "大数据生命周期",
-              "flag": "0",
+              "flag": "1",
               "resource_path": ["data/SpeechPDF/1-1-cn.pdf"]
             },
             {

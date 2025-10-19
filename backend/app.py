@@ -24,7 +24,6 @@ from tools.covert_resource import convert_to_pdf
 
 app = FastAPI(title="AI-Education API")
 
-# CORS配置
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -222,6 +221,55 @@ def find_children_index_for_pdf(pdf_path: str) -> Optional[int]:
     return None
 
 
+def find_grandchild_and_collect_pdfs(pdf_path: str) -> List[str]:
+    """找到PDF所属的grandchild，并收集该grandchild下所有great-grandchildren的PDF"""
+    if not pdf_path:
+        return []
+
+    try:
+        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+            graph_data = json.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load knowledge graph: {e}")
+        return []
+
+    all_pdfs = []
+
+    for child in graph_data.get("children", []):
+        for grandchild in child.get("grandchildren", []):
+
+            found_in_this_grandchild = False
+
+            resources = grandchild.get("resource_path", [])
+            if isinstance(resources, str):
+                resources = [resources] if resources else []
+            if pdf_path in resources:
+                found_in_this_grandchild = True
+
+            for great_grandchild in grandchild.get("great-grandchildren", []):
+                resources = great_grandchild.get("resource_path", [])
+                if isinstance(resources, str):
+                    resources = [resources] if resources else []
+                if pdf_path in resources:
+                    found_in_this_grandchild = True
+
+            if found_in_this_grandchild:
+                for great_grandchild in grandchild.get("great-grandchildren", []):
+                    resources = great_grandchild.get("resource_path", [])
+                    if isinstance(resources, str):
+                        resources = [resources] if resources else []
+                    for res in resources:
+                        if res.endswith(".pdf") and os.path.exists(res):
+                            all_pdfs.append(res)
+
+                logger.info(
+                    f"Found {len(all_pdfs)} PDFs in grandchild '{grandchild.get('name')}'"
+                )
+                return all_pdfs
+
+    return []
+
+
 @app.post("/api/quiz/start")
 async def start_quiz(data: QuizStart):
     """开始测验"""
@@ -380,10 +428,7 @@ def _compile_results(state: Dict) -> str:
         total_questions += tot
 
     if lines:
-        overall = sum(
-            (corr / tot) * 100 if tot else 0 for corr, tot in state["scores"].values()
-        )
-        overall /= len(state["scores"])
+        overall = (total_correct / total_questions) * 100 if total_questions > 0 else 0
         lines.append(
             f"\nOverall Score: {total_correct}/{total_questions} ({overall:.2f}%)"
         )
@@ -436,12 +481,91 @@ async def create_learning_plan_from_quiz(data: LearningPlanFromQuiz):
 @app.post("/api/summary")
 async def generate_summary(data: SummaryRequest):
     """生成知识总结"""
+    global CURRENT_PDF_PATH
+
     code = LanguageHandler.code_from_display(data.lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(data.topic)
 
-    summarizer = StudySummaryGenerator(retriever=retriever)
+    # 创建针对当前节点相关PDF的retriever
+    current_retriever = None
+    if CURRENT_PDF_PATH and os.path.exists(CURRENT_PDF_PATH):
+        from langchain_core.vectorstores import VectorStoreRetriever
+        from langchain_core.callbacks import CallbackManagerForRetrieverRun
+
+        # 收集当前PDF所属grandchild下的所有great-grandchildren的PDF
+        related_pdfs = find_grandchild_and_collect_pdfs(CURRENT_PDF_PATH)
+
+        if related_pdfs:
+            logger.info(f"📚 Summary will use {len(related_pdfs)} related PDFs")
+
+            class SummaryFilteredRetriever(VectorStoreRetriever):
+                """Summary专用retriever：检索grandchild下所有great-grandchildren的PDF"""
+
+                pdf_paths: List[str]
+
+                def _get_relevant_documents(
+                    self,
+                    query: str,
+                    *,
+                    run_manager: CallbackManagerForRetrieverRun = None,
+                ):
+                    # 获取向量存储
+                    vectorstore = rag_service._get_vectorstore()
+
+                    # 从所有相关PDF中检索
+                    all_docs = []
+                    for pdf_path in self.pdf_paths:
+                        docs = vectorstore.similarity_search(
+                            query, k=2, filter={"source": pdf_path}
+                        )
+                        all_docs.extend(docs)
+
+                    logger.info(
+                        f"🔍 Summary retrieval: found {len(all_docs)} docs from {len(self.pdf_paths)} PDFs"
+                    )
+
+                    # 返回最相关的文档（限制总数）
+                    return all_docs[:8]
+
+            current_retriever = SummaryFilteredRetriever(
+                vectorstore=rag_service._get_vectorstore(),
+                search_kwargs={"k": 8},
+                pdf_paths=related_pdfs,
+            )
+            logger.info(f"✅ Created summary retriever for {len(related_pdfs)} PDFs")
+        else:
+            logger.info(f"⚠️ No related PDFs found, using current PDF only")
+            # 如果没找到相关PDF，至少使用当前PDF
+            from langchain_core.vectorstores import VectorStoreRetriever
+            from langchain_core.callbacks import CallbackManagerForRetrieverRun
+
+            class SinglePDFRetriever(VectorStoreRetriever):
+                pdf_path: str
+
+                def _get_relevant_documents(
+                    self,
+                    query: str,
+                    *,
+                    run_manager: CallbackManagerForRetrieverRun = None,
+                ):
+                    vectorstore = rag_service._get_vectorstore()
+                    docs = vectorstore.similarity_search(
+                        query, k=4, filter={"source": self.pdf_path}
+                    )
+                    return docs
+
+            current_retriever = SinglePDFRetriever(
+                vectorstore=rag_service._get_vectorstore(),
+                search_kwargs={"k": 4},
+                pdf_path=CURRENT_PDF_PATH,
+            )
+    else:
+        current_retriever = retriever
+        logger.info(f"⚠️ No current PDF, using global retriever")
+
+    summarizer = StudySummaryGenerator(retriever=current_retriever)
     summary, used_retriever = summarizer.generate_summary(
-        data.topic, language=language, retriever=retriever
+        data.topic, language=language, retriever=current_retriever
     )
 
     return {"summary": summary, "used_retriever": used_retriever}

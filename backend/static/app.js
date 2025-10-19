@@ -343,9 +343,13 @@ async function startQuiz() {
     quizState = data.state;
 
     displayQuestion(data.question);
-    document.getElementById("quiz-result").textContent = data.used_retriever
-      ? "📄 Quiz 使用文档上下文生成"
-      : "";
+    const resultDiv = document.getElementById("quiz-result");
+    if (data.used_retriever) {
+      resultDiv.innerHTML = marked.parse("📄 Quiz 使用文档上下文生成");
+      resultDiv.classList.add("markdown-content");
+    } else {
+      resultDiv.innerHTML = "";
+    }
   } catch (error) {
     console.error("Error starting quiz:", error);
     alert("生成测验失败");
@@ -356,14 +360,29 @@ async function startQuiz() {
 function displayQuestion(question) {
   const questionDiv = document.getElementById("quiz-question");
   let text = question.question;
-  // 格式化选项
-  text = text.replace(/\s*([abcd]\))/gi, "\n$1");
-  questionDiv.innerHTML = `<strong>${
+
+  // 将题目和选项分开
+  const parts = text.split(/\s*([abcd]\))/i);
+
+  let questionText = parts[0].trim();
+  let optionsArray = [];
+
+  // 解析选项
+  for (let i = 1; i < parts.length; i += 2) {
+    if (parts[i] && parts[i + 1]) {
+      const letter = parts[i].replace(")", "").toUpperCase();
+      const optionText = parts[i + 1].trim();
+      optionsArray.push(`**${letter}**: ${optionText}`);
+    }
+  }
+
+  const markdownContent = `**${
     question.topic
-  }</strong><br><br>${text.trim()}`;
+  }**\n\n${questionText}\n\n${optionsArray.join("\n\n")}`;
+  questionDiv.innerHTML = marked.parse(markdownContent);
+  questionDiv.classList.add("markdown-content");
 }
 
-// 回答测验
 async function answerQuiz(choice) {
   if (!quizState) {
     alert("请先开始测验");
@@ -383,20 +402,24 @@ async function answerQuiz(choice) {
     const data = await response.json();
 
     const resultDiv = document.getElementById("quiz-result");
-    resultDiv.textContent = data.is_correct
+    const feedbackMsg = data.is_correct
       ? "✅ 正确！"
       : `❌ 错误！正确答案是：${data.correct_answer}`;
 
     if (data.finished) {
-      document.getElementById("quiz-question").innerHTML =
-        "<strong>测验完成！</strong>";
-      resultDiv.textContent += "\n\n" + data.results;
+      const questionDiv = document.getElementById("quiz-question");
+      questionDiv.innerHTML = marked.parse("## 测验完成！");
+      questionDiv.classList.add("markdown-content");
+      resultDiv.innerHTML = marked.parse(feedbackMsg + "\n\n" + data.results);
+      resultDiv.classList.add("markdown-content");
       quizState = data.state;
     } else {
+      resultDiv.innerHTML = marked.parse(feedbackMsg);
+      resultDiv.classList.add("markdown-content");
       quizState = data.state;
       setTimeout(() => {
         displayQuestion(data.next_question);
-        resultDiv.textContent = "";
+        resultDiv.innerHTML = "";
       }, 1500);
     }
   } catch (error) {
@@ -434,10 +457,15 @@ async function generatePlanFromQuiz() {
     });
 
     const data = await response.json();
-    output.textContent = "✅ " + data.message + "\n\n" + formatPlan(data.plan);
+    const formattedPlan = formatPlanMarkdown(data.plan);
+    output.innerHTML = marked.parse(
+      "✅ " + data.message + "\n\n" + formattedPlan
+    );
+    output.classList.add("markdown-content");
   } catch (error) {
     console.error("Error generating plan from quiz:", error);
-    output.textContent = "❌ 生成学习计划失败";
+    output.innerHTML = marked.parse("❌ 生成学习计划失败");
+    output.classList.add("markdown-content");
   }
 }
 
@@ -467,14 +495,32 @@ async function generateLearningPlan() {
     });
 
     const data = await response.json();
-    output.textContent = "✅ " + data.message + "\n\n" + formatPlan(data.plan);
+    const formattedPlan = formatPlanMarkdown(data.plan);
+    output.innerHTML = marked.parse(
+      "✅ " + data.message + "\n\n" + formattedPlan
+    );
+    output.classList.add("markdown-content");
   } catch (error) {
     console.error("Error generating learning plan:", error);
-    output.textContent = "❌ 生成学习计划失败";
+    output.innerHTML = marked.parse("❌ 生成学习计划失败");
+    output.classList.add("markdown-content");
   }
 }
 
-// 格式化学习计划
+// 格式化学习计划为markdown
+function formatPlanMarkdown(plan) {
+  return plan
+    .map(
+      (entry) =>
+        `### 📅 ${entry.date}\n\n` +
+        `**主题**: ${entry.topic}\n\n` +
+        `**优先级**: ${entry.priority}\n\n` +
+        `**推荐材料**:\n${entry.materials.map((m) => `- ${m}`).join("\n")}\n`
+    )
+    .join("\n---\n\n");
+}
+
+// 格式化学习计划（保留旧函数以防万一）
 function formatPlan(plan) {
   return plan
     .map(
@@ -518,7 +564,8 @@ async function generateSummary() {
     output.classList.add("markdown-content");
   } catch (error) {
     console.error("Error generating summary:", error);
-    output.textContent = "❌ 生成总结失败";
+    output.innerHTML = marked.parse("❌ 生成总结失败");
+    output.classList.add("markdown-content");
   }
 }
 
@@ -560,7 +607,6 @@ async function uploadFiles() {
       status.textContent = "✅ " + data.message;
       fileInput.value = "";
 
-      // 重新加载资源列表
       document
         .getElementById("node-selector")
         .dispatchEvent(new Event("change"));
