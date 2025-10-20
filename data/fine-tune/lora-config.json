@@ -1,0 +1,33 @@
+{
+  "title": "LORA-configuration",
+  "parameters": [
+    {
+      "label": "Learning Rate [0, 0.1]",
+      "value": 0.0001
+    },
+    {
+      "label": "Number of Epochs [1, 10]",
+      "value": 3
+    },
+    {
+      "label": "Batch Size",
+      "value": 8
+    },
+    {
+      "label": "LoRA Rank",
+      "value": 8
+    },
+    {
+      "label": "LoRA Alpha",
+      "value": 32
+    },
+    {
+      "label": "LoRA Dropout [0, 1.0]",
+      "value": 0.05
+    },
+    {
+      "label": "Max Tokens [0, 32768]",
+      "value": 32768
+    }
+  ]
+}

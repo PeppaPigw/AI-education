@@ -43,6 +43,16 @@ main {
   transform: translate(-50%, -50%);
 }
 
+.footer {
+  position: absolute;
+  top: 91.5%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 1rem;
+  color: #696969;
+}
+
 .forms-wrap {
   position: absolute;
   height: 100%;
