@@ -2,6 +2,16 @@
 
 ## Usage
 
+### Env
+
+For python==3.12,you can configure the environment using the following command
+
+```bash
+pip install -r requirements.txt
+```
+
+### Run
+
 - For Gradio
 
 ```python

@@ -11,7 +11,7 @@ from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 from langchain_core.prompts import PromptTemplate
-from langchain.retrievers import MultiQueryRetriever
+from langchain_classic.retrievers import MultiQueryRetriever
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.document_loaders import (
     UnstructuredFileLoader,

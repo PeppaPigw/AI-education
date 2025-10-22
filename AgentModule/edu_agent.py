@@ -1,4 +1,5 @@
-from langchain.agents import AgentExecutor, create_react_agent
+from langchain_classic.agents import create_react_agent
+from langchain_classic.agents.agent import AgentExecutor
 import logging
 
 from langchain_openai import ChatOpenAI

@@ -1,4 +1,12 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import (
+    FastAPI,
+    File,
+    UploadFile,
+    HTTPException,
+    Form,
+    status,
+)
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -99,16 +107,50 @@ async def get_index_page():
     return FileResponse("backend/static/index.html")
 
 
-@app.post("/api/login")
-async def login(data: LoginRequest):
-    TARGET_USERNAME = "wangqiyu"
-    TARGET_PASSWORD = "123456"
+@app.get("/teacher.html")
+async def get_teacher_page():
+    return FileResponse("backend/static/teacher.html")
 
-    if data.username == TARGET_USERNAME and data.password == TARGET_PASSWORD:
-        return {"message": "Login successful", "redirect_url": "/index.html"}
+
+@app.get("/admin.html")
+async def get_admin_page():
+    return FileResponse("backend/static/admin.html")
+
+
+@app.post("/login/student")
+async def login_student(
+    student_id: str = Form(..., alias="student_id"), password: str = Form(...)
+):
+    if student_id == "stuwangqiyu" and password == "123456":
+
+        return RedirectResponse(url="/index.html", status_code=status.HTTP_302_FOUND)
     else:
-        logger.warning(f"❌ Login failed for user: {data.username}")
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
+
+
+@app.post("/login/teacher")
+async def login_teacher(
+    teacher_id: str = Form(..., alias="teacher_id"), password: str = Form(...)
+):
+    if teacher_id == "teawangqiyu" and password == "123456":
+
+        return RedirectResponse(url="/teacher.html", status_code=status.HTTP_302_FOUND)
+    else:
+
+        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
+
+
+@app.post("/login/admin")
+async def login_admin(
+    admin_username: str = Form(..., alias="admin_username"), password: str = Form(...)
+):
+    if admin_username == "adminwangqiyu" and password == "123456":
+        # 登录成功，重定向到管理员页
+        return RedirectResponse(url="/admin.html", status_code=status.HTTP_302_FOUND)
+    else:
+        # 登录失败，重定向回登录页
+        return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
 
 
 @app.post("/api/chat")

@@ -1,6 +1,6 @@
 from tools.quiz_prompts import generate_topic_list_prompt, generate_questions_prompt
 from langchain_openai import ChatOpenAI
-from langchain.schema.runnable import RunnableLambda, RunnableParallel
+from langchain_core.runnables import RunnableLambda, RunnableParallel
 from LearningPlanModule.learning_plan import LearningPlan
 from tools.auto_answer import auto_answer
 from tools.rag_service import RAGService
