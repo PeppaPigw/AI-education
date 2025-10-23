@@ -146,10 +146,8 @@ async def login_admin(
     admin_username: str = Form(..., alias="admin_username"), password: str = Form(...)
 ):
     if admin_username == "adminwangqiyu" and password == "123456":
-        # 登录成功，重定向到管理员页
         return RedirectResponse(url="/admin.html", status_code=status.HTTP_302_FOUND)
     else:
-        # 登录失败，重定向回登录页
         return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
 
 
