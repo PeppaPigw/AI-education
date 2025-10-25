@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Education - 我的学习</title>
+    <style>
+      /* 1. 全局和重置 */
+      :root {
+        --primary-blue: #7a6ad8;
+        --light-gray-bg: #f5f5f5;
+        --white-bg: #fff;
+        --border-gray: #e0e0e0;
+        --text-dark: #2d2f31;
+        --text-light: #5f5f5f;
+        --text-dim: #9e9e9e;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        margin: 0;
+        background-color: var(--white-bg); /* 页面背景是白色 */
+        color: var(--text-dark);
+        line-height: 1.5;
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--primary-blue);
+        cursor: pointer;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* 2. 头部导航栏 */
+      .main-header {
+        background-color: var(--white-bg);
+        border-bottom: 1px solid var(--border-gray);
+        padding: 10px 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--primary-blue);
+        cursor: pointer;
+      }
+
+      .nav-links a {
+        margin: 0 10px;
+        color: var(--text-dark);
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .search-bar {
+        flex-grow: 1;
+        max-width: 350px;
+        display: flex;
+        border: 1px solid var(--border-gray);
+        border-radius: 4px;
+      }
+
+      .search-bar input {
+        border: none;
+        padding: 8px 12px;
+        font-size: 14px;
+        width: 100%;
+        border-radius: 4px 0 0 4px;
+      }
+      .search-bar input:focus {
+        outline: none;
+      }
+
+      .search-bar button {
+        border: none;
+        background-color: var(--primary-blue);
+        color: white;
+        padding: 0 15px;
+        cursor: pointer;
+        border-radius: 0 4px 4px 0;
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 20px;
+      }
+
+      .notification-bell {
+        position: relative;
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: -2px;
+        right: -5px;
+        background-color: red;
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .profile-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--text-dark);
+      }
+
+      /* 3. 主内容区域 */
+      .main-dashboard {
+        padding: 32px 0;
+      }
+
+      .dashboard-layout {
+        display: grid;
+        grid-template-columns: 300px 1fr; /* 左侧边栏 300px，右侧自适应 */
+        gap: 32px;
+      }
+
+      /* 4. 左侧边栏 */
+      .dashboard-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .greeting-box {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .greeting-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--primary-blue);
+        color: var(--white-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+        flex-shrink: 0;
+      }
+
+      .greeting-text h2 {
+        font-size: 20px;
+        margin: 0 0 4px 0;
+      }
+
+      .greeting-text p {
+        font-size: 14px;
+        color: var(--text-light);
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .goal-tag {
+        background-color: var(--light-gray-bg);
+        color: var(--text-dark);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .widget-card {
+        border: 1px solid var(--border-gray);
+        border-radius: 8px;
+        padding: 20px;
+        background-color: var(--white-bg);
+      }
+
+      .widget-card h3 {
+        font-size: 18px;
+        margin-top: 0;
+        margin-bottom: 16px;
+      }
+
+      .goal-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .goal-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: var(--text-light);
+      }
+
+      .goal-item .icon {
+        font-size: 18px;
+        color: var(--primary-blue);
+      }
+
+      /* 4.1 日历小部件 */
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .calendar-week-toggles {
+        display: flex;
+        gap: 8px;
+      }
+
+      .calendar-week-toggles span {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-dim);
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .calendar-nav {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .calendar-nav h4 {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .calendar-nav button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        color: var(--text-light);
+        cursor: pointer;
+      }
+
+      .calendar-grid-header,
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+      }
+
+      .calendar-grid-header span {
+        font-size: 12px;
+        color: var(--text-dim);
+        padding: 8px 0;
+      }
+
+      .calendar-cell {
+        font-size: 14px;
+        padding: 6px 0;
+        position: relative;
+        color: var(--text-dark);
+      }
+
+      .calendar-cell.dimmed {
+        color: var(--text-dim);
+      }
+
+      .calendar-cell.today {
+        background-color: var(--light-gray-bg);
+        border-radius: 50%;
+        font-weight: bold;
+      }
+
+      .calendar-cell.locked {
+        color: var(--text-dim);
+        cursor: pointer;
+      }
+
+      .calendar-cell .lock-icon {
+        font-size: 12px;
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .calendar-footer p {
+        font-size: 12px;
+        color: var(--text-light);
+        margin: 12px 0 0 0;
+      }
+
+      /* 5. 右侧主内容 */
+      .main-feed {
+        min-width: 0; /* 防止 flex/grid 子项溢出 */
+      }
+
+      .feed-tabs {
+        display: flex;
+        gap: 20px;
+        border-bottom: 1px solid var(--border-gray);
+        margin-bottom: 24px;
+      }
+
+      .feed-tab {
+        padding: 12px 4px;
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--text-light);
+        border: none;
+        background: none;
+        border-bottom: 3px solid transparent;
+      }
+
+      .feed-tab.active {
+        color: var(--text-dark);
+        border-bottom-color: var(--primary-blue);
+      }
+
+      .feed-card {
+        background-color: var(--white-bg);
+        border: 1px solid var(--border-gray);
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .feed-card .info .provider {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-light);
+      }
+
+      .feed-card .info h4 {
+        font-size: 18px;
+        margin: 4px 0 8px 0;
+      }
+
+      .feed-card .info .progress-text {
+        font-size: 14px;
+        color: var(--text-light);
+      }
+
+      .feed-card .action-button {
+        background-color: var(--primary-blue);
+        color: #fff;
+        padding: 10px 24px;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+      .feed-card .action-button:hover {
+        opacity: 0.9;
+      }
+
+      .peer-review-card .info h4 {
+        margin-bottom: 4px;
+      }
+      .peer-review-card .info .subtitle {
+        font-size: 14px;
+        color: var(--text-light);
+      }
+
+      /* 6. 页脚 */
+      .main-footer {
+        background-color: var(--light-gray-bg);
+        padding: 48px 0;
+        margin-top: 64px;
+        border-top: 1px solid var(--border-gray);
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+
+      .footer-column h5 {
+        font-size: 16px;
+        margin-top: 0;
+        margin-bottom: 12px;
+      }
+
+      .footer-column ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .footer-column ul li a {
+        font-size: 14px;
+        color: var(--text-dark);
+      }
+      .footer-column ul li a:hover {
+        text-decoration: underline;
+      }
+
+      .app-buttons img {
+        max-width: 135px;
+        height: auto;
+        margin-bottom: 10px;
+      }
+
+      /* 7. 学习计划样式 */
+      .plan-card {
+        background-color: var(--white-bg);
+        border: 1px solid var(--border-gray);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .plan-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: var(--primary-blue);
+      }
+
+      .plan-card.selected {
+        border-color: var(--primary-blue);
+        background-color: #f0f0ff;
+      }
+
+      .plan-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .plan-date {
+        font-size: 14px;
+        color: var(--text-light);
+        font-weight: 600;
+      }
+
+      .plan-priority {
+        background-color: var(--primary-blue);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .plan-topic {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+      }
+
+      .plan-materials {
+        font-size: 14px;
+        color: var(--text-light);
+      }
+
+      .plan-detail {
+        background-color: var(--white-bg);
+        border: 1px solid var(--border-gray);
+        border-radius: 8px;
+        padding: 24px;
+        max-height: 600px;
+        overflow-y: auto;
+      }
+
+      .plan-detail h3 {
+        margin-top: 0;
+        color: var(--text-dark);
+      }
+
+      .markdown-content {
+        line-height: 1.8;
+      }
+
+      .markdown-content h3 {
+        color: var(--primary-blue);
+        margin-top: 24px;
+        margin-bottom: 12px;
+      }
+
+      .markdown-content ul {
+        padding-left: 20px;
+      }
+
+      .markdown-content li {
+        margin-bottom: 8px;
+      }
+
+      .create-plan-form {
+        background-color: var(--white-bg);
+        border: 1px solid var(--border-gray);
+        border-radius: 8px;
+        padding: 24px;
+      }
+
+      .create-plan-form input,
+      .create-plan-form textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border-gray);
+        border-radius: 4px;
+        font-size: 14px;
+        margin-bottom: 16px;
+        font-family: inherit;
+      }
+
+      .create-plan-form input:focus,
+      .create-plan-form textarea:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+      }
+
+      .create-plan-form textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .create-plan-form button {
+        background-color: var(--primary-blue);
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .create-plan-form button:hover {
+        opacity: 0.9;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-light);
+      }
+
+      .empty-state-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+      }
+
+      /* 8. 响应式 */
+      @media (max-width: 992px) {
+        .dashboard-layout {
+          grid-template-columns: 1fr; /* 堆叠 */
+        }
+        .search-bar {
+          display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+        .footer-content {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 576px) {
+        .greeting-box {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .feed-card {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .feed-card .action-button {
+          width: 100%;
+          text-align: center;
+        }
+        .footer-content {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="navbar container">
+        <div class="nav-left">
+          <span
+            class="logo"
+            onclick="window.location.href='/static/mainpage.html'"
+            >AI-Education</span
+          >
+          <div class="nav-links">
+            <a href="/static/mainpage.html">首页</a>
+            <a href="/static/mylearning.html" style="font-weight: 600"
+              >我的学习</a
+            >
+            <a href="/static/coursecontent.html">课程内容</a>
+          </div>
+        </div>
+
+        <div class="nav-right">
+          <div class="profile-icon" title="个人中心" style="cursor: pointer">
+            W
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="main-dashboard container">
+      <div class="dashboard-layout">
+        <aside class="dashboard-sidebar">
+          <div class="greeting-box">
+            <div class="greeting-icon">W</div>
+            <div class="greeting-text">
+              <h2>晚上好, WangQiyu</h2>
+              <p>
+                您的学习目标是<strong>熟练掌握数据分析</strong>, 已选择课程
+                <span class="goal-tag">大数据基础概念</span>,
+                <span class="goal-tag">数据获取</span>,
+                <span class="goal-tag">数据质量与预处理</span>,
+                <span class="goal-tag">数据存储系统</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="widget-card">
+            <h3>今日目标</h3>
+            <ul class="goal-list">
+              <li class="goal-item">
+                <span class="icon">⭐</span> 访问 Coursera
+              </li>
+              <li class="goal-item">
+                <span class="icon">🏁</span> 完成任意4个学习项目 1/4
+              </li>
+              <li class="goal-item">
+                <span class="icon">📅</span> 制定学习计划
+              </li>
+            </ul>
+          </div>
+
+          <div class="widget-card">
+            <div class="calendar-header">
+              <h3>学习日历</h3>
+              <a href="#" onclick="showCreatePlanForm(); return false;"
+                >+ 制定计划</a
+              >
+            </div>
+
+            <div class="calendar-nav">
+              <button type="button" id="prev-month">&lt;</button>
+              <h4 id="calendar-title">加载中...</h4>
+              <button type="button" id="next-month">&gt;</button>
+            </div>
+
+            <div class="calendar-grid-header">
+              <span>日</span><span>一</span><span>二</span><span>三</span
+              ><span>四</span><span>五</span><span>六</span>
+            </div>
+
+            <div class="calendar-grid" id="calendar-grid">
+              <!-- 日历单元格将由JavaScript动态生成 -->
+            </div>
+
+            <div class="calendar-footer">
+              <p id="calendar-stats">本月学习计划：0 个</p>
+            </div>
+          </div>
+        </aside>
+
+        <section class="main-feed">
+          <div class="feed-tabs">
+            <button class="feed-tab active" onclick="showPlansTab()">
+              我的学习计划
+            </button>
+            <button class="feed-tab" onclick="showCreateTab()">
+              创建新计划
+            </button>
+          </div>
+
+          <!-- 学习计划列表 -->
+          <div id="plans-tab">
+            <div id="plans-list">
+              <!-- 学习计划列表将由JavaScript动态生成 -->
+              <div class="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <p>加载学习计划中...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 创建新计划表单 -->
+          <div id="create-tab" style="display: none">
+            <div class="create-plan-form">
+              <h3>📝 创建新的学习计划</h3>
+              <p style="color: var(--text-light); margin-bottom: 20px">
+                根据您的学习目标，我们将为您生成个性化的学习计划
+              </p>
+
+              <label
+                style="display: block; margin-bottom: 8px; font-weight: 600"
+                >姓名</label
+              >
+              <input
+                type="text"
+                id="plan-name"
+                placeholder="请输入您的姓名，例如：张三"
+              />
+
+              <label
+                style="display: block; margin-bottom: 8px; font-weight: 600"
+              >
+                学习目标
+                <span style="color: var(--text-light); font-weight: normal"
+                  >（用分号隔开多个目标）</span
+                >
+              </label>
+              <textarea
+                id="plan-goals"
+                placeholder="例如：掌握Python基础; 学习数据分析; 了解机器学习"
+              ></textarea>
+
+              <label
+                style="display: block; margin-bottom: 8px; font-weight: 600"
+                >语言</label
+              >
+              <select
+                id="lang-select"
+                style="
+                  width: 100%;
+                  padding: 12px;
+                  border: 1px solid var(--border-gray);
+                  border-radius: 4px;
+                  margin-bottom: 16px;
+                "
+              >
+                <option>🌐 Auto-detect</option>
+              </select>
+
+              <label
+                style="display: block; margin-bottom: 8px; font-weight: 600"
+                >完成期限</label
+              >
+              <select
+                id="plan-deadline"
+                style="
+                  width: 100%;
+                  padding: 12px;
+                  border: 1px solid var(--border-gray);
+                  border-radius: 4px;
+                  margin-bottom: 16px;
+                "
+              >
+                <option value="1">1天</option>
+                <option value="3">3天</option>
+                <option value="7" selected>1周</option>
+                <option value="14">2周</option>
+                <option value="30">1个月</option>
+              </select>
+
+              <button onclick="generatePlan()">🚀 生成学习计划</button>
+
+              <div id="plan-output" style="margin-top: 20px"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+    <script>
+      const API_BASE = "";
+      let allPlans = [];
+      let currentMonth = new Date();
+      let selectedPlanIndex = null;
+
+      // 页面加载时初始化
+      document.addEventListener("DOMContentLoaded", async () => {
+        console.log("My Learning page loaded");
+        await loadLanguages();
+        await loadPlans();
+        renderCalendar();
+
+        // 设置日历导航按钮
+        document.getElementById("prev-month").addEventListener("click", () => {
+          currentMonth.setMonth(currentMonth.getMonth() - 1);
+          renderCalendar();
+        });
+
+        document.getElementById("next-month").addEventListener("click", () => {
+          currentMonth.setMonth(currentMonth.getMonth() + 1);
+          renderCalendar();
+        });
+      });
+
+      // 加载支持的语言列表
+      async function loadLanguages() {
+        try {
+          const response = await fetch(`${API_BASE}/api/languages`);
+          const languages = await response.json();
+          const select = document.getElementById("lang-select");
+          select.innerHTML = languages
+            .map((lang) => `<option>${lang}</option>`)
+            .join("");
+        } catch (error) {
+          console.error("Error loading languages:", error);
+        }
+      }
+
+      // 加载所有学习计划
+      async function loadPlans() {
+        try {
+          const response = await fetch(`${API_BASE}/api/learning-plans`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch plans");
+          }
+
+          const plans = await response.json();
+          allPlans = plans.map((plan) => ({
+            filename: plan.filename,
+            data: plan.data,
+            date: extractDateFromFilename(plan.filename),
+          }));
+
+          renderPlansList();
+          updateCalendarStats();
+        } catch (error) {
+          console.error("Error loading plans:", error);
+          showEmptyState("无法加载学习计划");
+        }
+      }
+
+      // 从文件名提取日期
+      function extractDateFromFilename(filename) {
+        const match = filename.match(/(\d{8})_(\d{6})/);
+        if (match) {
+          const dateStr = match[1];
+          const year = dateStr.substring(0, 4);
+          const month = dateStr.substring(4, 6);
+          const day = dateStr.substring(6, 8);
+          return `${year}-${month}-${day}`;
+        }
+        return new Date().toISOString().split("T")[0];
+      }
+
+      // 渲染学习计划列表
+      function renderPlansList() {
+        const container = document.getElementById("plans-list");
+
+        if (allPlans.length === 0) {
+          showEmptyState('暂无学习计划，点击"创建新计划"开始制定您的学习计划');
+          return;
+        }
+
+        // ======= 工具函数：统计每个小节及总数 =======
+        function parseMaterialsBySection(materials) {
+          if (!Array.isArray(materials)) return [];
+          const text = materials.join("\n");
+          const sections = text.split(/^###\s+/m).slice(1);
+          return sections.map((section) => {
+            const [title, ...body] = section.split("\n");
+            const count = (
+              body.join("\n").match(/^\s*\d+\.\s+\*\*.*\*\*/gm) || []
+            ).length;
+            return { title: title.trim(), count };
+          });
+        }
+
+        function countLearningMaterials(materials) {
+          return parseMaterialsBySection(materials).reduce(
+            (sum, s) => sum + s.count,
+            0
+          );
+        }
+
+        container.innerHTML = allPlans
+          .map((plan, index) => {
+            const firstEntry = plan.data[0];
+            const sections = parseMaterialsBySection(firstEntry.materials);
+            const materialsCount = countLearningMaterials(firstEntry.materials);
+
+            const sectionText = sections
+              .map((s) => `${s.title}：${s.count} 条`)
+              .join("， ");
+            const deadlineInfo = firstEntry.deadline
+              ? `<div class="plan-deadline" style="color: #ff6b6b; font-size: 12px; margin-top: 4px;">⏰ 截止日期: ${firstEntry.deadline}</div>`
+              : "";
+
+            return `
+        <div class="plan-card ${selectedPlanIndex === index ? "selected" : ""}" 
+             onclick="selectPlan(${index})">
+          <div class="plan-header">
+            <div class="plan-date">📅 ${firstEntry.date}</div>
+            <div class="plan-priority">${firstEntry.priority}</div>
+          </div>
+          <div class="plan-topic">${firstEntry.topic}</div>
+          <div class="plan-materials">
+            📚 共 ${materialsCount} 个学习材料
+            <div class="plan-section-details">(${sectionText})</div>
+          </div>
+          ${deadlineInfo}
+        </div>
+      `;
+          })
+          .join("");
+        if (selectedPlanIndex !== null) {
+          showPlanDetail(selectedPlanIndex);
+        }
+      }
+
+      // 显示空状态
+      function showEmptyState(message) {
+        const container = document.getElementById("plans-list");
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <p>${message}</p>
+          </div>
+        `;
+      }
+
+      // 选中一个学习计划
+      function selectPlan(index) {
+        selectedPlanIndex = index;
+        renderPlansList();
+      }
+
+      // 显示计划详情
+      function showPlanDetail(index) {
+        const plan = allPlans[index];
+        const container = document.getElementById("plans-list");
+
+        const detailHTML = `
+          <div class="plan-card selected">
+            <div class="plan-header">
+              <div class="plan-date">📅 ${plan.data[0].date}</div>
+              <div class="plan-priority">${plan.data[0].priority}</div>
+            </div>
+            <div class="plan-topic">${plan.data[0].topic}</div>
+          </div>
+          <div class="plan-detail">
+            ${formatPlanMarkdown(plan.data)}
+          </div>
+          <button class="action-button" style="margin-top: 16px;" onclick="selectedPlanIndex = null; renderPlansList()">
+            ← 返回列表
+          </button>
+        `;
+
+        container.innerHTML = detailHTML;
+      }
+
+      // 格式化学习计划为HTML（使用marked）
+      function formatPlanMarkdown(planData) {
+        const markdown = planData
+          .map((entry) => {
+            const deadlineInfo = entry.deadline
+              ? `**截止日期**: ⏰ ${entry.deadline}\n\n`
+              : "";
+            return (
+              `### 📅 ${entry.date}\n\n` +
+              `**主题**: ${entry.topic}\n\n` +
+              `**优先级**: ${entry.priority}\n\n` +
+              deadlineInfo +
+              `**推荐材料**:\n\n${entry.materials
+                .map((m) => `- ${m}`)
+                .join("\n")}`
+            );
+          })
+          .join("\n\n---\n\n");
+
+        return marked.parse(markdown);
+      }
+
+      // 渲染日历
+      function renderCalendar() {
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+
+        // 更新标题
+        const monthNames = [
+          "一月",
+          "二月",
+          "三月",
+          "四月",
+          "五月",
+          "六月",
+          "七月",
+          "八月",
+          "九月",
+          "十月",
+          "十一月",
+          "十二月",
+        ];
+        document.getElementById(
+          "calendar-title"
+        ).textContent = `${monthNames[month]} ${year}`;
+
+        // 获取当月第一天和最后一天
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const firstDayOfWeek = firstDay.getDay(); // 0 = 周日
+        const daysInMonth = lastDay.getDate();
+
+        // 获取上个月的天数
+        const lastDayPrevMonth = new Date(year, month, 0).getDate();
+
+        const grid = document.getElementById("calendar-grid");
+        grid.innerHTML = "";
+
+        // 获取今天的日期
+        const today = new Date();
+        const isCurrentMonth =
+          today.getFullYear() === year && today.getMonth() === month;
+        const todayDate = today.getDate();
+
+        // 添加上个月的日期（灰色）
+        for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+          const cell = document.createElement("div");
+          cell.className = "calendar-cell dimmed";
+          cell.textContent = lastDayPrevMonth - i;
+          grid.appendChild(cell);
+        }
+
+        // 添加当月的日期
+        for (let day = 1; day <= daysInMonth; day++) {
+          const cell = document.createElement("div");
+          cell.className = "calendar-cell";
+
+          if (isCurrentMonth && day === todayDate) {
+            cell.classList.add("today");
+          }
+
+          // 检查是否有学习计划在这一天
+          const dateStr = `${year}-${String(month + 1).padStart(
+            2,
+            "0"
+          )}-${String(day).padStart(2, "0")}`;
+          const hasPlan = allPlans.some((plan) =>
+            plan.data.some((entry) => entry.date === dateStr)
+          );
+
+          const hasDeadline = allPlans.some((plan) =>
+            plan.data.some((entry) => entry.deadline === dateStr)
+          );
+
+          if (hasDeadline) {
+            cell.style.fontWeight = "bold";
+            cell.style.backgroundColor = "#ffebee";
+            cell.style.color = "#d32f2f";
+            cell.style.borderRadius = "4px";
+            cell.title = "⏰ 截止日期";
+          } else if (hasPlan) {
+            cell.style.fontWeight = "bold";
+            cell.style.color = "var(--primary-blue)";
+            cell.title = "有学习计划";
+          }
+
+          cell.textContent = day;
+          grid.appendChild(cell);
+        }
+
+        // 添加下个月的日期（灰色）
+        const totalCells = firstDayOfWeek + daysInMonth;
+        const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+        for (let day = 1; day <= remainingCells; day++) {
+          const cell = document.createElement("div");
+          cell.className = "calendar-cell dimmed";
+          cell.textContent = day;
+          grid.appendChild(cell);
+        }
+
+        updateCalendarStats();
+      }
+
+      // 更新日历统计信息
+      function updateCalendarStats() {
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+
+        const plansThisMonth = allPlans.filter((plan) => {
+          const planDate = new Date(plan.date);
+          return (
+            planDate.getFullYear() === year && planDate.getMonth() === month
+          );
+        }).length;
+
+        document.getElementById(
+          "calendar-stats"
+        ).textContent = `本月学习计划：${plansThisMonth} 个 | 总计：${allPlans.length} 个`;
+      }
+
+      // 切换到学习计划标签页
+      function showPlansTab() {
+        document.getElementById("plans-tab").style.display = "block";
+        document.getElementById("create-tab").style.display = "none";
+        document.querySelectorAll(".feed-tab")[0].classList.add("active");
+        document.querySelectorAll(".feed-tab")[1].classList.remove("active");
+      }
+
+      // 切换到创建计划标签页
+      function showCreateTab() {
+        document.getElementById("plans-tab").style.display = "none";
+        document.getElementById("create-tab").style.display = "block";
+        document.querySelectorAll(".feed-tab")[1].classList.add("active");
+        document.querySelectorAll(".feed-tab")[0].classList.remove("active");
+      }
+
+      // 显示创建计划表单（从日历链接点击）
+      function showCreatePlanForm() {
+        showCreateTab();
+      }
+
+      // 生成学习计划
+      async function generatePlan() {
+        const name = document.getElementById("plan-name").value.trim();
+        const goals = document.getElementById("plan-goals").value.trim();
+        const langChoice = document.getElementById("lang-select").value;
+        const deadlineDays = parseInt(
+          document.getElementById("plan-deadline").value
+        );
+
+        if (!name || !goals) {
+          alert("请输入姓名和学习目标");
+          return;
+        }
+
+        const output = document.getElementById("plan-output");
+        output.innerHTML =
+          '<p style="text-align: center; color: var(--text-light);">⏳ 正在生成学习计划，请稍候...</p>';
+
+        try {
+          const response = await fetch(`${API_BASE}/api/learning-plan`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: name,
+              goals: goals,
+              lang_choice: langChoice,
+              deadline_days: deadlineDays,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("生成失败");
+          }
+
+          const data = await response.json();
+          const formattedPlan = formatPlanMarkdown(data.plan);
+
+          output.innerHTML = `
+            <div style="padding: 20px; background-color: var(--light-gray-bg); border-radius: 8px;">
+              <h4 style="color: var(--primary-blue); margin-top: 0;">✅ ${data.message}</h4>
+              <div class="markdown-content">${formattedPlan}</div>
+              <button class="action-button" onclick="reloadPlans()" style="margin-top: 16px;">
+                刷新计划列表
+              </button>
+            </div>
+          `;
+        } catch (error) {
+          console.error("Error generating plan:", error);
+          output.innerHTML = `
+            <div style="padding: 20px; background-color: #fee; border-radius: 8px; color: #c00;">
+              <p>❌ 生成学习计划失败，请稍后重试</p>
+            </div>
+          `;
+        }
+      }
+
+      // 重新加载学习计划
+      async function reloadPlans() {
+        await loadPlans();
+        showPlansTab();
+      }
+    </script>
+  </body>
+</html>

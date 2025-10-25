@@ -134,7 +134,9 @@ function update(source) {
     Math.min(
       document.getElementById("knowledge-graph").clientWidth,
       document.getElementById("knowledge-graph").clientHeight
-    )/1.5 - 100;
+    ) /
+      1 -
+    100;
 
   const tree = d3
     .tree()
@@ -265,7 +267,7 @@ function getNodeColor(d) {
 
 function getNodeRadius(d) {
   const radiusMap = {
-    root: 40,
+    root: 80,
     children: 30,
     grandchildren: 20,
     greatGrandchildren: 10,

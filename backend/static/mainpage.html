@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Education - 智能教育平台</title>
+    <style>
+      /* 1. 全局和重置 */
+      :root {
+        --primary-blue: #7a6ad8;
+        --light-gray: #f5f5f5;
+        --border-gray: #e0e0e0;
+        --text-dark: #333;
+        --text-light: #555;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        margin: 0;
+        background-color: var(--light-gray);
+        color: var(--text-dark);
+        line-height: 1.6;
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--primary-blue);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* 2. 头部导航栏 */
+      .main-header {
+        background-color: #fff;
+        border-bottom: 1px solid var(--border-gray);
+        padding: 10px 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .nav-left {
+        display: flex;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--primary-blue);
+        margin-right: 20px;
+        cursor: pointer;
+      }
+
+      .nav-links a {
+        margin: 0 12px;
+        color: var(--text-dark);
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .nav-links a:hover {
+        color: var(--primary-blue);
+      }
+
+      .search-bar {
+        flex-grow: 1;
+        max-width: 400px;
+        display: flex;
+        border: 1px solid var(--border-gray);
+        border-radius: 4px;
+      }
+
+      .search-bar input {
+        border: none;
+        padding: 8px 12px;
+        font-size: 14px;
+        width: 100%;
+        border-radius: 4px 0 0 4px;
+      }
+
+      .search-bar button {
+        border: none;
+        background-color: var(--primary-blue);
+        color: white;
+        padding: 0 15px;
+        cursor: pointer;
+        border-radius: 0 4px 4px 0;
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 20px;
+      }
+
+      .profile-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--text-dark);
+      }
+
+      /* 3. 主内容区域 */
+      .main-content {
+        margin-top: 30px;
+      }
+
+      .welcome-header h1 {
+        font-size: 28px;
+        margin-bottom: 15px;
+      }
+
+      .week-nav {
+        display: flex;
+        gap: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-gray);
+      }
+
+      .week-nav a {
+        color: var(--text-light);
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .week-nav a.active {
+        color: var(--primary-blue);
+        border-bottom: 2px solid var(--primary-blue);
+        padding-bottom: 8px;
+      }
+
+      .content-layout {
+        display: flex;
+        gap: 30px;
+        margin-top: 20px;
+      }
+
+      .learning-feed {
+        flex: 3; /* 占 3/4 空间 */
+      }
+
+      .sidebar {
+        flex: 1; /* 占 1/4 空间 */
+        min-width: 250px;
+      }
+
+      /* 4. 课程卡片 */
+      .course-card {
+        background-color: #fff;
+        border: 1px solid var(--border-gray);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+      }
+
+      .course-card .info {
+        flex-grow: 1;
+      }
+
+      .course-card .provider {
+        font-size: 12px;
+        color: var(--text-light);
+        font-weight: 500;
+      }
+
+      .course-card h3 {
+        font-size: 18px;
+        margin: 5px 0;
+      }
+
+      .course-card .progress-text {
+        font-size: 14px;
+        color: var(--text-light);
+        margin-bottom: 5px;
+      }
+
+      .course-card .progress-bar {
+        width: 100%;
+        height: 6px;
+        background-color: var(--light-gray);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .course-card .progress-bar div {
+        width: 0%; /* 示例中是 0% */
+        height: 100%;
+        background-color: var(--primary-blue);
+      }
+
+      .course-card .start-button {
+        background-color: var(--primary-blue);
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .course-card .start-button:hover {
+        opacity: 0.9;
+      }
+
+      /* 5. 侧边栏 */
+      .sidebar-widget {
+        background-color: #fff;
+        border: 1px solid var(--border-gray);
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      .sidebar-widget h4 {
+        font-size: 20px;
+        margin-top: 0;
+        margin-bottom: 15px;
+      }
+
+      .goal-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        font-size: 14px;
+      }
+
+      .goal-item .icon {
+        font-size: 20px;
+        color: var(--primary-blue);
+      }
+
+      /* 6. 推荐区域 */
+      .recommendations {
+        margin-top: 40px;
+      }
+
+      .recommendations h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      .recommend-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+
+      .career-card {
+        background-color: #fff;
+        border: 1px solid var(--border-gray);
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .career-card-header {
+        position: relative;
+        height: 120px;
+      }
+
+      /* 模拟卡片顶部的紫色背景 */
+      .career-card-header .bg-shape {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        background-color: #f3e5f5; /* 模拟的淡紫色 */
+        border-radius: 8px 8px 0 0;
+      }
+
+      .career-card-header img {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 120px; /* 示例高度 */
+        width: auto;
+        border-bottom: 1px solid var(--border-gray);
+      }
+
+      .career-card-body {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .career-card-body h5 {
+        font-size: 18px;
+        margin: 0 0 10px 0;
+      }
+
+      .career-card-body p {
+        font-size: 14px;
+        color: var(--text-light);
+        flex-grow: 1;
+      }
+
+      .career-card-body .browse-title {
+        font-size: 12px;
+        color: var(--text-light);
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-top: 15px;
+        margin-bottom: 10px;
+      }
+
+      .career-card-body .course-links {
+        font-size: 14px;
+      }
+
+      .career-card-body .course-links li {
+        list-style-type: none;
+        margin-bottom: 8px;
+      }
+
+      .explore-all {
+        margin-top: 20px;
+      }
+
+      /* 6.5 知识图谱区域 */
+      .knowledge-graph-section {
+        margin-top: 60px;
+        margin-bottom: 60px;
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 30px;
+        border: 1px solid var(--border-gray);
+      }
+
+      .knowledge-graph-section h2 {
+        font-size: 28px;
+        margin-bottom: 20px;
+        color: var(--text-dark);
+      }
+
+      #knowledge-graph-container {
+        width: 100%;
+        min-height: 850px;
+        background-color: #fff;
+        border-radius: 8px;
+        border: 1px solid var(--border-gray);
+        position: relative;
+        overflow: hidden;
+      }
+
+      #knowledge-graph {
+        width: 100%;
+        height: 850px;
+        position: relative;
+      }
+
+      /* graph.js 样式支持 */
+      .node circle {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .node circle:hover {
+        stroke-width: 4px !important;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+      }
+
+      .node text {
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .link {
+        transition: opacity 0.3s ease;
+      }
+
+      .expand-all-btn {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+      }
+
+      .expand-all-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      /* 7. 响应式设计 */
+      @media (max-width: 992px) {
+        .content-layout {
+          flex-direction: column;
+        }
+        .recommend-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .search-bar {
+          display: none; /* 在中等屏幕上隐藏搜索栏以简化 */
+        }
+      }
+
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none; /* 在小屏幕上隐藏导航链接 */
+        }
+        .navbar {
+          justify-content: space-between;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .recommend-grid {
+          grid-template-columns: 1fr;
+        }
+        .course-card {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .course-card .start-button {
+          width: 100%;
+          margin-top: 10px;
+        }
+        #knowledge-graph-container {
+          min-height: 500px;
+        }
+        #knowledge-graph {
+          height: 500px;
+        }
+      }
+    </style>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="navbar container">
+        <div class="nav-left">
+          <span
+            class="logo"
+            onclick="window.location.href='/static/mainpage.html'"
+            >AI-Education</span
+          >
+          <div class="nav-links">
+            <a href="/static/mainpage.html">首页</a>
+            <a href="/static/mylearning.html">我的学习</a>
+            <a href="/static/coursecontent.html">课程内容</a>
+          </div>
+        </div>
+
+        <div class="nav-right">
+          <div class="profile-icon" title="个人中心" style="cursor: pointer">
+            W
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="main-content container">
+      <section class="welcome-header">
+        <h1>欢迎来到 AI-Education 智能教育平台 🎓</h1>
+      </section>
+
+      <div class="content-layout" id="courses">
+        <div class="learning-feed">
+          <div class="course-card">
+            <div class="info">
+              <div class="provider">AI-Education 平台</div>
+              <h3>大数据分析基础课程</h3>
+              <div class="progress-text">
+                课程 · 15% 已完成 · 预计还需 4 周完成
+              </div>
+              <div class="progress-bar">
+                <div style="width: 15%"></div>
+              </div>
+            </div>
+            <button
+              class="start-button"
+              onclick="window.location.href='/static/coursecontent.html'"
+            >
+              继续学习
+            </button>
+          </div>
+
+          <div class="course-card">
+            <div class="info">
+              <div class="provider">AI-Education 平台</div>
+              <h3>数据获取与预处理</h3>
+              <div class="progress-text">下一章节 · 约 45 分钟</div>
+            </div>
+            <button
+              class="start-button"
+              onclick="window.location.href='/static/coursecontent.html'"
+            >
+              开始学习
+            </button>
+          </div>
+
+          <div class="course-card">
+            <div class="info">
+              <div class="provider">AI-Education 平台</div>
+              <h3>机器学习与深度学习</h3>
+              <div class="progress-text">即将开放 · 预计 2 周后</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="sidebar" style="height: 100%">
+          <div class="sidebar-widget">
+            <h4>本周学习目标</h4>
+            <div class="goal-item">
+              <span class="icon">📚</span>
+              <span>完成大数据基础章节</span>
+            </div>
+            <div class="goal-item">
+              <span class="icon">✍️</span>
+              <span>完成随堂测验 2/5</span>
+            </div>
+            <div class="goal-item">
+              <span class="icon">🎯</span>
+              <span>查看知识图谱</span>
+            </div>
+            <div class="goal-item">
+              <span class="icon">📅</span>
+              <span>制定个性化学习计划</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <section class="recommendations">
+        <h2>推荐学习路径 📖</h2>
+
+        <div class="recommend-grid">
+          <div class="career-card">
+            <div class="career-card-header">
+              <div class="bg-shape" style="background-color: #e3f2fd"></div>
+              <div
+                style="
+                  font-size: 60px;
+                  position: absolute;
+                  bottom: 10px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                "
+              >
+                📊
+              </div>
+            </div>
+            <div class="career-card-body">
+              <h5>大数据基础概念</h5>
+              <p>学习大数据基础概念，掌握大数据分析的核心概念和实践技能。</p>
+            </div>
+          </div>
+
+          <div class="career-card">
+            <div class="career-card-header">
+              <div
+                class="bg-shape"
+                style="background-color: #f3e5f5"
+                style="height: 100%"
+              ></div>
+              <div
+                style="
+                  font-size: 60px;
+                  position: absolute;
+                  bottom: 10px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                "
+              >
+                🤖
+              </div>
+            </div>
+            <div class="career-card-body">
+              <h5>数据获取</h5>
+              <p>学习数据获取，掌握数据获取的核心概念和实践技能。</p>
+            </div>
+          </div>
+
+          <div class="career-card">
+            <div class="career-card-header">
+              <div class="bg-shape" style="background-color: #e8f5e9"></div>
+              <div
+                style="
+                  font-size: 60px;
+                  position: absolute;
+                  bottom: 10px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                "
+              >
+                🧠
+              </div>
+            </div>
+            <div class="career-card-body">
+              <h5>数据质量与预处理</h5>
+              <p>
+                学习数据质量与预处理，掌握数据质量与预处理的核心概念和实践技能。
+              </p>
+            </div>
+          </div>
+
+          <div class="career-card">
+            <div class="career-card-header">
+              <div class="bg-shape" style="background-color: #fff3e0"></div>
+              <div
+                style="
+                  font-size: 60px;
+                  position: absolute;
+                  bottom: 10px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                "
+              >
+                💾
+              </div>
+            </div>
+            <div class="career-card-body">
+              <h5>数据存储系统</h5>
+              <p>学习数据存储系统，掌握数据存储系统的核心概念和实践技能。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="knowledge-graph-section">
+        <h2>知识图谱 🗺️</h2>
+        <p style="color: var(--text-light); margin-bottom: 20px">
+          可视化课程知识结构，点击节点展开或折叠子节点
+        </p>
+        <div id="knowledge-graph-container">
+          <div id="knowledge-graph"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/static/js/graph.js"></script>
+    <script>
+      console.log("AI-Education Main Page Loaded");
+
+      // 加载知识图谱
+      fetch("/api/knowledge-graph")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Knowledge graph data loaded:", data);
+          if (data && (data.name || data.root_name)) {
+            // 兼容两种数据格式
+            if (data.name && !data.root_name) {
+              data.root_name = data.name;
+            }
+            // 使用原有的graph.js初始化函数
+            if (window.initializeGraph) {
+              window.initializeGraph(data);
+            } else {
+              console.error("initializeGraph function not found");
+            }
+          }
+        })
+        .catch((error) =>
+          console.error("Failed to load knowledge graph:", error)
+        );
+    </script>
+  </body>
+</html>

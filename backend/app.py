@@ -71,6 +71,7 @@ class LearningPlanRequest(BaseModel):
     name: str
     goals: str
     lang_choice: str = "auto"
+    deadline_days: int = 7
 
 
 class LearningPlanFromQuiz(BaseModel):
@@ -122,10 +123,10 @@ async def login_student(
     student_id: str = Form(..., alias="student_id"), password: str = Form(...)
 ):
     if student_id == "stuwangqiyu" and password == "123456":
-
-        return RedirectResponse(url="/index.html", status_code=status.HTTP_302_FOUND)
+        return RedirectResponse(
+            url="/static/mainpage.html", status_code=status.HTTP_302_FOUND
+        )
     else:
-
         return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
 
 
@@ -489,6 +490,15 @@ async def create_learning_plan(data: LearningPlanRequest):
     user_input = {"goals": goals_list}
 
     plan.generate_plan_from_prompt(user_input)
+
+    # 添加DDL信息
+    deadline_days = data.deadline_days if hasattr(data, "deadline_days") else 7
+    deadline_date = (datetime.now() + timedelta(days=deadline_days)).strftime(
+        "%Y-%m-%d"
+    )
+    for entry in plan.learning_plan:
+        entry["deadline"] = deadline_date
+
     plan.save_to_file()
 
     return {
@@ -787,6 +797,33 @@ async def get_pdf(path: str):
 async def get_languages():
     """获取支持的语言列表"""
     return LanguageHandler.dropdown_choices()
+
+
+@app.get("/api/learning-plans")
+async def get_learning_plans():
+    """获取所有学习计划文件列表"""
+    plans_dir = Path("data/learning_plans")
+    if not plans_dir.exists():
+        return []
+
+    plan_files = []
+    for file_path in plans_dir.glob("*.json"):
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                plan_data = json.load(f)
+                plan_files.append(
+                    {
+                        "filename": file_path.name,
+                        "path": str(file_path),
+                        "data": plan_data,
+                    }
+                )
+        except Exception as e:
+            logger.error(f"Error reading plan file {file_path}: {e}")
+
+    # 按文件名排序（最新的在前）
+    plan_files.sort(key=lambda x: x["filename"], reverse=True)
+    return plan_files
 
 
 if __name__ == "__main__":

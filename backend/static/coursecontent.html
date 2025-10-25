@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>课程内容 - Coursera 克隆</title>
+    <style>
+      /* 1. 全局和重置 */
+      :root {
+        --coursera-blue: #7a6ad8;
+        --light-gray: #f7f7f7; /* 页面背景色更浅 */
+        --border-gray: #e0e0e0;
+        --text-dark: #2d2f31;
+        --text-light: #5f5f5f;
+        --sidebar-bg: #f5f5f5;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        margin: 0;
+        background-color: #fff; /* 主内容区背景为白色 */
+        color: var(--text-dark);
+        line-height: 1.6;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--coursera-blue);
+      }
+
+      button {
+        cursor: pointer;
+        font-family: inherit;
+      }
+
+      /* 2. 顶部导航栏 */
+      .course-header {
+        background-color: #fff;
+        border-bottom: 1px solid var(--border-gray);
+        padding: 0 24px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+        font-size: 14px;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .header-left .logo {
+        font-size: 20px;
+        font-weight: bold;
+        color: var(--coursera-blue);
+      }
+
+      .header-left .provider {
+        font-weight: bold;
+        color: var(--text-dark);
+      }
+
+      .header-center {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-grow: 1;
+        justify-content: center;
+        min-width: 0;
+      }
+
+      .header-center .progress-text {
+        color: var(--text-light);
+        white-space: nowrap;
+      }
+
+      .progress-bar-container {
+        width: 100%;
+        max-width: 300px;
+        height: 8px;
+        background-color: var(--border-gray);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        width: 25%; /* 示例 c1/4 */
+        height: 100%;
+        background-color: var(--coursera-blue);
+      }
+
+      .header-center .rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--text-light);
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 20px;
+        color: var(--text-light);
+      }
+
+      .profile-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #e0e0e0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--text-dark);
+        font-size: 16px;
+      }
+
+      /* 3. 主内容布局 */
+      .main-layout {
+        display: flex;
+        flex-grow: 1; /* 占据剩余所有高度 */
+        overflow: hidden; /* 防止页面滚动 */
+      }
+
+      /* 4. 左侧边栏 */
+      .sidebar {
+        width: 300px;
+        background-color: var(--sidebar-bg);
+        border-right: 1px solid var(--border-gray);
+        flex-shrink: 0;
+        padding: 20px 0;
+        overflow-y: auto; /* 如果内容过多则滚动 */
+      }
+
+      .sidebar-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 20px;
+        font-size: 14px;
+        color: var(--text-light);
+        background: none;
+        border: none;
+        width: 100%;
+        text-align: left;
+      }
+
+      .sidebar-toggle .icon {
+        font-size: 20px;
+      }
+
+      .sidebar-nav {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0 0 0;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 20px;
+        font-size: 14px;
+        color: var(--text-dark);
+        border-left: 4px solid transparent;
+      }
+
+      .nav-item .icon {
+        font-size: 18px;
+        color: var(--text-light);
+        margin-top: 2px;
+      }
+
+      .nav-item.active {
+        background-color: #e3f2fd; /* 浅蓝色背景 */
+        border-left-color: var(--coursera-blue);
+        font-weight: bold;
+      }
+
+      .nav-item.locked .icon {
+        color: #9e9e9e; /* 灰色锁定图标 */
+      }
+
+      .nav-item-content {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .nav-item-content .title {
+        color: var(--text-dark);
+      }
+
+      .nav-item.active .title {
+        color: var(--text-dark);
+      }
+
+      .nav-item-content .subtitle {
+        font-size: 12px;
+        color: var(--text-light);
+        font-weight: normal;
+      }
+
+      /* 5. 右侧内容面板 */
+      .content-panel {
+        flex-grow: 1;
+        padding: 24px 48px;
+        overflow-y: auto; /* 内容区独立滚动 */
+        background-color: #fff;
+      }
+
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .breadcrumbs {
+        font-size: 14px;
+        color: var(--text-light);
+      }
+
+      .breadcrumbs a {
+        color: var(--coursera-blue);
+      }
+
+      .breadcrumbs span {
+        margin: 0 4px;
+      }
+
+      .page-nav a {
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .content-body {
+        max-width: 800px;
+        margin: 0 auto; /* 内容居中 */
+        padding: 30px 0;
+      }
+
+      .content-body h1 {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 24px;
+      }
+
+      .content-body p {
+        font-size: 16px;
+        color: var(--text-dark);
+        margin-bottom: 32px;
+      }
+
+      .complete-button {
+        background-color: var(--coursera-blue);
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+      }
+
+      .complete-button:hover {
+        opacity: 0.9;
+      }
+
+      .feedback-section {
+        display: flex;
+        gap: 20px;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-gray);
+      }
+
+      .feedback-button {
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: var(--text-light);
+      }
+
+      .feedback-button .icon {
+        font-size: 20px;
+      }
+
+      /* 6. 响应式 */
+      @media (max-width: 992px) {
+        .sidebar {
+          width: 250px;
+        }
+        .content-panel {
+          padding: 24px;
+        }
+        .header-center .progress-text {
+          display: none;
+        }
+        .header-center .rating {
+          display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          /* 在小屏幕上可以默认隐藏侧边栏 */
+          display: none;
+        }
+        .content-panel {
+          padding: 20px;
+        }
+        .content-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+        .content-body h1 {
+          font-size: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="course-header">
+      <div class="header-left">
+        <span class="logo">AI-Education</span>
+      </div>
+
+      <div class="header-center">
+        <span class="progress-text">1/4 节学习课程内容</span>
+        <div class="progress-bar-container">
+          <div class="progress-bar"></div>
+        </div>
+        <div class="rating">
+          <span>⭐</span>
+          <span>-</span>
+          <span>▾</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="profile-icon">W</div>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <aside class="sidebar">
+        <button class="sidebar-toggle">
+          <span class="icon">☰</span>
+          <span>隐藏菜单</span>
+        </button>
+
+        <ul class="sidebar-nav">
+          <li class="nav-item active">
+            <span class="icon">📄</span>
+            <div class="nav-item-content">
+              <span class="title"
+                >阅读材料: Fundamentals of Machine Learning and Artificial
+                Intelligence</span
+              >
+              <span class="subtitle">15 分</span>
+            </div>
+          </li>
+          <li class="nav-item locked">
+            <span class="icon">🔒</span>
+            <div class="nav-item-content">
+              <span class="title"> graded 作业: Self-Reflective Quiz</span>
+              <span class="subtitle">3 min</span>
+            </div>
+          </li>
+        </ul>
+      </aside>
+
+      <main class="content-panel">
+        <div class="content-header">
+          <div class="breadcrumbs">
+            <a href="#">Fundamentals of Machine Learning...</a>
+            <span>></span>
+            <a href="#">第 1 单元</a>
+            <span>></span>
+            Fundamentals of Machine...
+          </div>
+          <div class="page-nav">
+            <a href="#">下一个 ></a>
+          </div>
+        </div>
+
+        <div class="content-body">
+          <h1>Fundamentals of Machine Learning and Artificial Intelligence</h1>
+          <p>
+            Please access the main activity through this <a href="#">link</a>.
+            Once complete, return back to Coursera to complete a quiz.
+          </p>
+
+          <button class="complete-button">标记为完成</button>
+
+          <div class="feedback-section">
+            <button class="feedback-button">
+              <span class="icon">👍</span>
+              <span>喜欢</span>
+            </button>
+            <button class="feedback-button">
+              <span class="icon">👎</span>
+              <span>不喜欢</span>
+            </button>
+            <button class="feedback-button">
+              <span class="icon">🚩</span>
+              <span>报告问题</span>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // JS for interactivity (e.g., hiding sidebar)
+      console.log("Course page script loaded.");
+    </script>
+  </body>
+</html>
