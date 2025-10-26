@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI-Education - 智能教育平台</title>
     <link rel="stylesheet" href="/static/css/mainpage.css" />
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="/static/js/mainpage.js"></script>
   </head>
   <body>
     <header class="main-header">
@@ -221,217 +222,31 @@
         <p style="color: var(--text-light); margin-bottom: 20px">
           可视化课程知识结构，点击节点展开或折叠子节点
         </p>
+        <div id="knowledge-graph-controls">
+          <button class="graph-btn" onclick="expandAllNodes()">展开全部</button>
+          <button class="graph-btn" onclick="collapseAllNodes()">
+            折叠全部
+          </button>
+          <button
+            class="graph-btn"
+            id="relationBtn"
+            onclick="toggleRelations()"
+          >
+            隐藏关系
+          </button>
+        </div>
         <div id="knowledge-graph-container">
-          <div id="knowledge-graph"></div>
+          <div id="graph-container-kg"></div>
+          <div id="description-panel">
+            <h3 id="node-title"></h3>
+            <p id="node-description"></p>
+          </div>
+          <div id="stats">
+            节点总数: <span id="total-nodes">0</span> | 显示节点:
+            <span id="visible-nodes">0</span>
+          </div>
         </div>
       </section>
     </main>
-
-    <script src="/static/js/graph.js"></script>
-    <script>
-      console.log("AI-Education Main Page Loaded");
-
-      // 查找当前学习的节点
-      function findCurrentNodes(graphData) {
-        let currentChapter = null;
-        let currentSection = null;
-        let currentPoint = null;
-
-        const children = graphData.children || [];
-
-        for (let i = 0; i < children.length; i++) {
-          const chapter = children[i];
-
-          if (chapter.flag === "0" && !currentChapter) {
-            currentChapter = {
-              name: chapter.name,
-              index: i,
-              total: children.length,
-              completed: i,
-            };
-          }
-
-          const grandchildren = chapter.grandchildren || [];
-          for (let j = 0; j < grandchildren.length; j++) {
-            const section = grandchildren[j];
-
-            if (
-              section.flag === "0" &&
-              !currentSection &&
-              (!currentChapter || currentChapter.index === i)
-            ) {
-              currentSection = {
-                name: section.name,
-                index: j,
-                total: grandchildren.length,
-                completed: j,
-                chapterName: chapter.name,
-              };
-            }
-
-            function findFirstIncompletePoint(node, depth = 0) {
-              const greatGrandchildren = node["great-grandchildren"] || [];
-              for (let k = 0; k < greatGrandchildren.length; k++) {
-                const point = greatGrandchildren[k];
-                if (point.flag === "0" && !currentPoint) {
-                  currentPoint = {
-                    name: point.name,
-                    index: k,
-                    total: greatGrandchildren.length,
-                    completed: k,
-                    sectionName: node.name,
-                  };
-                  return true;
-                }
-                if (findFirstIncompletePoint(point, depth + 1)) {
-                  return true;
-                }
-              }
-              return false;
-            }
-
-            if (
-              (!currentSection || currentSection.index === j) &&
-              (!currentChapter || currentChapter.index === i)
-            ) {
-              findFirstIncompletePoint(section);
-            }
-          }
-        }
-
-        if (!currentChapter && children.length > 0) {
-          currentChapter = {
-            name: children[0].name,
-            index: 0,
-            total: children.length,
-            completed: 0,
-          };
-        }
-
-        return { currentChapter, currentSection, currentPoint };
-      }
-
-      // 加载学习进度
-      fetch("/api/learning-progress")
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Learning progress data loaded:", data);
-
-          // 更新章节进度
-          document.getElementById(
-            "chapter-progress"
-          ).textContent = `已完成 ${data.chapters.completed}/${data.chapters.total} 章 (${data.chapters.progress}%)`;
-          document.getElementById("chapter-progress-bar").style.width =
-            data.chapters.progress + "%";
-
-          // 更新小节进度
-          document.getElementById(
-            "section-progress"
-          ).textContent = `已完成 ${data.sections.completed}/${data.sections.total} 节 (${data.sections.progress}%)`;
-          document.getElementById("section-progress-bar").style.width =
-            data.sections.progress + "%";
-
-          // 更新知识点进度
-          document.getElementById(
-            "point-progress"
-          ).textContent = `已完成 ${data.points.completed}/${data.points.total} 个 (${data.points.progress}%)`;
-          document.getElementById("point-progress-bar").style.width =
-            data.points.progress + "%";
-        })
-        .catch((error) => {
-          console.error("Failed to load learning progress:", error);
-          document.getElementById("chapter-progress").textContent = "加载失败";
-          document.getElementById("section-progress").textContent = "加载失败";
-          document.getElementById("point-progress").textContent = "加载失败";
-        });
-
-      // 加载知识图谱
-      fetch("/api/knowledge-graph")
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Knowledge graph data loaded:", data);
-          if (data && (data.name || data.root_name)) {
-            // 兼容两种数据格式
-            if (data.name && !data.root_name) {
-              data.root_name = data.name;
-            }
-
-            // 查找当前学习的节点
-            const { currentChapter, currentSection, currentPoint } =
-              findCurrentNodes(data);
-
-            // 更新当前章节卡片
-            if (currentChapter) {
-              document.getElementById("current-chapter-name").textContent =
-                currentChapter.name;
-              const chapterProgress = (
-                (currentChapter.completed / currentChapter.total) *
-                100
-              ).toFixed(1);
-              document.getElementById(
-                "current-chapter-desc"
-              ).textContent = `章节 ${currentChapter.index + 1}/${
-                currentChapter.total
-              } · ${chapterProgress}% 已完成`;
-              document.getElementById("current-chapter-progress").style.width =
-                chapterProgress + "%";
-            }
-
-            // 更新当前小节卡片
-            if (currentSection) {
-              document.getElementById("current-section-name").textContent =
-                currentSection.name;
-              const sectionProgress = (
-                (currentSection.completed / currentSection.total) *
-                100
-              ).toFixed(1);
-              document.getElementById(
-                "current-section-desc"
-              ).textContent = `小节 ${currentSection.index + 1}/${
-                currentSection.total
-              } · ${sectionProgress}% 已完成`;
-              document.getElementById("current-section-progress").style.width =
-                sectionProgress + "%";
-            } else {
-              document.getElementById("current-section-name").textContent =
-                "暂无小节";
-              document.getElementById("current-section-desc").textContent =
-                "等待开始学习";
-            }
-
-            // 更新当前知识点卡片
-            if (currentPoint) {
-              document.getElementById("current-point-name").textContent =
-                currentPoint.name;
-              const pointProgress = (
-                (currentPoint.completed / currentPoint.total) *
-                100
-              ).toFixed(1);
-              document.getElementById(
-                "current-point-desc"
-              ).textContent = `知识点 ${currentPoint.index + 1}/${
-                currentPoint.total
-              } · ${pointProgress}% 已完成`;
-              document.getElementById("current-point-progress").style.width =
-                pointProgress + "%";
-            } else {
-              document.getElementById("current-point-name").textContent =
-                "暂无知识点";
-              document.getElementById("current-point-desc").textContent =
-                "等待开始学习";
-            }
-
-            // 使用原有的graph.js初始化函数
-            if (window.initializeGraph) {
-              window.initializeGraph(data);
-            } else {
-              console.error("initializeGraph function not found");
-            }
-          }
-        })
-        .catch((error) =>
-          console.error("Failed to load knowledge graph:", error)
-        );
-    </script>
   </body>
 </html>
