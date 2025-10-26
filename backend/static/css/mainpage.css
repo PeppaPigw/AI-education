@@ -192,7 +192,7 @@ a {
 }
 
 .course-card .progress-bar div {
-  width: 0%; /* 示例中是 0% */
+  width: 0%;
   height: 100%;
   background-color: var(--primary-blue);
 }
@@ -216,6 +216,7 @@ a {
   background-color: #fff;
   border: 1px solid var(--border-gray);
   border-radius: 8px;
+  margin-bottom: 20px;
   padding: 20px;
 }
 

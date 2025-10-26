@@ -872,6 +872,82 @@ def find_and_update_node(node, target_name):
     return False
 
 
+@app.get("/api/learning-progress")
+async def get_learning_progress():
+    """获取学习进度统计"""
+    try:
+        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+            graph_data = json.load(f)
+    except FileNotFoundError:
+        return {"error": "Knowledge graph not found"}
+
+    children = graph_data.get("children", [])
+
+    # 统计章节进度
+    total_chapters = len(children)
+    completed_chapters = sum(1 for c in children if c.get("flag") == "1")
+    chapter_progress = (
+        (completed_chapters / total_chapters * 100) if total_chapters > 0 else 0
+    )
+
+    # 统计小节进度
+    total_sections = 0
+    completed_sections = 0
+    for child in children:
+        grandchildren = child.get("grandchildren", [])
+        total_sections += len(grandchildren)
+        completed_sections += sum(1 for gc in grandchildren if gc.get("flag") == "1")
+    section_progress = (
+        (completed_sections / total_sections * 100) if total_sections > 0 else 0
+    )
+
+    # 统计知识点进度
+    total_points = 0
+    completed_points = 0
+
+    def count_knowledge_points(node):
+        nonlocal total_points, completed_points
+        great_grandchildren = node.get("great-grandchildren", [])
+        if great_grandchildren:
+            for ggc in great_grandchildren:
+                total_points += 1
+                if ggc.get("flag") == "1":
+                    completed_points += 1
+                count_knowledge_points(ggc)
+
+    for child in children:
+        for grandchild in child.get("grandchildren", []):
+            count_knowledge_points(grandchild)
+
+    point_progress = (completed_points / total_points * 100) if total_points > 0 else 0
+
+    # 整体进度
+    overall_progress = (chapter_progress + section_progress + point_progress) / 3
+
+    return {
+        "overall": {
+            "progress": round(overall_progress, 1),
+            "completed": completed_chapters + completed_sections + completed_points,
+            "total": total_chapters + total_sections + total_points,
+        },
+        "chapters": {
+            "progress": round(chapter_progress, 1),
+            "completed": completed_chapters,
+            "total": total_chapters,
+        },
+        "sections": {
+            "progress": round(section_progress, 1),
+            "completed": completed_sections,
+            "total": total_sections,
+        },
+        "points": {
+            "progress": round(point_progress, 1),
+            "completed": completed_points,
+            "total": total_points,
+        },
+    }
+
+
 @app.post("/api/quiz/complete")
 async def complete_quiz(data: QuizComplete):
     """完成测验，更新节点flag"""

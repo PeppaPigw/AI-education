@@ -41,12 +41,12 @@
           <div class="course-card">
             <div class="info">
               <div class="provider">AI-Education 平台</div>
-              <h3>大数据分析基础课程</h3>
-              <div class="progress-text">
-                课程 · 15% 已完成 · 预计还需 4 周完成
+              <h3 id="current-point-name">加载中...</h3>
+              <div class="progress-text" id="current-point-desc">
+                当前知识点
               </div>
               <div class="progress-bar">
-                <div style="width: 15%"></div>
+                <div id="current-point-progress" style="width: 0%"></div>
               </div>
             </div>
             <button
@@ -60,44 +60,61 @@
           <div class="course-card">
             <div class="info">
               <div class="provider">AI-Education 平台</div>
-              <h3>数据获取与预处理</h3>
-              <div class="progress-text">下一章节 · 约 45 分钟</div>
+              <h3 id="current-section-name">加载中...</h3>
+              <div class="progress-text" id="current-section-desc">
+                当前小节
+              </div>
+              <div class="progress-bar">
+                <div id="current-section-progress" style="width: 0%"></div>
+              </div>
             </div>
-            <button
-              class="start-button"
-              onclick="window.location.href='/static/coursecontent.html'"
-            >
-              开始学习
-            </button>
           </div>
 
           <div class="course-card">
             <div class="info">
               <div class="provider">AI-Education 平台</div>
-              <h3>机器学习与深度学习</h3>
-              <div class="progress-text">即将开放 · 预计 2 周后</div>
+              <h3 id="current-chapter-name">加载中...</h3>
+              <div class="progress-text" id="current-chapter-desc">
+                当前章节
+              </div>
+              <div class="progress-bar">
+                <div id="current-chapter-progress" style="width: 0%"></div>
+              </div>
             </div>
           </div>
         </div>
 
         <aside class="sidebar" style="height: 100%">
           <div class="sidebar-widget">
-            <h4>本周学习目标</h4>
+            <h4>章节进度 📚</h4>
             <div class="goal-item">
-              <span class="icon">📚</span>
-              <span>完成大数据基础章节</span>
+              <span class="icon">📊</span>
+              <span id="chapter-progress">加载中...</span>
             </div>
-            <div class="goal-item">
-              <span class="icon">✍️</span>
-              <span>完成随堂测验 2/5</span>
+            <div class="progress-bar" style="margin-top: 10px">
+              <div id="chapter-progress-bar" style="width: 0%"></div>
             </div>
+          </div>
+
+          <div class="sidebar-widget">
+            <h4>小节进度 📖</h4>
             <div class="goal-item">
-              <span class="icon">🎯</span>
-              <span>查看知识图谱</span>
+              <span class="icon">📝</span>
+              <span id="section-progress">加载中...</span>
             </div>
+            <div class="progress-bar" style="margin-top: 10px">
+              <div id="section-progress-bar" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="sidebar-widget">
+            <h4>知识点进度 🎯</h4>
             <div class="goal-item">
-              <span class="icon">📅</span>
-              <span>制定个性化学习计划</span>
+              <span class="icon">💡</span>
+              <span id="point-progress">加载中...</span>
+            </div>
+            <div class="progress-bar" style="margin-top: 10px">
+              <div id="point-progress-bar" style="width: 0%"></div>
             </div>
           </div>
         </aside>
@@ -214,6 +231,120 @@
     <script>
       console.log("AI-Education Main Page Loaded");
 
+      // 查找当前学习的节点
+      function findCurrentNodes(graphData) {
+        let currentChapter = null;
+        let currentSection = null;
+        let currentPoint = null;
+
+        const children = graphData.children || [];
+
+        for (let i = 0; i < children.length; i++) {
+          const chapter = children[i];
+
+          if (chapter.flag === "0" && !currentChapter) {
+            currentChapter = {
+              name: chapter.name,
+              index: i,
+              total: children.length,
+              completed: i,
+            };
+          }
+
+          const grandchildren = chapter.grandchildren || [];
+          for (let j = 0; j < grandchildren.length; j++) {
+            const section = grandchildren[j];
+
+            if (
+              section.flag === "0" &&
+              !currentSection &&
+              (!currentChapter || currentChapter.index === i)
+            ) {
+              currentSection = {
+                name: section.name,
+                index: j,
+                total: grandchildren.length,
+                completed: j,
+                chapterName: chapter.name,
+              };
+            }
+
+            function findFirstIncompletePoint(node, depth = 0) {
+              const greatGrandchildren = node["great-grandchildren"] || [];
+              for (let k = 0; k < greatGrandchildren.length; k++) {
+                const point = greatGrandchildren[k];
+                if (point.flag === "0" && !currentPoint) {
+                  currentPoint = {
+                    name: point.name,
+                    index: k,
+                    total: greatGrandchildren.length,
+                    completed: k,
+                    sectionName: node.name,
+                  };
+                  return true;
+                }
+                if (findFirstIncompletePoint(point, depth + 1)) {
+                  return true;
+                }
+              }
+              return false;
+            }
+
+            if (
+              (!currentSection || currentSection.index === j) &&
+              (!currentChapter || currentChapter.index === i)
+            ) {
+              findFirstIncompletePoint(section);
+            }
+          }
+        }
+
+        if (!currentChapter && children.length > 0) {
+          currentChapter = {
+            name: children[0].name,
+            index: 0,
+            total: children.length,
+            completed: 0,
+          };
+        }
+
+        return { currentChapter, currentSection, currentPoint };
+      }
+
+      // 加载学习进度
+      fetch("/api/learning-progress")
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Learning progress data loaded:", data);
+
+          // 更新章节进度
+          document.getElementById(
+            "chapter-progress"
+          ).textContent = `已完成 ${data.chapters.completed}/${data.chapters.total} 章 (${data.chapters.progress}%)`;
+          document.getElementById("chapter-progress-bar").style.width =
+            data.chapters.progress + "%";
+
+          // 更新小节进度
+          document.getElementById(
+            "section-progress"
+          ).textContent = `已完成 ${data.sections.completed}/${data.sections.total} 节 (${data.sections.progress}%)`;
+          document.getElementById("section-progress-bar").style.width =
+            data.sections.progress + "%";
+
+          // 更新知识点进度
+          document.getElementById(
+            "point-progress"
+          ).textContent = `已完成 ${data.points.completed}/${data.points.total} 个 (${data.points.progress}%)`;
+          document.getElementById("point-progress-bar").style.width =
+            data.points.progress + "%";
+        })
+        .catch((error) => {
+          console.error("Failed to load learning progress:", error);
+          document.getElementById("chapter-progress").textContent = "加载失败";
+          document.getElementById("section-progress").textContent = "加载失败";
+          document.getElementById("point-progress").textContent = "加载失败";
+        });
+
       // 加载知识图谱
       fetch("/api/knowledge-graph")
         .then((response) => response.json())
@@ -224,6 +355,72 @@
             if (data.name && !data.root_name) {
               data.root_name = data.name;
             }
+
+            // 查找当前学习的节点
+            const { currentChapter, currentSection, currentPoint } =
+              findCurrentNodes(data);
+
+            // 更新当前章节卡片
+            if (currentChapter) {
+              document.getElementById("current-chapter-name").textContent =
+                currentChapter.name;
+              const chapterProgress = (
+                (currentChapter.completed / currentChapter.total) *
+                100
+              ).toFixed(1);
+              document.getElementById(
+                "current-chapter-desc"
+              ).textContent = `章节 ${currentChapter.index + 1}/${
+                currentChapter.total
+              } · ${chapterProgress}% 已完成`;
+              document.getElementById("current-chapter-progress").style.width =
+                chapterProgress + "%";
+            }
+
+            // 更新当前小节卡片
+            if (currentSection) {
+              document.getElementById("current-section-name").textContent =
+                currentSection.name;
+              const sectionProgress = (
+                (currentSection.completed / currentSection.total) *
+                100
+              ).toFixed(1);
+              document.getElementById(
+                "current-section-desc"
+              ).textContent = `小节 ${currentSection.index + 1}/${
+                currentSection.total
+              } · ${sectionProgress}% 已完成`;
+              document.getElementById("current-section-progress").style.width =
+                sectionProgress + "%";
+            } else {
+              document.getElementById("current-section-name").textContent =
+                "暂无小节";
+              document.getElementById("current-section-desc").textContent =
+                "等待开始学习";
+            }
+
+            // 更新当前知识点卡片
+            if (currentPoint) {
+              document.getElementById("current-point-name").textContent =
+                currentPoint.name;
+              const pointProgress = (
+                (currentPoint.completed / currentPoint.total) *
+                100
+              ).toFixed(1);
+              document.getElementById(
+                "current-point-desc"
+              ).textContent = `知识点 ${currentPoint.index + 1}/${
+                currentPoint.total
+              } · ${pointProgress}% 已完成`;
+              document.getElementById("current-point-progress").style.width =
+                pointProgress + "%";
+            } else {
+              document.getElementById("current-point-name").textContent =
+                "暂无知识点";
+              document.getElementById("current-point-desc").textContent =
+                "等待开始学习";
+            }
+
             // 使用原有的graph.js初始化函数
             if (window.initializeGraph) {
               window.initializeGraph(data);

@@ -8,12 +8,12 @@
       "grandchildren": [
         {
           "name": "大数据生命周期与应用",
-          "flag": "0",
+          "flag": "1",
           "resource_path": "",
           "great-grandchildren": [
             {
               "name": "大数据生命周期",
-              "flag": "0",
+              "flag": "1",
               "resource_path": [
                 "data/Book/1.PDF",
                 "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/3c44996d-195b-4668-9a4a-8e117630594e_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d0b3814a5405c0ae3472bb37afc653e713059f726dc7bb86b92adbc3d5b34b13286f6d485b7c68159a2ee6658b6cb1e67aabef62f6a5b7f74a41ca7132f31ab87"
@@ -21,7 +21,7 @@
             },
             {
               "name": "大数据驱动因素",
-              "flag": "0",
+              "flag": "1",
               "resource_path": [
                 "data/Book/2.PDF",
                 "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/a728c394-8eab-4d39-a25c-e6e4d00dc4cc_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d8bd12ae30bac355ee905d1d74e2fe38b3059f726dc7bb86b92adbc3d5b34b13286f6d485b7c68159a2ee6658b6cb1e674cca709eeec35724f15d3e6a182e04cb"
@@ -29,7 +29,7 @@
             },
             {
               "name": "DIKW金字塔模型",
-              "flag": "0",
+              "flag": "1",
               "resource_path": [
                 "data/Book/3.PDF",
                 "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/53c55891-045e-4ea9-a3ae-6913be213d90_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632da3bdcd36986c3d8f1b442c0e38643caa3059f726dc7bb86b92adbc3d5b34b1325ed6037fbf0a290d18831c48a2935f57b108680c195ae7aedbefcbd824e55924"
@@ -37,7 +37,7 @@
             },
             {
               "name": "商务智能的发展过程",
-              "flag": "0",
+              "flag": "1",
               "resource_path": [
                 "data/Book/4.PDF",
                 "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/93c23ba6-3555-4e43-b233-c29043b61fcb_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632dcd84727413c966781f18979dbddbc6673059f726dc7bb86b92adbc3d5b34b13286f6d485b7c68159a2ee6658b6cb1e67b108680c195ae7aedbefcbd824e55924"
@@ -47,12 +47,12 @@
         },
         {
           "name": "大数据基本概念",
-          "flag": "0",
+          "flag": "1",
           "resource_path": "",
           "great-grandchildren": [
             {
               "name": "大数据的概念",
-              "flag": "0",
+              "flag": "1",
               "resource_path": [
                 "data/Book/5.PDF",
                 "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/495e4775-81f7-4be1-886a-a7873c1a5b98_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632dc82d75fb5186349be7a43f0664d916a23059f726dc7bb86b92adbc3d5b34b132bc3c599e763a957161a864807d3127addf69454fe54d63664bd5297860cdfa3d"
@@ -60,7 +60,7 @@
               "great-grandchildren": [
                 {
                   "name": "大数据定义、特征、生命周期等",
-                  "flag": "0",
+                  "flag": "1",
                   "resource_path": [
                     "data/Book/12.PDF",
                     "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/01496e07-29da-4d1b-b5bd-cc574cb89fc9_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d8b8bbb3f04c11a335320877459af798a3059f726dc7bb86b92adbc3d5b34b132bc3c599e763a957161a864807d3127ad623591d5e74d0640a136e4a4f0e4eb71"
@@ -70,7 +70,7 @@
             },
             {
               "name": "大数据的渗透与影响",
-              "flag": "0",
+              "flag": "1",
               "resource_path": [
                 "data/Book/6.PDF",
                 "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/2ad2314b-de8d-4944-a6a8-192109a6d4df_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d770344757a98f20d50b8028b6b02b2883059f726dc7bb86b92adbc3d5b34b132bc3c599e763a957161a864807d3127ad4426afeac364f76a817da3b2623cd41e"
@@ -78,113 +78,113 @@
             },
             {
               "name": "大数据的量化进程",
-              "flag": "0",
+              "flag": "1",
               "resource_path": "data/Book/7.PDF"
             },
             {
               "name": "数据的价值与原油的类比",
-              "flag": "0",
+              "flag": "1",
               "resource_path": "data/Book/8.PDF"
             },
             {
               "name": "大数据的产生阶段",
-              "flag": "0",
+              "flag": "1",
               "resource_path": "data/Book/9.PDF"
             },
             {
               "name": "传统数据库与大数据的区别",
-              "flag": "0",
+              "flag": "1",
               "resource_path": "data/Book/10.PDF"
             },
             {
               "name": "IT的发展历程",
-              "flag": "0",
+              "flag": "1",
               "resource_path": "data/Book/11.PDF"
             }
           ]
         },
         {
           "name": "大数据特征与类型",
-          "flag": "0",
+          "flag": "1",
           "resource_path": "",
           "great-grandchildren": [
             {
               "name": "大数据类型",
-              "flag": "0",
+              "flag": "1",
               "resource_path": "data/Book/13.PDF",
               "great-grandchildren": [
                 {
                   "name": "大数据的种类",
-                  "flag": "0",
+                  "flag": "1",
                   "resource_path": "data/Book/15.PDF"
                 },
                 {
                   "name": "数据类型比例",
-                  "flag": "0",
+                  "flag": "1",
                   "resource_path": "data/Book/16.PDF"
                 }
               ]
             },
             {
               "name": "大数据特征",
-              "flag": "0",
+              "flag": "1",
               "resource_path": "data/Book/14.PDF",
               "great-grandchildren": [
                 {
                   "name": "大数据的规模与速度",
-                  "flag": "0",
+                  "flag": "1",
                   "resource_path": "data/Book/17.PDF",
                   "great-grandchildren": [
                     {
                       "name": "大数据的规模",
-                      "flag": "0",
+                      "flag": "1",
                       "resource_path": "data/Book/19.PDF"
                     },
                     {
                       "name": "大数据的速度",
-                      "flag": "0",
+                      "flag": "1",
                       "resource_path": "data/Book/20.PDF"
                     }
                   ]
                 },
                 {
                   "name": "大数据的五大特征",
-                  "flag": "0",
+                  "flag": "1",
                   "resource_path": "data/Book/18.PDF",
                   "great-grandchildren": [
                     {
                       "name": "大数据的特征",
-                      "flag": "0",
+                      "flag": "1",
                       "resource_path": "data/Book/21.PDF"
                     },
                     {
                       "name": "网络大数据特征",
-                      "flag": "0",
+                      "flag": "1",
                       "resource_path": "data/Book/22.PDF"
                     },
                     {
                       "name": "Volume",
-                      "flag": "0",
+                      "flag": "1",
                       "resource_path": "data/Book/23.PDF"
                     },
                     {
                       "name": "Variety",
-                      "flag": "0",
+                      "flag": "1",
                       "resource_path": "data/Book/24.PDF"
                     },
                     {
                       "name": "Velocity",
-                      "flag": "0",
+                      "flag": "1",
                       "resource_path": "data/Book/25.PDF"
                     },
                     {
                       "name": "Veracity",
-                      "flag": "0",
+                      "flag": "1",
                       "resource_path": "data/Book/26.PDF"
                     },
                     {
                       "name": "Value",
-                      "flag": "0",
+                      "flag": "1",
                       "resource_path": "data/Book/27.PDF"
                     }
                   ]
@@ -195,24 +195,24 @@
         },
         {
           "name": "大数据技术与模型",
-          "flag": "0",
+          "flag": "1",
           "resource_path": "",
           "great-grandchildren": [
             {
               "name": "第四研究范式",
-              "flag": "0",
+              "flag": "1",
               "resource_path": "data/Book/28.PDF",
               "great-grandchildren": [
                 {
                   "name": "数据密集型科学发现",
-                  "flag": "0",
+                  "flag": "1",
                   "resource_path": "data/Book/30.PDF"
                 }
               ]
             },
             {
               "name": "大数据计算系统的三个基本层次",
-              "flag": "0",
+              "flag": "1",
               "resource_path": "data/Book/29.PDF"
             }
           ]
@@ -231,7 +231,7 @@
           "great-grandchildren": [
             {
               "name": "结构化数据",
-              "flag": "0",
+              "flag": "1",
               "resource_path": [
                 "data/Book/31.PDF",
                 "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/81a60f07-9600-4d0c-995b-3b6648b55428_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d4199901d1c16c6a131116682425165093059f726dc7bb86b92adbc3d5b34b13286f6d485b7c68159a2ee6658b6cb1e67aabef62f6a5b7f74a41ca7132f31ab87"
@@ -239,7 +239,7 @@
             },
             {
               "name": "非结构化数据",
-              "flag": "0",
+              "flag": "1",
               "resource_path": [
                 "data/Book/32.PDF",
                 "http://mooc2vod.stu.126.net/nos/hls/2025/05/27/66/089245ad-a213-4947-85b9-b20687169fe3_7.m3u8?ak=7909bff134372bffca53cdc2c17adc27a4c38c6336120510aea1ae1790819de84d8cc86c8b2855ab14ae8dc0e8ff632d037d99cfd4f7be384f8cd4f464c123be3059f726dc7bb86b92adbc3d5b34b132d5d02463ab18777c21155307c7c2fb204cca709eeec35724f15d3e6a182e04cb"
