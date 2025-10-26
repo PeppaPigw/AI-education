@@ -424,7 +424,10 @@
           justify-content: space-between;
         }
       }
-
+      .nav-links a.active,
+      .nav-links a:hover {
+        color: var(--primary-blue);
+      }
       @media (max-width: 576px) {
         .recommend-grid {
           grid-template-columns: 1fr;
@@ -457,7 +460,7 @@
             >AI-Education</span
           >
           <div class="nav-links">
-            <a href="/static/mainpage.html">首页</a>
+            <a href="/static/mainpage.html" class="active">首页</a>
             <a href="/static/mylearning.html">我的学习</a>
             <a href="/static/coursecontent.html">课程内容</a>
           </div>

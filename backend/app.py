@@ -18,7 +18,7 @@ import shutil
 import logging
 import base64
 import math
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from pathlib import Path
 
 from AgentModule import create_agent
@@ -92,6 +92,12 @@ class NodeSelection(BaseModel):
 
 class PDFSelection(BaseModel):
     pdf_path: str
+
+
+class QuizComplete(BaseModel):
+    node_name: str
+    score: int
+    total: int
 
 
 class LoginRequest(BaseModel):
@@ -359,7 +365,7 @@ async def start_quiz(data: QuizStart):
 
                 # 如果有Question文件内容，添加相关问题到上下文
                 if self.question_file_content:
-                    from langchain.schema import Document
+                    from langchain_core.documents import Document
 
                     # 将Question文件内容作为额外文档
                     question_doc = Document(
@@ -828,6 +834,100 @@ async def get_learning_plans():
     # 按文件名排序（最新的在前）
     plan_files.sort(key=lambda x: x["filename"], reverse=True)
     return plan_files
+
+
+def update_flags_recursive(node):
+    """递归更新节点的flag，如果所有子节点都为1，则父节点也为1"""
+    if "great-grandchildren" in node and node["great-grandchildren"]:
+        all_complete = all(
+            child.get("flag") == "1" for child in node["great-grandchildren"]
+        )
+        if all_complete:
+            node["flag"] = "1"
+            return True
+        else:
+            node["flag"] = "0"
+            return False
+    return node.get("flag") == "1"
+
+
+def find_and_update_node(node, target_name):
+    """递归查找并更新节点flag"""
+    if node.get("name") == target_name:
+        node["flag"] = "1"
+        return True
+
+    # 检查 great-grandchildren
+    if "great-grandchildren" in node and node["great-grandchildren"]:
+        for child in node["great-grandchildren"]:
+            if find_and_update_node(child, target_name):
+                # 检查是否所有子节点都完成
+                all_complete = all(
+                    c.get("flag") == "1" for c in node["great-grandchildren"]
+                )
+                if all_complete:
+                    node["flag"] = "1"
+                return True
+
+    return False
+
+
+@app.post("/api/quiz/complete")
+async def complete_quiz(data: QuizComplete):
+    """完成测验，更新节点flag"""
+    try:
+        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+            graph_data = json.load(f)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Knowledge graph not found")
+
+    # 检查是否通过测验（8/10 = 80%）
+    pass_threshold = 0.8
+    score_ratio = data.score / data.total if data.total > 0 else 0
+    passed = score_ratio >= pass_threshold
+
+    if not passed:
+        return {
+            "success": False,
+            "message": f"Score {data.score}/{data.total} is below passing threshold",
+            "passed": False,
+        }
+
+    # 查找节点并更新flag
+    updated = False
+    for child in graph_data.get("children", []):
+        for grandchild in child.get("grandchildren", []):
+            if find_and_update_node(grandchild, data.node_name):
+                updated = True
+
+                # 检查是否所有 grandchildren 都完成
+                all_grandchildren_complete = all(
+                    gc.get("flag") == "1" for gc in child.get("grandchildren", [])
+                )
+                if all_grandchildren_complete:
+                    child["flag"] = "1"
+                break
+
+        if updated:
+            break
+
+    if updated:
+        # 检查并更新root层级
+        all_children_complete = all(
+            c.get("flag") == "1" for c in graph_data.get("children", [])
+        )
+        if all_children_complete:
+            graph_data["flag"] = "1"
+
+        with open(KNOWLEDGE_JSON_PATH, "w", encoding="utf-8") as f:
+            json.dump(graph_data, f, indent=2, ensure_ascii=False)
+        return {
+            "success": True,
+            "message": "Quiz completed successfully",
+            "passed": True,
+        }
+
+    raise HTTPException(status_code=404, detail=f"Node '{data.node_name}' not found")
 
 
 if __name__ == "__main__":

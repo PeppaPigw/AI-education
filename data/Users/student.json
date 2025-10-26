@@ -1,0 +1,75 @@
+[
+  {
+    "stu_name": "WangQiyu",
+    "username": "stuwangqiyu",
+    "password": "123456",
+    "email": "",
+    "learning_goals": [
+      "大数据基础概念",
+      "数据获取",
+      "数据质量与预处理",
+      "数据存储系统"
+    ],
+    "preference": {
+      "course_topic": [
+        {
+          "name": "大数据基础分析",
+          "hierarchy": "great-grandchildren"
+        },
+        { "name": "数据存储", "hierarchy": "great-grandchildren" }
+      ],
+      "course_type": [{ "name": "在线课程" }, { "name": "实践课程" }]
+    },
+    "learning_plan": [
+      {
+        "date": "2025-10-25",
+        "hierarchy": "great-grandchildren",
+        "topic": "大数据基础分析",
+        "priority": "High"
+      },
+      {
+        "date": "2025-10-26",
+        "hierarchy": "great-grandchildren",
+        "topic": "数据存储",
+        "priority": "Medium"
+      }
+    ]
+  },
+
+  {
+    "stu_name": "LiuYiMing",
+    "username": "stuliuyiming",
+    "password": "123456",
+    "email": "",
+    "learning_goals": [
+      "大数据基础概念",
+      "数据获取",
+      "数据质量与预处理",
+      "数据存储系统"
+    ],
+    "preference": {
+      "course_topic": [
+        {
+          "name": "大数据基础分析",
+          "hierarchy": "great-grandchildren"
+        },
+        { "name": "数据存储", "hierarchy": "great-grandchildren" }
+      ],
+      "course_type": [{ "name": "在线课程" }, { "name": "实践课程" }]
+    },
+    "learning_plan": [
+      {
+        "date": "2025-10-25",
+        "hierarchy": "great-grandchildren",
+        "topic": "大数据基础分析",
+        "priority": "High"
+      },
+      {
+        "date": "2025-10-26",
+        "hierarchy": "great-grandchildren",
+        "topic": "数据存储",
+        "priority": "Medium"
+      }
+    ]
+  }
+]

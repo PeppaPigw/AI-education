@@ -542,6 +542,7 @@
       let answered = false;
       let userAnswers = [];
       let totalChoiceQuestions = 0;
+      let quizTopic = "";
 
       const API_URL = "https://api.siliconflow.cn/v1/chat/completions";
       const API_KEY = "sk-iujgwjycqgmvzxycfgyynuowipaykmbbcneerzvdnehpqvfs";
@@ -552,6 +553,7 @@
 你是一位资深的**教育评估专家**和**专业命题人**。你的任务是根据给定的核心主题，生成一套高质量、严谨的测验题。
 
 # 核心主题
+我们的课程是大数据分析基础。因此题目与大数据相关。
 本套测验的核心主题是：**${core_topic}**
 
 # 质量与严谨性要求 🧐
@@ -689,6 +691,7 @@
         try {
           // 获取主题
           const topic = getTopicFromURL();
+          quizTopic = topic; // 保存到全局变量
 
           // 更新加载提示
           document.querySelector(
@@ -982,7 +985,7 @@
         }
       }
 
-      function showResults() {
+      async function showResults() {
         document.getElementById("quizContainer").style.display = "none";
         const resultScreen = document.getElementById("resultScreen");
         const finalScore = document.getElementById("finalScore");
@@ -1018,6 +1021,27 @@
 
         resultScreen.classList.add("show");
         document.getElementById("progressBar").style.width = "100%";
+
+        // 提交测验完成状态
+        if (quizTopic && percentage >= 80) {
+          try {
+            const response = await fetch("/api/quiz/complete", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                node_name: quizTopic,
+                score: score,
+                total: questions.length,
+              }),
+            });
+            const data = await response.json();
+            if (data.success) {
+              console.log("✅ Quiz completion recorded");
+            }
+          } catch (error) {
+            console.error("Error recording quiz completion:", error);
+          }
+        }
       }
     </script>
   </body>
