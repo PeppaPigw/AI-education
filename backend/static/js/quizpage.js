@@ -1,0 +1,502 @@
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+let userAnswers = [];
+let totalChoiceQuestions = 0;
+let quizTopic = "";
+
+const API_URL = "https://api.siliconflow.cn/v1/chat/completions";
+const API_KEY = "sk-iujgwjycqgmvzxycfgyynuowipaykmbbcneerzvdnehpqvfs";
+
+function generate_QUESTION_TEMPLATE(core_topic) {
+  return `# 角色与任务 🎯
+你是一位资深的**教育评估专家**和**专业命题人**。你的任务是根据给定的核心主题，生成一套高质量、严谨的测验题。
+
+# 核心主题
+我们的课程是大数据分析基础。因此题目与大数据相关。
+本套测验的核心主题是：**${core_topic}**
+
+# 质量与严谨性要求 🧐
+1.  **专业性**：题目必须反映该主题的核心概念和关键知识点。
+2.  **严谨性**：问题表述清晰无歧义，答案唯一且正确。
+3.  **迷惑性（选择题）**：错误选项 (Distractors) 必须具有高度的迷惑性，是基于常见误解设计的，而不能是明显无关的选项。
+
+# 数量与格式要求 (【强制】)
+请**严格且仅**输出一个符合以下格式的 JSON 对象。**禁止**在 JSON 对象前后添加任何开场白、解释、总结或 Markdown 标记 (如 \`\`\`json ... \`\`\`)。
+
+**数量**：必须包含 **8 个** \`single-choice\` 题目 和 **2 个** \`short-answer\` 题目。
+
+!!!注意fillinblank是简答题而不是填空题。选择题需要给出答案。选择题包含三个字段[question,options,right-answer]。主观题包含一个字段"question"
+
+**JSON 格式**：
+{
+  "title": "${core_topic}",
+  "single-choice": [
+    {
+      "question": "（这里是第 1 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    },
+    {
+      "question": "（这里是第 2 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    },
+    {
+      "question": "（这里是第 3 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    },
+    {
+      "question": "（这里是第 4 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    },
+    {
+      "question": "（这里是第 5 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    },
+    {
+      "question": "（这里是第 6 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    },
+    {
+      "question": "（这里是第 7 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    },
+    {
+      "question": "（这里是第 8 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }
+  ],
+  "short-answer": [
+    {
+      "question": "（这里是第 1 个简答题）"
+    },
+    {
+      "question": "（这里是第 2 个简答题）"
+    }
+  ]
+}
+再次提示：
+1.主观题不是填空题，应该是答题者用一段话回答。
+2. 选择题必须把答案一起输出在json中`;
+}
+
+// 从 URL 参数获取主题
+function getTopicFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get("topic") || "大数据分析基础"; // 默认主题
+}
+
+// 调用 LLM API 生成题目
+async function generateQuestions(topic) {
+  const prompt = generate_QUESTION_TEMPLATE(topic);
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "inclusionAI/Ling-mini-2.0",
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API 请求失败: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices[0].message.content.trim();
+
+    // 尝试解析 JSON（处理可能的 markdown 标记）
+    let jsonContent = content;
+
+    // 移除可能的 markdown 代码块标记
+    if (content.startsWith("```json")) {
+      jsonContent = content.replace(/```json\s*/, "").replace(/```\s*$/, "");
+    } else if (content.startsWith("```")) {
+      jsonContent = content.replace(/```\s*/, "").replace(/```\s*$/, "");
+    }
+
+    const questionsData = JSON.parse(jsonContent);
+    return questionsData;
+  } catch (error) {
+    console.error("生成题目失败:", error);
+    throw error;
+  }
+}
+
+// 页面加载时自动加载题目
+window.onload = function () {
+  loadQuestions();
+};
+
+async function loadQuestions() {
+  try {
+    // 获取主题
+    const topic = getTopicFromURL();
+    quizTopic = topic; // 保存到全局变量
+
+    // 更新加载提示
+    document.querySelector(
+      ".json-upload p"
+    ).textContent = `正在为主题"${topic}"生成测验题目...`;
+
+    // 调用 API 生成题目
+    const questionsData = await generateQuestions(topic);
+
+    // 处理题目
+    processQuestions(questionsData);
+
+    // 开始测验
+    startQuiz();
+  } catch (error) {
+    alert("题目生成失败，请刷新页面重试！");
+    console.error("题目生成错误:", error);
+
+    // 显示错误信息
+    document.querySelector(".json-upload p").textContent =
+      "题目生成失败，请刷新页面重试";
+    document.getElementById("loadingSpinner").style.display = "none";
+  }
+}
+
+function processQuestions(jsonData) {
+  questions = [];
+
+  // 处理选择题
+  if (jsonData["single-choice"]) {
+    jsonData["single-choice"].forEach((q) => {
+      questions.push({
+        type: "choice",
+        question: q.question,
+        options: q.options,
+        answer: q["right-answer"],
+      });
+    });
+    totalChoiceQuestions = jsonData["single-choice"].length;
+  }
+
+  // 处理简答题
+  if (jsonData["short-answer"]) {
+    jsonData["short-answer"].forEach((q) => {
+      questions.push({
+        type: "text",
+        question: q.question,
+        // 简答题由 LLM 评分，不需要预设答案
+      });
+    });
+  }
+
+  document.getElementById("totalQuestions").textContent = questions.length;
+}
+
+function startQuiz() {
+  document.getElementById("jsonUpload").style.display = "none";
+  document.getElementById("progressContainer").style.display = "block";
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+  userAnswers = [];
+  renderQuestion();
+}
+
+function updateProgress() {
+  const progress = ((currentIndex + 1) / questions.length) * 100;
+  document.getElementById("progressBar").style.width = progress + "%";
+  document.getElementById("currentQuestion").textContent = currentIndex + 1;
+}
+
+function renderQuestion() {
+  const container = document.getElementById("quizContainer");
+  const q = questions[currentIndex];
+  answered = false;
+
+  let html = `
+                          <div class="question-slide active">
+                              <div class="question-header">
+                                  <span class="question-number">${
+                                    q.type === "choice" ? "选择题" : "简答题"
+                                  } ${currentIndex + 1}</span>
+                                  <span class="question-type">${
+                                    q.type === "choice"
+                                      ? "单项选择"
+                                      : "开放问答"
+                                  }</span>
+                              </div>
+                              <div class="question-text">${q.question}</div>
+                      `;
+
+  if (q.type === "choice") {
+    html += '<div class="options">';
+    q.options.forEach((option, index) => {
+      const letter = String.fromCharCode(65 + index);
+      html += `<div class="option" onclick="selectOption('${letter}')"><span>${option}</span><span class="option-icon"></span></div>`;
+    });
+    html += "</div>";
+    html += '<div class="feedback" id="feedback"></div>';
+  } else {
+    html += `
+                              <textarea class="text-answer" id="textAnswer" placeholder="请在此输入你的答案..."></textarea>
+                              <div class="feedback" id="feedback"></div>
+                          `;
+  }
+
+  html += `
+                          <div class="nav-buttons">
+                              ${
+                                currentIndex > 0
+                                  ? '<button class="btn btn-secondary" onclick="previousQuestion()">← 上一题</button>'
+                                  : ""
+                              }
+                              <button class="btn" id="nextBtn" onclick="nextQuestion()" ${
+                                q.type === "choice" ? "disabled" : ""
+                              }>
+                                  ${
+                                    currentIndex === questions.length - 1
+                                      ? "完成测验 →"
+                                      : "下一题 →"
+                                  }
+                              </button>
+                          </div>
+                      </div>
+                      `;
+
+  container.innerHTML = html;
+  updateProgress();
+}
+
+function selectOption(selected) {
+  if (answered) return;
+
+  const q = questions[currentIndex];
+  const options = document.querySelectorAll(".option");
+  const feedback = document.getElementById("feedback");
+  const nextBtn = document.getElementById("nextBtn");
+
+  options.forEach((opt) => opt.classList.add("disabled"));
+
+  const isCorrect = selected === q.answer;
+  userAnswers[currentIndex] = { selected, correct: isCorrect };
+
+  if (isCorrect) {
+    score++;
+    feedback.className = "feedback correct show";
+    feedback.textContent = "✓ 太棒了！回答正确！";
+  } else {
+    feedback.className = "feedback incorrect show";
+    feedback.textContent = `✗ 回答错误。正确答案是：${q.answer}`;
+  }
+
+  options.forEach((opt) => {
+    const letter = opt.querySelector("span").textContent.charAt(0);
+    const icon = opt.querySelector(".option-icon");
+    if (letter === q.answer) {
+      opt.classList.add("correct");
+      icon.textContent = "✓";
+    } else if (letter === selected) {
+      opt.classList.add("incorrect");
+      icon.textContent = "✗";
+    }
+  });
+
+  answered = true;
+  nextBtn.disabled = false;
+}
+
+async function evaluateTextAnswer(question, answer) {
+  const prompt = `请你作为一个评分老师，评判以下学生的简答题答案。
+
+题目：${question}
+
+学生答案：${answer}
+
+评分标准：
+1. 答案是否理解并回答了问题的核心内容
+2. 答案是否有实质性的内容（不是空洞或敷衍的回答）
+3. 答案的逻辑是否清晰、表达是否连贯
+4. 答案是否包含了相关的知识点
+
+如果答案满足以上大部分标准，有一定的质量和深度，请回复"1|优秀的回答！你的答案涵盖了关键要点。"
+如果答案基本合理但不够完整或深入，请回复"1|回答正确，但还可以更加深入。"
+如果答案明显错误、不相关、过于简单或空洞，请回复"0|回答需要改进。请确保理解题目要求，并提供更具体的内容。"
+
+输出格式：[分数]|[反馈]，其中分数为0或1。`;
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "inclusionAI/Ling-mini-2.0",
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      }),
+    });
+
+    const data = await response.json();
+    const result = data.choices[0].message.content.trim();
+
+    // 解析结果 (格式: "分数|反馈")
+    const parts = result.split("|");
+    const scoreStr = parts[0].trim();
+    const feedback = parts.length > 1 ? parts[1].trim() : "已评分";
+
+    const score = scoreStr.includes("1") ? 1 : 0;
+
+    return { score, feedback };
+  } catch (error) {
+    console.error("LLM评分错误:", error);
+    // 如果API调用失败，给予中性反馈
+    return { score: 1, feedback: "评分系统暂时不可用，已自动给分。" };
+  }
+}
+
+async function nextQuestion() {
+  const q = questions[currentIndex];
+
+  if (q.type === "text") {
+    const textAnswer = document.getElementById("textAnswer").value.trim();
+
+    if (!textAnswer) {
+      alert("请输入答案后再继续！");
+      return;
+    }
+
+    // 显示加载提示
+    const feedback = document.getElementById("feedback");
+    const nextBtn = document.getElementById("nextBtn");
+    feedback.className = "feedback loading show";
+    feedback.innerHTML =
+      '<span class="loading-spinner"></span> 正在评分中，请稍候...';
+    nextBtn.disabled = true;
+
+    // 调用LLM评分
+    const evalResult = await evaluateTextAnswer(q.question, textAnswer);
+
+    userAnswers[currentIndex] = {
+      answer: textAnswer,
+      score: evalResult.score,
+    };
+
+    if (evalResult.score === 1) {
+      score++;
+      feedback.className = "feedback correct show";
+      feedback.textContent = `✓ ${evalResult.feedback}`;
+    } else {
+      feedback.className = "feedback incorrect show";
+      feedback.textContent = `✗ ${evalResult.feedback}`;
+    }
+
+    // 等待2秒后继续，让用户看到反馈
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    nextBtn.disabled = false;
+  }
+
+  if (currentIndex < questions.length - 1) {
+    const slide = document.querySelector(".question-slide");
+    slide.classList.remove("active");
+    slide.classList.add("exit");
+
+    setTimeout(() => {
+      currentIndex++;
+      renderQuestion();
+    }, 400);
+  } else {
+    showResults();
+  }
+}
+
+function previousQuestion() {
+  if (currentIndex > 0) {
+    const slide = document.querySelector(".question-slide");
+    slide.classList.remove("active");
+    slide.classList.add("exit");
+
+    setTimeout(() => {
+      currentIndex--;
+      renderQuestion();
+    }, 400);
+  }
+}
+
+async function showResults() {
+  document.getElementById("quizContainer").style.display = "none";
+  const resultScreen = document.getElementById("resultScreen");
+  const finalScore = document.getElementById("finalScore");
+  const resultMessage = document.getElementById("resultMessage");
+  const resultIcon = document.querySelector(".result-icon");
+
+  finalScore.textContent = `${score}/${questions.length}`;
+
+  let message = "";
+  let icon = "🎉";
+  const percentage = (score / questions.length) * 100;
+
+  if (percentage >= 90) {
+    message = "优秀！你的表现非常出色！";
+    icon = "🏆";
+  } else if (percentage >= 70) {
+    message = "良好！继续保持！";
+    icon = "⭐";
+  } else if (percentage >= 60) {
+    message = "及格！还有进步空间。";
+    icon = "👍";
+  } else {
+    message = "继续努力！不要气馁。";
+    icon = "💪";
+  }
+
+  resultIcon.textContent = icon;
+  resultMessage.innerHTML = `
+                          总得分：${score}/${questions.length} 分<br>
+                          ${message}<br><br>
+                          感谢你完成所有题目！
+                      `;
+
+  resultScreen.classList.add("show");
+  document.getElementById("progressBar").style.width = "100%";
+
+  // 提交测验完成状态
+  if (quizTopic && percentage >= 80) {
+    try {
+      const response = await fetch("/api/quiz/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          node_name: quizTopic,
+          score: score,
+          total: questions.length,
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        console.log("✅ Quiz completion recorded");
+      }
+    } catch (error) {
+      console.error("Error recording quiz completion:", error);
+    }
+  }
+}

@@ -1,0 +1,474 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+  background: #fafbfc;
+  color: #333;
+}
+
+.progress-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 24px 40px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  z-index: 100;
+}
+
+.progress-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.progress-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.progress-label {
+  color: #7a6ad8;
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.progress-count {
+  color: #64748b;
+  font-size: 0.95em;
+}
+
+.progress-bar {
+  background: #f1f0f9;
+  height: 3px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7a6ad8, #9b8ce0);
+  width: 0%;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 10px;
+  position: relative;
+}
+
+.progress-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 120px 40px 60px;
+}
+
+.json-upload {
+  background: white;
+  border-radius: 32px;
+  padding: 60px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  border: 1px solid #f0f0f5;
+}
+
+.json-upload h2 {
+  font-size: 2.5em;
+  color: #1e293b;
+  margin-bottom: 30px;
+}
+
+.question-slide {
+  background: white;
+  border-radius: 32px;
+  padding: 80px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #f0f0f5;
+}
+
+.question-slide.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.question-slide.exit {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.question-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.question-number {
+  background: linear-gradient(135deg, #7a6ad8, #9b8ce0);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 1em;
+  box-shadow: 0 4px 12px rgba(122, 106, 216, 0.25);
+}
+
+.question-type {
+  color: #94a3b8;
+  font-size: 0.95em;
+  font-weight: 500;
+}
+
+.question-text {
+  font-size: 2em;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 50px;
+  line-height: 1.5;
+}
+
+.options {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.option {
+  background: #fafbfc;
+  border: 2px solid #f0f0f5;
+  border-radius: 20px;
+  padding: 28px 32px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1.2em;
+  position: relative;
+  color: #334155;
+}
+
+.option:hover:not(.disabled) {
+  border-color: #7a6ad8;
+  background: #f8f7ff;
+  transform: translateX(8px);
+  box-shadow: 0 4px 16px rgba(122, 106, 216, 0.15);
+}
+
+.option.selected {
+  background: #f8f7ff;
+  border-color: #7a6ad8;
+}
+
+.option.correct {
+  background: #f0fdf4;
+  border-color: #4ade80;
+  animation: correctPulse 0.6s ease;
+}
+
+.option.incorrect {
+  background: #fef2f2;
+  border-color: #f87171;
+  animation: incorrectShake 0.6s ease;
+}
+
+.option.disabled {
+  cursor: not-allowed;
+}
+
+@keyframes correctPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes incorrectShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  75% {
+    transform: translateX(8px);
+  }
+}
+
+.option-icon {
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.option.correct .option-icon {
+  color: #4ade80;
+}
+
+.option.incorrect .option-icon {
+  color: #f87171;
+}
+
+.text-answer {
+  width: 100%;
+  min-height: 200px;
+  padding: 28px;
+  border: 2px solid #f0f0f5;
+  border-radius: 20px;
+  font-size: 1.15em;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+  margin-bottom: 30px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.text-answer:focus {
+  outline: none;
+  border-color: #7a6ad8;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(122, 106, 216, 0.08);
+}
+
+.feedback {
+  padding: 24px 32px;
+  border-radius: 16px;
+  margin-bottom: 40px;
+  font-weight: 500;
+  display: none;
+  animation: slideDown 0.4s ease;
+  font-size: 1.1em;
+}
+
+.feedback.show {
+  display: block;
+}
+
+.feedback.correct {
+  background: #f0fdf4;
+  color: #166534;
+  border: 2px solid #4ade80;
+}
+
+.feedback.incorrect {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 2px solid #f87171;
+}
+
+.feedback.info {
+  background: #f8f7ff;
+  color: #5b21b6;
+  border: 2px solid #7a6ad8;
+}
+
+.feedback.loading {
+  background: #fffbeb;
+  color: #92400e;
+  border: 2px solid #fbbf24;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.btn {
+  background: linear-gradient(135deg, #7a6ad8, #9b8ce0);
+  color: white;
+  border: none;
+  padding: 20px 50px;
+  font-size: 1.1em;
+  font-weight: 600;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(122, 106, 216, 0.3);
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(122, 106, 216, 0.4);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+  color: #475569;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.result-screen {
+  background: white;
+  border-radius: 32px;
+  padding: 100px 80px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  display: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.5s ease;
+  border: 1px solid #f0f0f5;
+}
+
+.result-screen.show {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.result-icon {
+  font-size: 5em;
+  margin-bottom: 30px;
+  animation: bounce 1s ease;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.result-screen h2 {
+  font-size: 3em;
+  color: #1e293b;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+.score-display {
+  font-size: 6em;
+  font-weight: 800;
+  background: linear-gradient(135deg, #7a6ad8, #9b8ce0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 30px 0;
+}
+
+.result-message {
+  font-size: 1.4em;
+  color: #64748b;
+  margin-bottom: 50px;
+  line-height: 1.8;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #7a6ad8;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .question-slide {
+    padding: 40px 30px;
+  }
+
+  .question-text {
+    font-size: 1.5em;
+  }
+
+  .container {
+    padding: 100px 20px 40px;
+  }
+
+  .result-screen {
+    padding: 60px 30px;
+  }
+
+  .score-display {
+    font-size: 4em;
+  }
+
+  .progress-container {
+    padding: 20px;
+  }
+
+  .option {
+    padding: 22px 26px;
+    font-size: 1.05em;
+  }
+
+  .json-upload {
+    padding: 40px 20px;
+  }
+}

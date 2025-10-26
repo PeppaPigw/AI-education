@@ -1,0 +1,647 @@
+:root {
+  --primary-blue: #7a6ad8;
+  --light-gray-bg: #f5f5f5;
+  --white-bg: #fff;
+  --border-gray: #e0e0e0;
+  --text-dark: #2d2f31;
+  --text-light: #5f5f5f;
+  --text-dim: #9e9e9e;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  margin: 0;
+  background-color: var(--white-bg);
+  color: var(--text-dark);
+  line-height: 1.5;
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary-blue);
+  cursor: pointer;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.main-header {
+  background-color: var(--white-bg);
+  border-bottom: 1px solid var(--border-gray);
+  padding: 10px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--primary-blue);
+  cursor: pointer;
+}
+
+.nav-links a {
+  margin: 0 10px;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+.nav-links a.active,
+.nav-links a:hover {
+  color: var(--primary-blue);
+}
+.search-bar {
+  flex-grow: 1;
+  max-width: 350px;
+  display: flex;
+  border: 1px solid var(--border-gray);
+  border-radius: 4px;
+}
+
+.search-bar input {
+  border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  width: 100%;
+  border-radius: 4px 0 0 4px;
+}
+.search-bar input:focus {
+  outline: none;
+}
+
+.search-bar button {
+  border: none;
+  background-color: var(--primary-blue);
+  color: white;
+  padding: 0 15px;
+  cursor: pointer;
+  border-radius: 0 4px 4px 0;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 20px;
+}
+
+.notification-bell {
+  position: relative;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -2px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--text-dark);
+}
+
+/* 3. 主内容区域 */
+.main-dashboard {
+  padding: 32px 0;
+}
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr; /* 左侧边栏 300px，右侧自适应 */
+  gap: 32px;
+}
+
+/* 4. 左侧边栏 */
+.dashboard-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.greeting-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.greeting-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--primary-blue);
+  color: var(--white-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.greeting-text h2 {
+  font-size: 20px;
+  margin: 0 0 4px 0;
+}
+
+.greeting-text p {
+  font-size: 14px;
+  color: var(--text-light);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.goal-tag {
+  background-color: var(--light-gray-bg);
+  color: var(--text-dark);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.widget-card {
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  padding: 20px;
+  background-color: var(--white-bg);
+}
+
+.widget-card h3 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.goal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.goal-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.goal-item .icon {
+  font-size: 18px;
+  color: var(--primary-blue);
+}
+
+/* 4.1 日历小部件 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.calendar-week-toggles {
+  display: flex;
+  gap: 8px;
+}
+
+.calendar-week-toggles span {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.calendar-nav h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.calendar-nav button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text-light);
+  cursor: pointer;
+}
+
+.calendar-grid-header,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+}
+
+.calendar-grid-header span {
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 8px 0;
+}
+
+.calendar-cell {
+  font-size: 14px;
+  padding: 6px 0;
+  position: relative;
+  color: var(--text-dark);
+}
+
+.calendar-cell.dimmed {
+  color: var(--text-dim);
+}
+
+.calendar-cell.today {
+  background-color: var(--light-gray-bg);
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.calendar-cell.locked {
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.calendar-cell .lock-icon {
+  font-size: 12px;
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.calendar-footer p {
+  font-size: 12px;
+  color: var(--text-light);
+  margin: 12px 0 0 0;
+}
+
+/* 5. 右侧主内容 */
+.main-feed {
+  min-width: 0; /* 防止 flex/grid 子项溢出 */
+}
+
+.feed-tabs {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid var(--border-gray);
+  margin-bottom: 24px;
+}
+
+.feed-tab {
+  padding: 12px 4px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-light);
+  border: none;
+  background: none;
+  border-bottom: 3px solid transparent;
+}
+
+.feed-tab.active {
+  color: var(--text-dark);
+  border-bottom-color: var(--primary-blue);
+}
+
+.feed-card {
+  background-color: var(--white-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.feed-card .info .provider {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.feed-card .info h4 {
+  font-size: 18px;
+  margin: 4px 0 8px 0;
+}
+
+.feed-card .info .progress-text {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.feed-card .action-button {
+  background-color: var(--primary-blue);
+  color: #fff;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.feed-card .action-button:hover {
+  opacity: 0.9;
+}
+
+.peer-review-card .info h4 {
+  margin-bottom: 4px;
+}
+.peer-review-card .info .subtitle {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+/* 6. 页脚 */
+.main-footer {
+  background-color: var(--light-gray-bg);
+  padding: 48px 0;
+  margin-top: 64px;
+  border-top: 1px solid var(--border-gray);
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.footer-column h5 {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-column ul li a {
+  font-size: 14px;
+  color: var(--text-dark);
+}
+.footer-column ul li a:hover {
+  text-decoration: underline;
+}
+
+.app-buttons img {
+  max-width: 135px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+/* 7. 学习计划样式 */
+.plan-card {
+  background-color: var(--white-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.plan-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-blue);
+}
+
+.plan-card.selected {
+  border-color: var(--primary-blue);
+  background-color: #f0f0ff;
+}
+
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.plan-date {
+  font-size: 14px;
+  color: var(--text-light);
+  font-weight: 600;
+}
+
+.plan-priority {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.plan-priority.基础知识 {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.plan-priority.实践应用 {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.plan-priority.原理分析 {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.plan-priority.拓展创新 {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.plan-priority.User-defined {
+  background-color: var(--primary-blue);
+  color: white;
+}
+
+.plan-topic {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.plan-materials {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+.plan-detail {
+  background-color: var(--white-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  padding: 24px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.plan-detail h3 {
+  margin-top: 0;
+  color: var(--text-dark);
+}
+
+.markdown-content {
+  line-height: 1.8;
+}
+
+.markdown-content h3 {
+  color: var(--primary-blue);
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.markdown-content ul {
+  padding-left: 20px;
+}
+
+.markdown-content li {
+  margin-bottom: 8px;
+}
+
+.create-plan-form {
+  background-color: var(--white-bg);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.create-plan-form input,
+.create-plan-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-gray);
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 16px;
+  font-family: inherit;
+}
+
+.create-plan-form input:focus,
+.create-plan-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+}
+
+.create-plan-form textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.create-plan-form button {
+  background-color: var(--primary-blue);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.create-plan-form button:hover {
+  opacity: 0.9;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-light);
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+/* 8. 响应式 */
+@media (max-width: 992px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr; /* 堆叠 */
+  }
+  .search-bar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+  .nav-links a.active,
+  .nav-links a:hover {
+    color: var(--primary-blue);
+  }
+  .footer-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .greeting-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .feed-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .feed-card .action-button {
+    width: 100%;
+    text-align: center;
+  }
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+}
