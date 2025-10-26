@@ -17,11 +17,9 @@
           options
         );
   
-        // how many times to update the value, and how much to increment the value on each update
         var loops = Math.ceil(settings.speed / settings.refreshInterval),
           increment = (settings.to - settings.from) / loops;
   
-        // references & variables that will change with each update
         var self = this,
           $self = $(this),
           loopCount = 0,
@@ -30,13 +28,11 @@
   
         $self.data("countTo", data);
   
-        // if an existing interval can be found, clear it first
         if (data.interval) {
           clearInterval(data.interval);
         }
         data.interval = setInterval(updateTimer, settings.refreshInterval);
   
-        // initialize the element with the starting value
         render(value);
   
         function updateTimer() {
@@ -50,7 +46,6 @@
           }
   
           if (loopCount >= loops) {
-            // remove the interval
             $self.removeData("countTo");
             clearInterval(data.interval);
             value = settings.to;
