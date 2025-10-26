@@ -71,6 +71,7 @@ class LearningPlanRequest(BaseModel):
     name: str
     goals: str
     lang_choice: str = "auto"
+    priority: str = "基础知识"
     deadline_days: int = 7
 
 
@@ -491,13 +492,16 @@ async def create_learning_plan(data: LearningPlanRequest):
 
     plan.generate_plan_from_prompt(user_input)
 
-    # 添加DDL信息
+    # 添加DDL和优先级信息
     deadline_days = data.deadline_days if hasattr(data, "deadline_days") else 7
     deadline_date = (datetime.now() + timedelta(days=deadline_days)).strftime(
         "%Y-%m-%d"
     )
+    priority = data.priority if hasattr(data, "priority") else "基础知识"
+
     for entry in plan.learning_plan:
         entry["deadline"] = deadline_date
+        entry["priority"] = priority
 
     plan.save_to_file()
 

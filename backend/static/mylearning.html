@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI-Education - 我的学习</title>
     <style>
-      /* 1. 全局和重置 */
       :root {
         --primary-blue: #7a6ad8;
         --light-gray-bg: #f5f5f5;
@@ -20,7 +19,7 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Helvetica, Arial, sans-serif;
         margin: 0;
-        background-color: var(--white-bg); /* 页面背景是白色 */
+        background-color: var(--white-bg);
         color: var(--text-dark);
         line-height: 1.5;
       }
@@ -37,7 +36,6 @@
         padding: 0 24px;
       }
 
-      /* 2. 头部导航栏 */
       .main-header {
         background-color: var(--white-bg);
         border-bottom: 1px solid var(--border-gray);
@@ -482,12 +480,35 @@
       }
 
       .plan-priority {
-        background-color: var(--primary-blue);
-        color: white;
         padding: 4px 12px;
         border-radius: 4px;
         font-size: 12px;
         font-weight: 600;
+      }
+
+      .plan-priority.基础知识 {
+        background-color: #e3f2fd;
+        color: #1976d2;
+      }
+
+      .plan-priority.实践应用 {
+        background-color: #e8f5e9;
+        color: #388e3c;
+      }
+
+      .plan-priority.原理分析 {
+        background-color: #fff3e0;
+        color: #f57c00;
+      }
+
+      .plan-priority.拓展创新 {
+        background-color: #f3e5f5;
+        color: #7b1fa2;
+      }
+
+      .plan-priority.User-defined {
+        background-color: var(--primary-blue);
+        color: white;
       }
 
       .plan-topic {
@@ -736,14 +757,28 @@
             </div>
           </div>
 
-          <!-- 创建新计划表单 -->
           <div id="create-tab" style="display: none">
             <div class="create-plan-form">
               <h3>📝 创建新的学习计划</h3>
               <p style="color: var(--text-light); margin-bottom: 20px">
                 根据您的学习目标，我们将为您生成个性化的学习计划
               </p>
-
+              <label
+                style="display: block; margin-bottom: 8px; font-weight: 600"
+                >语言</label
+              >
+              <select
+                id="lang-select"
+                style="
+                  width: 100%;
+                  padding: 12px;
+                  border: 1px solid var(--border-gray);
+                  border-radius: 4px;
+                  margin-bottom: 16px;
+                "
+              >
+                <option>🌐 Auto-detect</option>
+              </select>
               <label
                 style="display: block; margin-bottom: 8px; font-weight: 600"
                 >姓名</label
@@ -769,10 +804,10 @@
 
               <label
                 style="display: block; margin-bottom: 8px; font-weight: 600"
-                >语言</label
+                >学习类型</label
               >
               <select
-                id="lang-select"
+                id="plan-priority"
                 style="
                   width: 100%;
                   padding: 12px;
@@ -781,7 +816,10 @@
                   margin-bottom: 16px;
                 "
               >
-                <option>🌐 Auto-detect</option>
+                <option value="基础知识" selected>基础知识</option>
+                <option value="实践应用">实践应用</option>
+                <option value="原理分析">原理分析</option>
+                <option value="拓展创新">拓展创新</option>
               </select>
 
               <label
@@ -819,14 +857,12 @@
       let currentMonth = new Date();
       let selectedPlanIndex = null;
 
-      // 页面加载时初始化
       document.addEventListener("DOMContentLoaded", async () => {
         console.log("My Learning page loaded");
         await loadLanguages();
         await loadPlans();
         renderCalendar();
 
-        // 设置日历导航按钮
         document.getElementById("prev-month").addEventListener("click", () => {
           currentMonth.setMonth(currentMonth.getMonth() - 1);
           renderCalendar();
@@ -838,7 +874,6 @@
         });
       });
 
-      // 加载支持的语言列表
       async function loadLanguages() {
         try {
           const response = await fetch(`${API_BASE}/api/languages`);
@@ -851,8 +886,6 @@
           console.error("Error loading languages:", error);
         }
       }
-
-      // 加载所有学习计划
       async function loadPlans() {
         try {
           const response = await fetch(`${API_BASE}/api/learning-plans`);
@@ -875,7 +908,6 @@
         }
       }
 
-      // 从文件名提取日期
       function extractDateFromFilename(filename) {
         const match = filename.match(/(\d{8})_(\d{6})/);
         if (match) {
@@ -888,7 +920,6 @@
         return new Date().toISOString().split("T")[0];
       }
 
-      // 渲染学习计划列表
       function renderPlansList() {
         const container = document.getElementById("plans-list");
 
@@ -897,7 +928,6 @@
           return;
         }
 
-        // ======= 工具函数：统计每个小节及总数 =======
         function parseMaterialsBySection(materials) {
           if (!Array.isArray(materials)) return [];
           const text = materials.join("\n");
@@ -936,7 +966,9 @@
              onclick="selectPlan(${index})">
           <div class="plan-header">
             <div class="plan-date">📅 ${firstEntry.date}</div>
-            <div class="plan-priority">${firstEntry.priority}</div>
+            <div class="plan-priority ${firstEntry.priority}">${
+              firstEntry.priority
+            }</div>
           </div>
           <div class="plan-topic">${firstEntry.topic}</div>
           <div class="plan-materials">
@@ -953,7 +985,6 @@
         }
       }
 
-      // 显示空状态
       function showEmptyState(message) {
         const container = document.getElementById("plans-list");
         container.innerHTML = `
@@ -963,14 +994,11 @@
           </div>
         `;
       }
-
-      // 选中一个学习计划
       function selectPlan(index) {
         selectedPlanIndex = index;
         renderPlansList();
       }
 
-      // 显示计划详情
       function showPlanDetail(index) {
         const plan = allPlans[index];
         const container = document.getElementById("plans-list");
@@ -979,7 +1007,9 @@
           <div class="plan-card selected">
             <div class="plan-header">
               <div class="plan-date">📅 ${plan.data[0].date}</div>
-              <div class="plan-priority">${plan.data[0].priority}</div>
+              <div class="plan-priority ${plan.data[0].priority}">${
+          plan.data[0].priority
+        }</div>
             </div>
             <div class="plan-topic">${plan.data[0].topic}</div>
           </div>
@@ -994,7 +1024,6 @@
         container.innerHTML = detailHTML;
       }
 
-      // 格式化学习计划为HTML（使用marked）
       function formatPlanMarkdown(planData) {
         const markdown = planData
           .map((entry) => {
@@ -1004,7 +1033,7 @@
             return (
               `### 📅 ${entry.date}\n\n` +
               `**主题**: ${entry.topic}\n\n` +
-              `**优先级**: ${entry.priority}\n\n` +
+              `**学习类型**: ${entry.priority}\n\n` +
               deadlineInfo +
               `**推荐材料**:\n\n${entry.materials
                 .map((m) => `- ${m}`)
@@ -1016,12 +1045,10 @@
         return marked.parse(markdown);
       }
 
-      // 渲染日历
       function renderCalendar() {
         const year = currentMonth.getFullYear();
         const month = currentMonth.getMonth();
 
-        // 更新标题
         const monthNames = [
           "一月",
           "二月",
@@ -1052,21 +1079,17 @@
         const grid = document.getElementById("calendar-grid");
         grid.innerHTML = "";
 
-        // 获取今天的日期
         const today = new Date();
         const isCurrentMonth =
           today.getFullYear() === year && today.getMonth() === month;
         const todayDate = today.getDate();
 
-        // 添加上个月的日期（灰色）
         for (let i = firstDayOfWeek - 1; i >= 0; i--) {
           const cell = document.createElement("div");
           cell.className = "calendar-cell dimmed";
           cell.textContent = lastDayPrevMonth - i;
           grid.appendChild(cell);
         }
-
-        // 添加当月的日期
         for (let day = 1; day <= daysInMonth; day++) {
           const cell = document.createElement("div");
           cell.className = "calendar-cell";
@@ -1075,7 +1098,6 @@
             cell.classList.add("today");
           }
 
-          // 检查是否有学习计划在这一天
           const dateStr = `${year}-${String(month + 1).padStart(
             2,
             "0"
@@ -1117,7 +1139,6 @@
         updateCalendarStats();
       }
 
-      // 更新日历统计信息
       function updateCalendarStats() {
         const year = currentMonth.getFullYear();
         const month = currentMonth.getMonth();
@@ -1134,7 +1155,6 @@
         ).textContent = `本月学习计划：${plansThisMonth} 个 | 总计：${allPlans.length} 个`;
       }
 
-      // 切换到学习计划标签页
       function showPlansTab() {
         document.getElementById("plans-tab").style.display = "block";
         document.getElementById("create-tab").style.display = "none";
@@ -1142,7 +1162,6 @@
         document.querySelectorAll(".feed-tab")[1].classList.remove("active");
       }
 
-      // 切换到创建计划标签页
       function showCreateTab() {
         document.getElementById("plans-tab").style.display = "none";
         document.getElementById("create-tab").style.display = "block";
@@ -1150,16 +1169,15 @@
         document.querySelectorAll(".feed-tab")[0].classList.remove("active");
       }
 
-      // 显示创建计划表单（从日历链接点击）
       function showCreatePlanForm() {
         showCreateTab();
       }
 
-      // 生成学习计划
       async function generatePlan() {
         const name = document.getElementById("plan-name").value.trim();
         const goals = document.getElementById("plan-goals").value.trim();
         const langChoice = document.getElementById("lang-select").value;
+        const priority = document.getElementById("plan-priority").value;
         const deadlineDays = parseInt(
           document.getElementById("plan-deadline").value
         );
@@ -1181,6 +1199,7 @@
               name: name,
               goals: goals,
               lang_choice: langChoice,
+              priority: priority,
               deadline_days: deadlineDays,
             }),
           });
@@ -1210,8 +1229,6 @@
           `;
         }
       }
-
-      // 重新加载学习计划
       async function reloadPlans() {
         await loadPlans();
         showPlansTab();

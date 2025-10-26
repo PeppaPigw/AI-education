@@ -1,0 +1,53 @@
+{
+  "title": "社交网络分析",
+  "single-choice": [
+    {
+      "question": "在社交网络分析中，节点（Node）通常代表什么？",
+      "options": ["A. 网络中的连接或关系", "B. 网络中的个体或实体", "C. 网络中的信息流", "D. 网络中的时间戳"],
+      "right-answer": "B"
+    },
+    {
+      "question": "以下哪项指标衡量的是节点在信息传播中的潜在影响力？",
+      "options": ["A. 度中心性（Degree Centrality）", "B. 介数中心性（Betweenness Centrality）", "C. 接近中心性（Closeness Centrality）", "D. 特征向量中心性（Eigenvector Centrality）"],
+      "right-answer": "D"
+    },
+    {
+      "question": "在有向图中，如果节点A指向节点B，那么从A到B的关系是？",
+      "options": ["A. 入度（In-degree）", "B. 出度（Out-degree）", "C. 双向连接（Bidirectional Link）", "D. 传递关系（Transitive Relation）"],
+      "right-answer": "B"
+    },
+    {
+      "question": "以下哪项是衡量一个节点在网络中控制信息流动能力的指标？",
+      "options": ["A. 度中心性", "B. 接近中心性", "C. 介数中心性", "D. 密度（Density）"],
+      "right-answer": "C"
+    },
+    {
+      "question": "在社交网络中，如果两个节点之间没有直接连接，但都与同一个中间节点相连，这种结构通常被称为？",
+      "options": ["A. 三角闭合", "B. 间接连接", "C. 共现关系", "D. 间接影响路径"],
+      "right-answer": "D"
+    },
+    {
+      "question": "模块化（Modularity）在社交网络分析中主要用于评估？",
+      "options": ["A. 网络的整体连通性", "B. 节点的中心性水平", "C. 社团结构的紧密程度", "D. 信息传播的速度"],
+      "right-answer": "C"
+    },
+    {
+      "question": "以下哪个方法常用于发现社交网络中的社团结构？",
+      "options": ["A. PageRank", "B. 谱聚类（Spectral Clustering）", "C. 最小生成树（MST）", "D. 深度优先搜索（DFS）"],
+      "right-answer": "B"
+    },
+    {
+      "question": "在社交网络分析中，'小世界现象'（Small World Phenomenon）主要描述的是？",
+      "options": ["A. 大多数节点之间相距很远", "B. 网络中存在大量孤立节点", "C. 节点间存在较短的平均路径长度", "D. 网络的密度极低"],
+      "right-answer": "C"
+    }
+  ],
+  "short-answer": [
+    {
+      "question": "请解释什么是‘中心性’（Centrality）在社交网络分析中的作用，并列举三种常见的中心性度量方法。"
+    },
+    {
+      "question": "描述‘社团检测’（Community Detection）在社交网络分析中的意义，并说明其在现实世界中的一个应用实例。"
+    }
+  ]
+}

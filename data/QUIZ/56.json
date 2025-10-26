@@ -1,0 +1,53 @@
+{
+  "title": "流处理计算模型",
+  "single-choice": [
+    {
+      "question": "在流处理计算模型中，以下哪项是其核心特征？",
+      "options": ["A. 数据以批处理方式一次性处理", "B. 数据以静态快照的形式进行分析", "C. 数据以连续、实时的方式进行处理", "D. 数据仅在持久化存储中进行处理"],
+      "right-answer": "C"
+    },
+    {
+      "question": "以下哪种流处理模型通过将数据流划分为有界、连续的窗口来处理事件？",
+      "options": ["A. 事件时间处理模型", "B. 处理时间处理模型", "C. 事件驱动模型", "D. 基于时间窗口的处理模型"],
+      "right-answer": "D"
+    },
+    {
+      "question": "在Flink中，负责协调任务调度和资源管理的组件是？",
+      "options": ["A. TaskManager", "B. JobManager", "C. ResourceManager", "D. DataStream API"],
+      "right-answer": "B"
+    },
+    {
+      "question": "以下关于“状态”在流处理中的描述，哪一项是正确的？",
+      "options": ["A. 流处理中的状态是临时的，仅在处理当前事件时存在", "B. 状态用于维护处理过程中的上下文信息，支持有状态计算", "C. 所有流处理框架都采用内存状态，不支持持久化", "D. 状态只能由用户手动管理，框架不提供支持"],
+      "right-answer": "B"
+    },
+    {
+      "question": "在Flink中，为了保证 Exactly-once 语义，以下哪种机制被用来实现事务性输出？",
+      "options": ["A. Checkpointing", "B. Savepoints", "C. Two-phase commit", "D. State Backend"],
+      "right-answer": "C"
+    },
+    {
+      "question": "以下关于流处理与批处理的对比，哪一项是错误的？",
+      "options": ["A. 流处理处理的是无界数据，批处理处理的是有界数据", "B. 流处理延迟较低，批处理延迟较高", "C. 流处理可以实现实时响应，批处理无法实现实时响应", "D. 所有流处理框架都支持批处理，但并非所有批处理框架都支持流处理"],
+      "right-answer": "D"
+    },
+    {
+      "question": "在流处理中，水印（Watermark）机制主要用于解决以下哪种问题？",
+      "options": ["A. 数据丢失问题", "B. 计算资源不足问题", "C. 事件时间乱序问题", "D. 网络延迟问题"],
+      "right-answer": "C"
+    },
+    {
+      "question": "以下哪项是流处理中“端到端 Exactly-once”语义的关键组成部分？",
+      "options": ["A. 仅需在计算引擎层面实现精确一次", "B. 仅需在数据源和数据接收端实现原子操作", "C. 需要从数据源到数据接收端的每个组件都支持原子性或事务性", "D. 仅需在Checkpoint机制中保证一致性"],
+      "right-answer": "C"
+    }
+  ],
+  "short-answer": [
+    {
+      "question": "请解释为什么在流处理中，处理时间（Processing Time）和事件时间（Event Time）是两个重要的概念，并说明它们之间的主要区别。"
+    },
+    {
+      "question": "描述Flink如何通过Checkpoint机制实现容错，并说明其对流处理系统可靠性的重要性。"
+    }
+  ]
+}

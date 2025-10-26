@@ -1,0 +1,53 @@
+{
+  "title": "ETL(Extract,Transform,Load)",
+  "single-choice": [
+    {
+      "question": "在ETL流程中，'Extract'阶段的主要目标是什么？",
+      "options": ["A. 将数据加载到目标系统中", "B. 清洗和标准化数据格式", "C. 从源系统中读取并抽取数据", "D. 对数据进行分析和建模"],
+      "right-answer": "C"
+    },
+    {
+      "question": "以下哪一项最准确地描述了ETL中'Transform'阶段的功能？",
+      "options": ["A. 将数据写入数据仓库", "B. 从多个源系统中获取数据", "C. 执行数据清洗、转换和聚合操作", "D. 监控ETL作业的运行状态"],
+      "right-answer": "C"
+    },
+    {
+      "question": "在ETL过程中，'Load'阶段通常不包括以下哪项操作？",
+      "options": ["A. 将转换后的数据写入目标数据库", "B. 执行增量加载或全量加载", "C. 创建数据索引和分区", "D. 从源系统中提取原始数据"],
+      "right-answer": "D"
+    },
+    {
+      "question": "以下哪种场景最不适合使用实时ETL？",
+      "options": ["A. 实时监控仪表板", "B. 金融交易数据同步", "C. 周报生成的数据批处理", "D. 客户行为日志收集"],
+      "right-answer": "C"
+    },
+    {
+      "question": "关于ETL与ELT的区别，以下哪项描述是正确的？",
+      "options": ["A. ETL在目标系统中执行转换，而ELT在源系统中执行", "B. ETL和ELT在处理顺序上完全相同，仅名称不同", "C. ELT先加载原始数据，再在目标系统中进行转换", "D. ELT通常用于处理实时数据流，而ETL用于批处理"],
+      "right-answer": "C"
+    },
+    {
+      "question": "在ETL流程中，以下哪项通常属于数据质量保证的范畴？",
+      "options": ["A. 数据源连接配置", "B. 数据完整性检查", "C. 转换逻辑编写", "D. 加载策略定义"],
+      "right-answer": "B"
+    },
+    {
+      "question": "以下哪项是ETL工具中常见的调度方式？",
+      "options": ["A. 手动触发", "B. 事件驱动", "C. 定时触发", "D. 以上都是"],
+      "right-answer": "D"
+    },
+    {
+      "question": "在ETL实施过程中，以下哪项是确保数据一致性的关键步骤？",
+      "options": ["A. 数据抽取频率设置", "B. 使用唯一键或主键进行数据比对", "C. 加载数据前的格式校验", "D. 增量加载机制"],
+      "right-answer": "B"
+    }
+  ],
+  "short-answer": [
+    {
+      "question": "请简要说明在ETL流程中，为何数据转换（Transformation）步骤至关重要，并列举至少两个常见的转换操作。"
+    },
+    {
+      "question": "解释增量加载（Incremental Load）与全量加载（Full Load）的区别，并说明在什么情况下应优先选择增量加载。"
+    }
+  ]
+}

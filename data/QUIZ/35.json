@@ -1,0 +1,53 @@
+{
+  "title": "数据访问层",
+  "single-choice": [
+    {
+      "question": "在典型的MVC架构中，数据访问层的主要职责是什么？",
+      "options": ["A. 处理用户输入和业务逻辑", "B. 管理用户界面的渲染", "C. 直接与数据库交互并提供数据操作接口", "D. 控制应用程序的流程和调度"],
+      "right-answer": "C"
+    },
+    {
+      "question": "以下哪项技术最常用于实现数据访问层的持久化操作？",
+      "options": ["A. RESTful API", "B. JDBC", "C. HTML/CSS", "D. JavaScript"],
+      "right-answer": "B"
+    },
+    {
+      "question": "在.NET中，使用Entity Framework进行数据访问时，它主要扮演了哪个角色？",
+      "options": ["A. 数据库管理系统", "B. 数据访问层的实现框架", "C. 前端渲染引擎", "D. 消息队列中间件"],
+      "right-answer": "B"
+    },
+    {
+      "question": "以下关于数据访问层（DAL）的陈述中，哪一项是正确的？",
+      "options": ["A. DAL通常直接暴露数据库表结构给业务层", "B. DAL的职责是将数据操作细节与业务逻辑解耦", "C. DAL可以包含复杂的业务规则", "D. DAL不支持事务管理"],
+      "right-answer": "B"
+    },
+    {
+      "question": "在Java EE中，使用JPA（Java Persistence API）进行数据访问，它属于哪一层？",
+      "options": ["A. 表现层", "B. 业务逻辑层", "C. 数据访问层", "D. 持久化层和数据访问层的混合"],
+      "right-answer": "D"
+    },
+    {
+      "question": "以下哪个设计模式最常应用于数据访问层以实现与具体数据库的解耦？",
+      "options": ["A. 单例模式", "B. 工厂模式", "C. 门面模式", "D. 数据访问对象（DAO）模式"],
+      "right-answer": "D"
+    },
+    {
+      "question": "在分层架构中，数据访问层应该向哪个上层提供服务？",
+      "options": ["A. 用户界面层", "B. 数据库层", "C. 业务逻辑层", "D. 网络传输层"],
+      "right-answer": "C"
+    },
+    {
+      "question": "以下关于数据访问层测试的说法，哪一项是正确的？",
+      "options": ["A. DAL的测试不需要考虑数据库连接", "B. DAL的测试通常依赖真实的数据库环境", "C. DAL的测试应尽量使用模拟对象（Mock）来隔离数据库", "D. DAL测试只需验证SQL语法是否正确"],
+      "right-answer": "C"
+    }
+  ],
+  "short-answer": [
+    {
+      "question": "请阐述数据访问层在软件架构中的作用，并解释为什么它对于系统的可维护性和可扩展性至关重要。"
+    },
+    {
+      "question": "在实现数据访问层时，为什么要使用接口或抽象类？请结合实际开发中的依赖倒置原则进行说明。"
+    }
+  ]
+}

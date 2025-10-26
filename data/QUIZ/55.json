@@ -1,0 +1,53 @@
+{
+  "title": "Spark架构",
+  "single-choice": [
+    {
+      "question": "在Spark中，负责任务调度和集群资源管理的核心组件是什么？",
+      "options": ["A. Driver", "B. Executor", "C. Cluster Manager", "D. DAGScheduler"],
+      "right-answer": "C"
+    },
+    {
+      "question": "以下关于Spark RDD的描述，哪一项是正确的？",
+      "options": ["A. RDD是只读的、可变的数据集", "B. RDD支持内存中的数据持久化", "C. RDD的转换操作是立即执行的", "D. RDD支持跨集群的数据共享"],
+      "right-answer": "B"
+    },
+    {
+      "question": "在Spark的执行流程中，DAGScheduler的作用是什么？",
+      "options": ["A. 向集群管理器请求资源", "B. 将作业划分为Stage并提交给TaskScheduler", "C. 负责在Executor上执行具体的Task", "D. 监控整个Spark应用的运行状态"],
+      "right-answer": "B"
+    },
+    {
+      "question": "以下哪项不是Spark支持的集群管理模式？",
+      "options": ["A. Standalone", "B. YARN", "C. Mesos", "D. Kubernetes"],
+      "right-answer": "D"
+    },
+    {
+      "question": "在Spark中，哪个组件负责在集群中运行实际的任务代码？",
+      "options": ["A. Driver", "B. Cluster Manager", "C. Executor", "D. DAGScheduler"],
+      "right-answer": "C"
+    },
+    {
+      "question": "以下关于Spark与MapReduce的对比，哪一项是正确的？",
+      "options": ["A. Spark比MapReduce慢，因为其基于内存计算", "B. Spark的迭代计算效率低于MapReduce", "C. Spark支持有向无环图（DAG）的计算模型", "D. Spark的容错性不如MapReduce"],
+      "right-answer": "C"
+    },
+    {
+      "question": "在Spark中，哪个组件负责与外部存储系统交互，如HDFS或S3？",
+      "options": ["A. Driver", "B. Executor", "C. Cluster Manager", "D. Storage Module"],
+      "right-answer": "D"
+    },
+    {
+      "question": "以下关于Spark的“懒执行”（Lazy Evaluation）机制的描述，哪一项是正确的？",
+      "options": ["A. 所有转换操作都会立即执行", "B. 只有动作操作（Action）触发计算", "C. 懒执行会导致数据丢失", "D. 懒执行降低了Spark的容错性"],
+      "right-answer": "B"
+    }
+  ],
+  "short-answer": [
+    {
+      "question": "请简要解释Spark的架构中，Driver和Executor的角色分工，并说明它们之间的通信机制。"
+    },
+    {
+      "question": "为什么Spark在处理迭代式机器学习任务时比传统的MapReduce更高效？请从其计算模型和内存管理角度进行阐述。"
+    }
+  ]
+}

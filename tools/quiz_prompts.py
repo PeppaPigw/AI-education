@@ -5,14 +5,14 @@ def generate_topic_list_prompt(
     subject: str, language: str = "zh"
 ) -> ChatPromptTemplate:
     system_message = (
-        f"你是教育课程设计方面的专家。你是一位专家导师，根据学生的测验结果来评估他们的知识水平。\n"  # 保持原有中文信息
-        f"您的任务是生成最可检查的子主题的逻辑结构化列表。\n"  # 保持原有中文信息
-        f"请**仅**使用 {language} **回复**。**不要**包含任何解释。"  # 翻译并保留 {language}
+        f"你是教育课程设计方面的专家。你是一位专家导师，根据学生的测验结果来评估他们的知识水平。\n"
+        f"您的任务是生成最可检查的子主题的逻辑结构化列表。\n"
+        f"请**仅**使用 {language} **回复**。**不要**包含任何解释。"
     )
 
     human_message = (
-        f"主题: {subject}\n\n"  # 保持原有中文信息和 {subject}
-        f"请创建一个核心主题的**项目符号列表**，这些主题可用于**创建测验**。"  # 翻译
+        f"主题: {subject}\n\n"
+        f"请创建一个核心主题的**项目符号列表**，这些主题可用于**创建测验**。"
     )
 
     return ChatPromptTemplate.from_messages(
@@ -22,22 +22,86 @@ def generate_topic_list_prompt(
 
 def generate_questions_prompt(topic: str, language: str = "en") -> ChatPromptTemplate:
     """
-    Generates a prompt template to create multiple-choice quiz questions in the specified language.
+    生成包含选择题和主观题的测验题目提示词模板
     """
-    system_message = (
-        f"你是一位准备技术主题**多项选择测验题**的专业教育工作者。\n"  # 翻译
-        f"**所有内容**都**必须严格**使用 {language} **撰写**。\n"  # 翻译并保留 {language}
-        "对于每个问题：\n"
-        "- **精确地**提供 **4 个**答案选项，并标记为 a)、b)、c)、d)\n"  # 翻译
-        "- 以此行**结束**：Correct Answer: [a/b/c/d]（**必须**是这些选项之一）\n"  # 翻译
-        "- 问题必须**与领域相关**、**清晰**且**难度多样**\n"  # 翻译
-        "- **不要**解释答案。**只**输出符合指定格式的问题。\n"  # 翻译
-        "**重要提示**：**不要**跳过 'Correct Answer' 行。**每个**问题都**必须**有它。"  # 翻译
-    )
+    system_message = f"""
+        # 角色与任务 🎯
+你是一位资深的**教育评估专家**和**专业命题人**。你的任务是根据给定的核心主题，生成一套高质量、严谨的测验题。
+
+# 核心主题
+本套测验的核心主题是：**{core_topic}**
+
+# 质量与严谨性要求 🧐
+1.  **专业性**：题目必须反映该主题的核心概念和关键知识点。
+2.  **严谨性**：问题表述清晰无歧义，答案唯一且正确。
+3.  **迷惑性（选择题）**：错误选项 (Distractors) 必须具有高度的迷惑性，是基于常见误解设计的，而不能是明显无关的选项。
+
+# 数量与格式要求 (【强制】)
+请**严格且仅**输出一个符合以下格式的 JSON 对象。**禁止**在 JSON 对象前后添加任何开场白、解释、总结或 Markdown 标记 (如 ```json ... ```)。
+
+**数量**：必须包含 **8 个** `single-choice` 题目 和 **2 个** `short-answer` 题目。
+
+**JSON 格式**：
+{{
+  "title": "{core_topic}",
+  "single-choice": [
+    {{
+      "question": "（这里是第 1 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 2 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 3 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 4 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 5 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 6 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 7 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 8 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }}
+  ],
+  "short-answer": [
+    {{
+      "question": "（这里是第 1 个简答题）"
+    }},
+    {{
+      "question": "（这里是第 2 个简答题）"
+    }}
+  ]
+}}
+请使用 {language} **回复**。
+"""
 
     human_message = (
-        f"主题： {topic}\n\n"  # 保持原有中文信息和 {topic}
-        f"使用 {language} **生成**一组**高质量**的**选择题**。"  # 翻译并保留 {language}
+        f"主题：{topic}\n\n"
+        f"请使用 {language} 生成高质量的测验题目，包含15个选择题和5个主观题。"
+        f"题目应该覆盖该主题的核心概念、关键技术和实际应用。"
     )
 
     return ChatPromptTemplate.from_messages(
@@ -49,17 +113,97 @@ def assess_knowledge_level_prompt(
     topic: str, score_percentage: float, language: str = "en"
 ) -> ChatPromptTemplate:
     system_message = (
-        "你是一位专家导师，根据学生的测验结果来评估他们的知识水平。\n"  # 保持原有中文信息
-        "提供一个**简短而深刻的总结**，并提出**具体的**下一步学习步骤。\n"  # 保持原有中文信息
-        f"请使用 {language} **回复**。"  # 翻译并保留 {language}
+        "你是一位专家导师，根据学生的测验结果来评估他们的知识水平。\n"
+        "提供一个**简短而深刻的总结**，并提出**具体的**下一步学习步骤。\n"
+        f"请使用 {language} **回复**。"
     )
 
     human_message = (
-        f"主题: {topic}\n"  # 保持原有中文信息和 {topic}
-        f"得分百分比: {score_percentage}\n\n"  # 保持原有中文信息和 {score_percentage}
-        f"评估知识水平，并提出下一步的改进步骤。"  # 保持原有中文信息
+        f"主题: {topic}\n"
+        f"得分百分比: {score_percentage}\n\n"
+        f"评估知识水平，并提出下一步的改进步骤。"
     )
 
     return ChatPromptTemplate.from_messages(
         [("system", system_message), ("human", human_message)]
     )
+
+
+def generate_QUESTION_TEMPLATE(core_topic):
+    return f"""
+# 角色与任务 🎯
+你是一位资深的**教育评估专家**和**专业命题人**。你的任务是根据给定的核心主题，生成一套高质量、严谨的测验题。
+
+# 核心主题
+本套测验的核心主题是：**{core_topic}**
+
+# 质量与严谨性要求 🧐
+1.  **专业性**：题目必须反映该主题的核心概念和关键知识点。
+2.  **严谨性**：问题表述清晰无歧义，答案唯一且正确。
+3.  **迷惑性（选择题）**：错误选项 (Distractors) 必须具有高度的迷惑性，是基于常见误解设计的，而不能是明显无关的选项。
+
+# 数量与格式要求 (【强制】)
+请**严格且仅**输出一个符合以下格式的 JSON 对象。**禁止**在 JSON 对象前后添加任何开场白、解释、总结或 Markdown 标记 (如 ```json ... ```)。
+
+**数量**：必须包含 **8 个** `single-choice` 题目 和 **2 个** `short-answer` 题目。
+
+!!!注意fillinblank是简答题而不是填空题。选择题需要给出答案。选择题包含三个字段[question,options,right-answer]。主观题包含一个字段"question"
+
+**JSON 格式**：
+{{
+  "title": "{core_topic}",
+  "single-choice": [
+    {{
+      "question": "（这里是第 1 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 2 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 3 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 4 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 5 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 6 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 7 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }},
+    {{
+      "question": "（这里是第 8 个选择题问题）",
+      "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+      "right-answer": "（A, B, C 或 D）"
+    }}
+  ],
+  "short-answer": [
+    {{
+      "question": "（这里是第 1 个简答题）"
+    }},
+    {{
+      "question": "（这里是第 2 个简答题）"
+    }}
+  ]
+}}
+再次提示：
+1.主观题不是填空题，应该是答题者用一段话回答。
+2. 选择题必须把答案一起输出在json中
+"""

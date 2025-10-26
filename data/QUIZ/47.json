@@ -1,0 +1,53 @@
+{
+  "title": "NewSQL数据库",
+  "single-choice": [
+    {
+      "question": "NewSQL数据库最主要的创新点在于：",
+      "options": ["A. 完全抛弃了ACID事务特性以换取高性能", "B. 在分布式架构下依然提供强一致性和可扩展的SQL接口", "C. 采用列式存储来优化OLAP场景", "D. 仅支持内存数据库以实现极低延迟"],
+      "right-answer": "B"
+    },
+    {
+      "question": "以下哪项不是NewSQL数据库通常采用的实现技术？",
+      "options": ["A. 分布式共识算法（如Raft）", "B. 基于共享内存的锁机制", "C. 分片（Sharding）与分布式事务协调", "D. 内存计算和列式存储结合"],
+      "right-answer": "B"
+    },
+    {
+      "question": "NewSQL数据库与传统关系型数据库（如MySQL）的关键区别主要体现在：",
+      "options": ["A. NewSQL只支持NoSQL风格的查询语言", "B. NewSQL牺牲了数据一致性以实现水平扩展", "C. NewSQL在保持SQL接口和ACID特性的同时支持水平扩展", "D. NewSQL完全不支持事务处理"],
+      "right-answer": "C"
+    },
+    {
+      "question": "下列哪个NewSQL数据库系统使用了“可串行化快照隔离（Serializable Snapshot Isolation）”来实现高并发下的强一致性？",
+      "options": ["A. H-Store", "B. Spanner", "C. VoltDB", "D. NuoDB"],
+      "right-answer": "B"
+    },
+    {
+      "question": "NewSQL数据库在处理大规模并发写入时，通常采用哪种策略来避免锁竞争？",
+      "options": ["A. 基于行的全局锁机制", "B. 使用悲观锁保证数据一致性", "C. 通过分片和分布式锁协调", "D. 采用基于时间戳的多版本并发控制（MVCC）"],
+      "right-answer": "D"
+    },
+    {
+      "question": "关于NewSQL与NoSQL数据库的比较，以下哪项是正确的？",
+      "options": ["A. NewSQL和NoSQL一样，都不支持SQL查询", "B. NewSQL在可扩展性和一致性之间做了更好的折中", "C. NoSQL数据库的ACID支持通常优于NewSQL", "D. NewSQL数据库的查询性能普遍低于传统关系型数据库"],
+      "right-answer": "B"
+    },
+    {
+      "question": "NewSQL数据库在架构上通常采用哪一种模式来实现数据的高可用性？",
+      "options": ["A. 主从复制 + 故障转移", "B. 基于共享磁盘的集群", "C. 无共享架构（Shared-Nothing）", "D. 单点部署以简化运维"],
+      "right-answer": "C"
+    },
+    {
+      "question": "以下哪项最能描述NewSQL数据库的典型应用场景？",
+      "options": ["A. 高频交易系统，需要强一致性和低延迟", "B. 日志分析，需要海量数据写入和顺序读取", "C. 机器学习特征存储，需要支持向量运算", "D. 网站会话缓存，对一致性要求不高"],
+      "right-answer": "A"
+    }
+  ],
+  "short-answer": [
+    {
+      "question": "请简要阐述NewSQL数据库是如何在水平扩展的同时保持ACID特性的。"
+    },
+    {
+      "question": "为什么说NewSQL数据库是传统关系型数据库和NoSQL数据库之间的“第三条道路”？"
+    }
+  ]
+}

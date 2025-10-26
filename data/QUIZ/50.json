@@ -1,0 +1,53 @@
+{
+  "title": "MapReduce计算模型",
+  "single-choice": [
+    {
+      "question": "在MapReduce模型中，以下哪一项最准确地描述了Map函数的输入和输出类型？",
+      "options": ["A. 输入：键值对；输出：单个值", "B. 输入：单个值；输出：键值对", "C. 输入：键值对；输出：键值对列表", "D. 输入：键值对；输出：单个键"],
+      "right-answer": "C"
+    },
+    {
+      "question": "关于MapReduce的Shuffle阶段，以下哪项描述是正确的？",
+      "options": ["A. Shuffle发生在Map阶段之前，用于分发数据到各个Mapper", "B. Shuffle是将Map输出按键排序并分发到Reducer的过程", "C. Shuffle是Reducer将结果写入文件的阶段", "D. Shuffle阶段在Reduce函数执行后才开始"],
+      "right-answer": "B"
+    },
+    {
+      "question": "在MapReduce中，Combiner（组合器）的作用是什么？",
+      "options": ["A. 用于在Reduce阶段之前合并所有中间键值对", "B. 用于在Map阶段结束后对Map输出进行本地聚合，减少网络传输数据量", "C. 用于将多个Map任务的结果合并成最终输出", "D. 用于对Reducer的输入进行排序和分组"],
+      "right-answer": "B"
+    },
+    {
+      "question": "以下关于MapReduce容错机制的描述，哪一项是正确的？",
+      "options": ["A. MapReduce通过将中间结果写入本地磁盘来实现容错", "B. 如果某个Map任务失败，整个作业将重新执行所有任务", "C. Reduce任务的失败不会影响Map任务的执行", "D. MapReduce不支持任务失败恢复，需人工干预"],
+      "right-answer": "B"
+    },
+    {
+      "question": "在MapReduce中，分区（Partitioning）的主要目的是什么？",
+      "options": ["A. 将输入数据划分成多个块以便并行处理", "B. 决定哪个Reducer接收特定的中间键值对", "C. 控制Map任务的执行顺序", "D. 优化Map阶段的内存使用"],
+      "right-answer": "B"
+    },
+    {
+      "question": "以下关于MapReduce计算模型的说法，哪一项是错误的？",
+      "options": ["A. MapReduce是一种适用于大规模数据集的并行计算模型", "B. MapReduce模型天然支持流式数据处理", "C. MapReduce的编程模型抽象了底层的分布式细节", "D. MapReduce适合处理批处理任务，而非实时流数据"],
+      "right-answer": "B"
+    },
+    {
+      "question": "在MapReduce中，如果Reduce任务数量为0，那么以下哪种情况可能发生？",
+      "options": ["A. Map任务将直接输出结果，不经过Shuffle和Reduce", "B. 作业将无法完成，因为必须有Reduce任务", "C. 所有Map输出将被忽略", "D. 作业将自动创建一个Reduce任务"],
+      "right-answer": "A"
+    },
+    {
+      "question": "关于MapReduce的Map和Reduce阶段，以下说法正确的是？",
+      "options": ["A. Map和Reduce阶段可以并行执行，但Reduce必须在所有Map完成后开始", "B. Map和Reduce阶段可以完全并行，没有依赖关系", "C. Map阶段结束后，Reducer立即开始处理所有Map输出", "D. Map和Reduce阶段不能并行，必须按顺序执行"],
+      "right-answer": "A"
+    }
+  ],
+  "short-answer": [
+    {
+      "question": "请简要说明MapReduce计算模型中，Shuffle和Sort阶段的具体作用及其在作业执行流程中的位置。"
+    },
+    {
+      "question": "为什么MapReduce模型适合处理大规模数据的批处理任务？请从并行性、容错性和数据本地性三个方面进行解释。"
+    }
+  ]
+}
