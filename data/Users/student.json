@@ -80,12 +80,7 @@
     "username": "stuliuyiming",
     "password": "123456",
     "email": "",
-    "learning_goals": [
-      "大数据基础概念",
-      "数据获取",
-      "数据质量与预处理",
-      "数据存储系统"
-    ],
+    "learning_goals": ["大数据开发", "参加数据分析比赛"],
     "preference": {
       "course_topic": [
         {
@@ -94,7 +89,7 @@
         },
         { "name": "数据存储", "hierarchy": "great-grandchildren" }
       ],
-      "course_type": [{ "name": "在线课程" }, { "name": "实践课程" }]
+      "course_type": [{ "name": "电子版书籍" }, { "name": "项目比赛" }]
     },
     "progress": [
       {
@@ -155,12 +150,7 @@
     "username": "stumoulongyu",
     "password": "123456",
     "email": "",
-    "learning_goals": [
-      "大数据基础概念",
-      "数据获取",
-      "数据质量与预处理",
-      "数据存储系统"
-    ],
+    "learning_goals": ["通过大数据考试", "参加数据分析比赛"],
     "preference": {
       "course_topic": [
         {
@@ -169,7 +159,7 @@
         },
         { "name": "数据存储", "hierarchy": "great-grandchildren" }
       ],
-      "course_type": [{ "name": "在线课程" }, { "name": "实践课程" }]
+      "course_type": [{ "name": "电子版书籍" }, { "name": "考试" }]
     },
     "progress": [
       {
