@@ -1,258 +1,2800 @@
 <html>
-    <head>
-        <meta charset="utf-8">
-        
-            <script src="lib/bindings/utils.js"></script>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-            
-        
-<center>
-<h1></h1>
-</center>
+  <head>
+    <meta charset="utf-8" />
 
-<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+    <script src="lib/bindings/utils.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css"
+      integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"
+      integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <center>
+      <h1></h1>
+    </center>
+
+    <!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
 <script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
-        <link
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
-          crossorigin="anonymous"
-        />
-        <script
-          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
-          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
-          crossorigin="anonymous"
-        ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+      crossorigin="anonymous"
+    ></script>
 
+    <center>
+      <h1></h1>
+    </center>
+    <style type="text/css">
+      #mynetwork {
+        width: 100%;
+        height: 800px;
+        background-color: #222222;
+        border: 1px solid lightgray;
+        position: relative;
+        float: left;
+      }
 
-        <center>
-          <h1></h1>
-        </center>
-        <style type="text/css">
+      #loadingBar {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 800px;
+        background-color: rgba(200, 200, 200, 0.8);
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -ms-transition: all 0.5s ease;
+        -o-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+        opacity: 1;
+      }
 
-             #mynetwork {
-                 width: 100%;
-                 height: 800px;
-                 background-color: #222222;
-                 border: 1px solid lightgray;
-                 position: relative;
-                 float: left;
-             }
+      #bar {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 20px;
+        height: 20px;
+        margin: auto auto auto auto;
+        border-radius: 11px;
+        border: 2px solid rgba(30, 30, 30, 0.05);
+        background: rgb(0, 173, 246); /* Old browsers */
+        box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.4);
+      }
 
-             
-             #loadingBar {
-                 position:absolute;
-                 top:0px;
-                 left:0px;
-                 width: 100%;
-                 height: 800px;
-                 background-color:rgba(200,200,200,0.8);
-                 -webkit-transition: all 0.5s ease;
-                 -moz-transition: all 0.5s ease;
-                 -ms-transition: all 0.5s ease;
-                 -o-transition: all 0.5s ease;
-                 transition: all 0.5s ease;
-                 opacity:1;
-             }
+      #border {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 500px;
+        height: 23px;
+        margin: auto auto auto auto;
+        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+      }
 
-             #bar {
-                 position:absolute;
-                 top:0px;
-                 left:0px;
-                 width:20px;
-                 height:20px;
-                 margin:auto auto auto auto;
-                 border-radius:11px;
-                 border:2px solid rgba(30,30,30,0.05);
-                 background: rgb(0, 173, 246); /* Old browsers */
-                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
-             }
+      #text {
+        position: absolute;
+        top: 8px;
+        left: 530px;
+        width: 30px;
+        height: 50px;
+        margin: auto auto auto auto;
+        font-size: 22px;
+        color: #000000;
+      }
 
-             #border {
-                 position:absolute;
-                 top:10px;
-                 left:10px;
-                 width:500px;
-                 height:23px;
-                 margin:auto auto auto auto;
-                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
-                 border-radius:10px;
-             }
+      div.outerBorder {
+        position: relative;
+        top: 400px;
+        width: 600px;
+        height: 44px;
+        margin: auto auto auto auto;
+        border: 8px solid rgba(0, 0, 0, 0.1);
+        background: rgb(252, 252, 252); /* Old browsers */
+        background: -moz-linear-gradient(
+          top,
+          rgba(252, 252, 252, 1) 0%,
+          rgba(237, 237, 237, 1) 100%
+        ); /* FF3.6+ */
+        background: -webkit-gradient(
+          linear,
+          left top,
+          left bottom,
+          color-stop(0%, rgba(252, 252, 252, 1)),
+          color-stop(100%, rgba(237, 237, 237, 1))
+        ); /* Chrome,Safari4+ */
+        background: -webkit-linear-gradient(
+          top,
+          rgba(252, 252, 252, 1) 0%,
+          rgba(237, 237, 237, 1) 100%
+        ); /* Chrome10+,Safari5.1+ */
+        background: -o-linear-gradient(
+          top,
+          rgba(252, 252, 252, 1) 0%,
+          rgba(237, 237, 237, 1) 100%
+        ); /* Opera 11.10+ */
+        background: -ms-linear-gradient(
+          top,
+          rgba(252, 252, 252, 1) 0%,
+          rgba(237, 237, 237, 1) 100%
+        ); /* IE10+ */
+        background: linear-gradient(
+          to bottom,
+          rgba(252, 252, 252, 1) 0%,
+          rgba(237, 237, 237, 1) 100%
+        ); /* W3C */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+        border-radius: 72px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
 
-             #text {
-                 position:absolute;
-                 top:8px;
-                 left:530px;
-                 width:30px;
-                 height:50px;
-                 margin:auto auto auto auto;
-                 font-size:22px;
-                 color: #000000;
-             }
+  <body>
+    <div class="card" style="width: 100%">
+      <div id="mynetwork" class="card-body"></div>
+    </div>
 
-             div.outerBorder {
-                 position:relative;
-                 top:400px;
-                 width:600px;
-                 height:44px;
-                 margin:auto auto auto auto;
-                 border:8px solid rgba(0,0,0,0.1);
-                 background: rgb(252,252,252); /* Old browsers */
-                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
-                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
-                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
-                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
-                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
-                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
-                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
-                 border-radius:72px;
-                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
-             }
-             
-
-             
-
-             
-        </style>
-    </head>
-
-
-    <body>
-        <div class="card" style="width: 100%">
-            
-            
-            <div id="mynetwork" class="card-body"></div>
+    <div id="loadingBar">
+      <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+          <div id="bar"></div>
         </div>
+      </div>
+    </div>
 
-        
-            <div id="loadingBar">
-              <div class="outerBorder">
-                <div id="text">0%</div>
-                <div id="border">
-                  <div id="bar"></div>
-                </div>
-              </div>
-            </div>
-        
-        
+    <script type="text/javascript">
+      // initialize global variables.
+      var edges;
+      var nodes;
+      var allNodes;
+      var allEdges;
+      var nodeColors;
+      var originalNodes;
+      var network;
+      var container;
+      var options, data;
+      var filter = {
+        item: "",
+        property: "",
+        value: [],
+      };
 
-        <script type="text/javascript">
+      // This method is responsible for drawing the graph, returns the drawn network
+      function drawGraph() {
+        var container = document.getElementById("mynetwork");
 
-              // initialize global variables.
-              var edges;
-              var nodes;
-              var allNodes;
-              var allEdges;
-              var nodeColors;
-              var originalNodes;
-              var network;
-              var container;
-              var options, data;
-              var filter = {
-                  item : '',
-                  property : '',
-                  value : []
-              };
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u5206\u6790",
+            label: "\u5927\u6570\u636e\u5206\u6790",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5",
+            label: "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528",
+            label:
+              "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u751f\u547d\u5468\u671f",
+            label: "\u5927\u6570\u636e\u751f\u547d\u5468\u671f",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "Resource",
+            id: "None",
+            label: "None",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u9a71\u52a8\u56e0\u7d20",
+            label: "\u5927\u6570\u636e\u9a71\u52a8\u56e0\u7d20",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "DIKW\u91d1\u5b57\u5854\u6a21\u578b",
+            label: "DIKW\u91d1\u5b57\u5854\u6a21\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5546\u52a1\u667a\u80fd\u7684\u53d1\u5c55\u8fc7\u7a0b",
+            label: "\u5546\u52a1\u667a\u80fd\u7684\u53d1\u5c55\u8fc7\u7a0b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5",
+            label: "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7684\u6982\u5ff5",
+            label: "\u5927\u6570\u636e\u7684\u6982\u5ff5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u5b9a\u4e49\u3001\u7279\u5f81\u3001\u751f\u547d\u5468\u671f\u7b49",
+            label:
+              "\u5927\u6570\u636e\u5b9a\u4e49\u3001\u7279\u5f81\u3001\u751f\u547d\u5468\u671f\u7b49",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7684\u6e17\u900f\u4e0e\u5f71\u54cd",
+            label: "\u5927\u6570\u636e\u7684\u6e17\u900f\u4e0e\u5f71\u54cd",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7684\u91cf\u5316\u8fdb\u7a0b",
+            label: "\u5927\u6570\u636e\u7684\u91cf\u5316\u8fdb\u7a0b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u7684\u4ef7\u503c\u4e0e\u539f\u6cb9\u7684\u7c7b\u6bd4",
+            label:
+              "\u6570\u636e\u7684\u4ef7\u503c\u4e0e\u539f\u6cb9\u7684\u7c7b\u6bd4",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7684\u4ea7\u751f\u9636\u6bb5",
+            label: "\u5927\u6570\u636e\u7684\u4ea7\u751f\u9636\u6bb5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u4f20\u7edf\u6570\u636e\u5e93\u4e0e\u5927\u6570\u636e\u7684\u533a\u522b",
+            label:
+              "\u4f20\u7edf\u6570\u636e\u5e93\u4e0e\u5927\u6570\u636e\u7684\u533a\u522b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "IT\u7684\u53d1\u5c55\u5386\u7a0b",
+            label: "IT\u7684\u53d1\u5c55\u5386\u7a0b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7279\u5f81\u4e0e\u7c7b\u578b",
+            label: "\u5927\u6570\u636e\u7279\u5f81\u4e0e\u7c7b\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7c7b\u578b",
+            label: "\u5927\u6570\u636e\u7c7b\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7684\u79cd\u7c7b",
+            label: "\u5927\u6570\u636e\u7684\u79cd\u7c7b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u7c7b\u578b\u6bd4\u4f8b",
+            label: "\u6570\u636e\u7c7b\u578b\u6bd4\u4f8b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7279\u5f81",
+            label: "\u5927\u6570\u636e\u7279\u5f81",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7684\u89c4\u6a21\u4e0e\u901f\u5ea6",
+            label: "\u5927\u6570\u636e\u7684\u89c4\u6a21\u4e0e\u901f\u5ea6",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7684\u89c4\u6a21",
+            label: "\u5927\u6570\u636e\u7684\u89c4\u6a21",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7684\u901f\u5ea6",
+            label: "\u5927\u6570\u636e\u7684\u901f\u5ea6",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81",
+            label: "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u7684\u7279\u5f81",
+            label: "\u5927\u6570\u636e\u7684\u7279\u5f81",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u7f51\u7edc\u5927\u6570\u636e\u7279\u5f81",
+            label: "\u7f51\u7edc\u5927\u6570\u636e\u7279\u5f81",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "Volume",
+            label: "Volume",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "Variety",
+            label: "Variety",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "Velocity",
+            label: "Velocity",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "Veracity",
+            label: "Veracity",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "Value",
+            label: "Value",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u6280\u672f\u4e0e\u6a21\u578b",
+            label: "\u5927\u6570\u636e\u6280\u672f\u4e0e\u6a21\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u7b2c\u56db\u7814\u7a76\u8303\u5f0f",
+            label: "\u7b2c\u56db\u7814\u7a76\u8303\u5f0f",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5bc6\u96c6\u578b\u79d1\u5b66\u53d1\u73b0",
+            label: "\u6570\u636e\u5bc6\u96c6\u578b\u79d1\u5b66\u53d1\u73b0",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u6570\u636e\u8ba1\u7b97\u7cfb\u7edf\u7684\u4e09\u4e2a\u57fa\u672c\u5c42\u6b21",
+            label:
+              "\u5927\u6570\u636e\u8ba1\u7b97\u7cfb\u7edf\u7684\u4e09\u4e2a\u57fa\u672c\u5c42\u6b21",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u83b7\u53d6",
+            label: "\u6570\u636e\u83b7\u53d6",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u7c7b\u578b",
+            label: "\u6570\u636e\u7c7b\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u7ed3\u6784\u5316\u6570\u636e",
+            label: "\u7ed3\u6784\u5316\u6570\u636e",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u975e\u7ed3\u6784\u5316\u6570\u636e",
+            label: "\u975e\u7ed3\u6784\u5316\u6570\u636e",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u534a\u7ed3\u6784\u5316\u6570\u636e\u548c\u51c6\u7ed3\u6784\u5316\u6570\u636e",
+            label:
+              "\u534a\u7ed3\u6784\u5316\u6570\u636e\u548c\u51c6\u7ed3\u6784\u5316\u6570\u636e",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5185\u90e8\u6570\u636e\u4e0e\u5916\u90e8\u6570\u636e",
+            label: "\u5185\u90e8\u6570\u636e\u4e0e\u5916\u90e8\u6570\u636e",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u91c7\u96c6",
+            label: "\u6570\u636e\u91c7\u96c6",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6df1\u5c42\u7f51\u7edc(DeepWeb)",
+            label: "\u6df1\u5c42\u7f51\u7edc(DeepWeb)",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6df1\u7f51\u6570\u636e\u91c7\u96c6",
+            label: "\u6df1\u7f51\u6570\u636e\u91c7\u96c6",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6697\u7f51(DarkWeb)",
+            label: "\u6697\u7f51(DarkWeb)",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "PageRank\u4e0eOPIC\u7b56\u7565",
+            label: "PageRank\u4e0eOPIC\u7b56\u7565",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "ETL(Extract,Transform,Load)",
+            label: "ETL(Extract,Transform,Load)",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u6e90\u9009\u62e9\u4e0e\u6570\u636e\u6536\u96c6",
+            label:
+              "\u6570\u636e\u6e90\u9009\u62e9\u4e0e\u6570\u636e\u6536\u96c6",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u63d0\u53d6\u65b9\u6cd5",
+            label: "\u6570\u636e\u63d0\u53d6\u65b9\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u589e\u91cf\u6570\u636e\u63d0\u53d6",
+            label: "\u589e\u91cf\u6570\u636e\u63d0\u53d6",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u589e\u91cf\u63d0\u53d6\u65b9\u6cd5",
+            label: "\u589e\u91cf\u63d0\u53d6\u65b9\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u8d28\u91cf\u4e0e\u9884\u5904\u7406",
+            label: "\u6570\u636e\u8d28\u91cf\u4e0e\u9884\u5904\u7406",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            label: "\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u7ba1\u7406\u8fc7\u7a0b",
+            label: "\u6570\u636e\u7ba1\u7406\u8fc7\u7a0b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u7ba1\u7406\u7684\u8fc7\u7a0b",
+            label: "\u6570\u636e\u7ba1\u7406\u7684\u8fc7\u7a0b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29",
+            label: "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u89c4\u7ea6",
+            label: "\u6570\u636e\u89c4\u7ea6",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5c5e\u6027\u5b50\u96c6\u9009\u62e9",
+            label: "\u5c5e\u6027\u5b50\u96c6\u9009\u62e9",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u538b\u7f29",
+            label: "\u6570\u636e\u538b\u7f29",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u591a\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+            label: "\u591a\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+            label: "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5355\u6570\u636e\u6e90\u7684\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            label:
+              "\u5355\u6570\u636e\u6e90\u7684\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5355\u4e00\u6570\u636e\u6e90\u6a21\u578b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            label:
+              "\u5355\u4e00\u6570\u636e\u6e90\u6a21\u578b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5355\u4e00\u6570\u636e\u6e90\u5b9e\u4f8b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            label:
+              "\u5355\u4e00\u6570\u636e\u6e90\u5b9e\u4f8b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u8d28\u91cf\u95ee\u9898\u5206\u7c7b",
+            label: "\u6570\u636e\u8d28\u91cf\u95ee\u9898\u5206\u7c7b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u9884\u5904\u7406",
+            label: "\u6570\u636e\u9884\u5904\u7406",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5b58\u50a8\u4e0e\u6570\u636e\u6e05\u6d17",
+            label: "\u6570\u636e\u5b58\u50a8\u4e0e\u6570\u636e\u6e05\u6d17",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u6e05\u6d17",
+            label: "\u6570\u636e\u6e05\u6d17",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u7f3a\u5931\u503c\u5904\u7406",
+            label: "\u7f3a\u5931\u503c\u5904\u7406",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u91cd\u590d\u8bb0\u5f55\u6e05\u6d17",
+            label: "\u91cd\u590d\u8bb0\u5f55\u6e05\u6d17",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u566a\u58f0\u6570\u636e\u6e05\u6d17",
+            label: "\u566a\u58f0\u6570\u636e\u6e05\u6d17",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u7bb1\u7b97\u6cd5",
+            label: "\u5206\u7bb1\u7b97\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u6e05\u6d17\u548c\u5efa\u6a21",
+            label: "\u6570\u636e\u6e05\u6d17\u548c\u5efa\u6a21",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u8f6c\u6362",
+            label: "\u6570\u636e\u8f6c\u6362",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u96c6\u6210",
+            label: "\u6570\u636e\u96c6\u6210",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+            label: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u8d44\u4ea7",
+            label: "\u6570\u636e\u8d44\u4ea7",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee",
+            label: "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u8bbf\u95ee\u5c42",
+            label: "\u6570\u636e\u8bbf\u95ee\u5c42",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5efa\u6a21",
+            label: "\u6570\u636e\u5efa\u6a21",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "ACID\u4e0eBASE\u6a21\u578b",
+            label: "ACID\u4e0eBASE\u6a21\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5efa\u6a21\u5c42\u7ea7",
+            label: "\u6570\u636e\u5efa\u6a21\u5c42\u7ea7",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u7edf\u4e00\u6570\u636e\u8bbf\u95ee\u63a5\u53e3",
+            label: "\u7edf\u4e00\u6570\u636e\u8bbf\u95ee\u63a5\u53e3",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u6e90\u5305\u88c5\u5668",
+            label: "\u6570\u636e\u6e90\u5305\u88c5\u5668",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5b58\u50a8\u6280\u672f",
+            label: "\u6570\u636e\u5b58\u50a8\u6280\u672f",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u57fa\u4e8e\u5217\u7684\u5b58\u50a8",
+            label: "\u57fa\u4e8e\u5217\u7684\u5b58\u50a8",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u57fa\u4e8e\u5217\u5b58\u50a8\u7684\u8868",
+            label: "\u57fa\u4e8e\u5217\u5b58\u50a8\u7684\u8868",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u538b\u7f29\u4e0e\u5206\u533a",
+            label: "\u6570\u636e\u538b\u7f29\u4e0e\u5206\u533a",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5b58\u50a8\u67b6\u6784",
+            label: "\u6570\u636e\u5b58\u50a8\u67b6\u6784",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf",
+            label: "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "HDFS\u6570\u636e\u64cd\u4f5c",
+            label: "HDFS\u6570\u636e\u64cd\u4f5c",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "HDFS\u6570\u636e\u5199\u5165\u8fc7\u7a0b",
+            label: "HDFS\u6570\u636e\u5199\u5165\u8fc7\u7a0b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "HDFS\u6570\u636e\u8bfb\u53d6\u8fc7\u7a0b",
+            label: "HDFS\u6570\u636e\u8bfb\u53d6\u8fc7\u7a0b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519",
+            label: "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u533a\u5bb9\u9519\u6027",
+            label: "\u5206\u533a\u5bb9\u9519\u6027",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf-\u4ee5HDFS\u4e3a\u4f8b",
+            label:
+              "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf-\u4ee5HDFS\u4e3a\u4f8b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u5e03\u5f0f\u5b58\u50a8",
+            label: "\u5206\u5e03\u5f0f\u5b58\u50a8",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "HDFS\u67b6\u6784\u4e0e\u673a\u5236",
+            label: "HDFS\u67b6\u6784\u4e0e\u673a\u5236",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "HDFS\u5b58\u50a8\u673a\u5236",
+            label: "HDFS\u5b58\u50a8\u673a\u5236",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "HDFS\u67b6\u6784",
+            label: "HDFS\u67b6\u6784",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "HDFS\u4e00\u6b21\u5199\u5165\u591a\u6b21\u8bfb\u53d6",
+            label: "HDFS\u4e00\u6b21\u5199\u5165\u591a\u6b21\u8bfb\u53d6",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u5e03\u5f0f\u6570\u636e\u5e93",
+            label: "\u5206\u5e03\u5f0f\u6570\u636e\u5e93",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "NewSQL\u6570\u636e\u5e93",
+            label: "NewSQL\u6570\u636e\u5e93",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "NoSQL\u6570\u636e\u5e93",
+            label: "NoSQL\u6570\u636e\u5e93",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u952e\u503c\u6570\u636e\u5e93",
+            label: "\u952e\u503c\u6570\u636e\u5e93",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u56fe\u6570\u636e\u5e93",
+            label: "\u56fe\u6570\u636e\u5e93",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6587\u6863\u6570\u636e\u5e93",
+            label: "\u6587\u6863\u6570\u636e\u5e93",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "NoSQL\u6570\u636e\u5e93\u7c7b\u578b",
+            label: "NoSQL\u6570\u636e\u5e93\u7c7b\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5217\u5b58\u50a8\u6570\u636e\u5e93",
+            label: "\u5217\u5b58\u50a8\u6570\u636e\u5e93",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "CAP\u5b9a\u7406",
+            label: "CAP\u5b9a\u7406",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "BASE\u6a21\u578b",
+            label: "BASE\u6a21\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5b58\u50a8\u4e0e\u5904\u7406\u5e73\u53f0",
+            label: "\u6570\u636e\u5b58\u50a8\u4e0e\u5904\u7406\u5e73\u53f0",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+            label: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6279\u5904\u7406",
+            label: "\u6279\u5904\u7406",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "MapReduce\u8ba1\u7b97\u6a21\u578b",
+            label: "MapReduce\u8ba1\u7b97\u6a21\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u4efb\u52a1\u8c03\u5ea6\u4e0e\u8d44\u6e90\u7ba1\u7406",
+            label: "\u4efb\u52a1\u8c03\u5ea6\u4e0e\u8d44\u6e90\u7ba1\u7406",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "MapReduce\u5de5\u4f5c\u6d41\u7a0b",
+            label: "MapReduce\u5de5\u4f5c\u6d41\u7a0b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5fae\u91cf\u6279\u5904\u7406\u7cfb\u7edf",
+            label: "\u5fae\u91cf\u6279\u5904\u7406\u7cfb\u7edf",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u56fe\u8ba1\u7b97\u4e0e\u6d88\u606f\u4f20\u9012",
+            label: "\u56fe\u8ba1\u7b97\u4e0e\u6d88\u606f\u4f20\u9012",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b",
+            label: "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u8d85\u6b65(superstep)",
+            label: "\u8d85\u6b65(superstep)",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u56fe\u5206\u533a\u4e0e\u6d88\u606f\u4f20\u9012",
+            label: "\u56fe\u5206\u533a\u4e0e\u6d88\u606f\u4f20\u9012",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "BulkSynchronousParallel(BSP)",
+            label: "BulkSynchronousParallel(BSP)",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "GooglePregel\u67b6\u6784",
+            label: "GooglePregel\u67b6\u6784",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406",
+            label: "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5185\u5b58\u8ba1\u7b97",
+            label: "\u5185\u5b58\u8ba1\u7b97",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6d41\u8ba1\u7b97\u6a21\u578b",
+            label: "\u6d41\u8ba1\u7b97\u6a21\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u8ba1\u7b97\u5f15\u64ce",
+            label: "\u8ba1\u7b97\u5f15\u64ce",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "Spark\u67b6\u6784",
+            label: "Spark\u67b6\u6784",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5f39\u6027\u5206\u5e03\u5f0f\u6570\u636e\u96c6(RDD)",
+            label: "\u5f39\u6027\u5206\u5e03\u5f0f\u6570\u636e\u96c6(RDD)",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u60f0\u6027\u6c42\u503c(LazyEvaluation)",
+            label: "\u60f0\u6027\u6c42\u503c(LazyEvaluation)",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6d41\u5904\u7406",
+            label: "\u6d41\u5904\u7406",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6d41\u5904\u7406\u8ba1\u7b97\u6a21\u578b",
+            label: "\u6d41\u5904\u7406\u8ba1\u7b97\u6a21\u578b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5",
+            label: "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u67b6\u6784",
+            label: "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u67b6\u6784",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u5e03\u5f0f\u8ba1\u7b97\u67b6\u6784",
+            label: "\u5206\u5e03\u5f0f\u8ba1\u7b97\u67b6\u6784",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u5e03\u5f0f\u7b56\u7565",
+            label: "\u5206\u5e03\u5f0f\u7b56\u7565",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u5e03\u5f0f\u8ba1\u7b97",
+            label: "\u5206\u5e03\u5f0f\u8ba1\u7b97",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5206\u5e03\u5f0f\u5904\u7406",
+            label: "\u5206\u5e03\u5f0f\u5904\u7406",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u7279\u5f81\u5de5\u7a0b\u4e0e\u6570\u636e\u5206\u6790",
+            label: "\u7279\u5f81\u5de5\u7a0b\u4e0e\u6570\u636e\u5206\u6790",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406",
+            label: "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u65e0\u5171\u4eab\u67b6\u6784",
+            label: "\u65e0\u5171\u4eab\u67b6\u6784",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "MPP\u6570\u636e\u5e93",
+            label: "MPP\u6570\u636e\u5e93",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u5206\u5e03\u4e0e\u5e76\u884c\u6027",
+            label: "\u6570\u636e\u5206\u5e03\u4e0e\u5e76\u884c\u6027",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "Greenplum\u7269\u7406\u67b6\u6784",
+            label: "Greenplum\u7269\u7406\u67b6\u6784",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "Greenplum",
+            label: "Greenplum",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5185\u5b58\u6570\u636e\u5e93",
+            label: "\u5185\u5b58\u6570\u636e\u5e93",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5185\u5b58\u6570\u636e\u5e93-HANA",
+            label: "\u5185\u5b58\u6570\u636e\u5e93-HANA",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u6316\u6398\u4e0e\u5206\u6790",
+            label: "\u6570\u636e\u6316\u6398\u4e0e\u5206\u6790",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6570\u636e\u6316\u6398\u7b97\u6cd5",
+            label: "\u6570\u636e\u6316\u6398\u7b97\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f",
+            label: "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5377\u79ef\u795e\u7ecf\u7f51\u7edc",
+            label: "\u5377\u79ef\u795e\u7ecf\u7f51\u7edc",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6fc0\u6d3b\u51fd\u6570",
+            label: "\u6fc0\u6d3b\u51fd\u6570",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6743\u91cd\u548c\u504f\u7f6e",
+            label: "\u6743\u91cd\u548c\u504f\u7f6e",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6df1\u5ea6\u5b66\u4e60",
+            label: "\u6df1\u5ea6\u5b66\u4e60",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "TensorFlow\u67b6\u6784",
+            label: "TensorFlow\u67b6\u6784",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "TensorFlow2.0\u67b6\u6784",
+            label: "TensorFlow2.0\u67b6\u6784",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6df1\u5ea6\u5b66\u4e60\u7b97\u6cd5",
+            label: "\u6df1\u5ea6\u5b66\u4e60\u7b97\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u673a\u5668\u5b66\u4e60\u57fa\u7840",
+            label: "\u673a\u5668\u5b66\u4e60\u57fa\u7840",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f",
+            label: "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u673a\u5668\u5b66\u4e60Pipeline",
+            label: "\u673a\u5668\u5b66\u4e60Pipeline",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6a21\u578b\u6301\u4e45\u5316",
+            label: "\u6a21\u578b\u6301\u4e45\u5316",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "MLlib\u7b97\u6cd5",
+            label: "MLlib\u7b97\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u673a\u5668\u5b66\u4e60\u7b97\u6cd5",
+            label: "\u673a\u5668\u5b66\u4e60\u7b97\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "K\u8fd1\u90bb\u7b97\u6cd5",
+            label: "K\u8fd1\u90bb\u7b97\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u8bad\u7ec3\u6570\u636e\u4e0e\u6d4b\u8bd5\u6570\u636e",
+            label: "\u8bad\u7ec3\u6570\u636e\u4e0e\u6d4b\u8bd5\u6570\u636e",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u652f\u6301\u5411\u91cf\u673a(SVM)",
+            label: "\u652f\u6301\u5411\u91cf\u673a(SVM)",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u8f6f\u95f4\u9694\u5206\u7c7b\u5668",
+            label: "\u8f6f\u95f4\u9694\u5206\u7c7b\u5668",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6838\u51fd\u6570\u4e0e\u6838\u6280\u5de7",
+            label: "\u6838\u51fd\u6570\u4e0e\u6838\u6280\u5de7",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u76d1\u7763\u5b66\u4e60",
+            label: "\u76d1\u7763\u5b66\u4e60",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u65e0\u76d1\u7763\u5b66\u4e60",
+            label: "\u65e0\u76d1\u7763\u5b66\u4e60",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6734\u7d20\u8d1d\u53f6\u65af\u5206\u7c7b\u7b97\u6cd5",
+            label: "\u6734\u7d20\u8d1d\u53f6\u65af\u5206\u7c7b\u7b97\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5148\u9a8c\u6982\u7387",
+            label: "\u5148\u9a8c\u6982\u7387",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u52a0\u6cd5\u5e73\u6ed1",
+            label: "\u52a0\u6cd5\u5e73\u6ed1",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u805a\u7c7b\u5206\u6790",
+            label: "\u805a\u7c7b\u5206\u6790",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "K\u5747\u503c\u805a\u7c7b\u7b97\u6cd5",
+            label: "K\u5747\u503c\u805a\u7c7b\u7b97\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u9009\u62e9\u6700\u4f73K\u503c",
+            label: "\u9009\u62e9\u6700\u4f73K\u503c",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u6b27\u51e0\u91cc\u5f97\u8ddd\u79bb",
+            label: "\u6b27\u51e0\u91cc\u5f97\u8ddd\u79bb",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u805a\u7c7b\u7b97\u6cd5",
+            label: "\u805a\u7c7b\u7b97\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u7edf\u8ba1\u5206\u6790\u4e0e\u56de\u5f52",
+            label: "\u7edf\u8ba1\u5206\u6790\u4e0e\u56de\u5f52",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u7ebf\u6027\u56de\u5f52",
+            label: "\u7ebf\u6027\u56de\u5f52",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5747\u503c\u8ba1\u7b97",
+            label: "\u5747\u503c\u8ba1\u7b97",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u56de\u5f52\u65b9\u7a0b",
+            label: "\u56de\u5f52\u65b9\u7a0b",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u5173\u8054\u89c4\u5219\u6316\u6398",
+            label: "\u5173\u8054\u89c4\u5219\u6316\u6398",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "Apriori\u7b97\u6cd5",
+            label: "Apriori\u7b97\u6cd5",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u652f\u6301\u5ea6\u3001\u7f6e\u4fe1\u5ea6\u548c\u63d0\u5347\u5ea6",
+            label:
+              "\u652f\u6301\u5ea6\u3001\u7f6e\u4fe1\u5ea6\u548c\u63d0\u5347\u5ea6",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u964d\u7ef4\u4e0e\u77e9\u9635\u5206\u89e3",
+            label: "\u964d\u7ef4\u4e0e\u77e9\u9635\u5206\u89e3",
+            shape: "dot",
+          },
+          {
+            font: { color: "white" },
+            group: "CourseNode",
+            id: "\u4e3b\u6210\u5206\u5206\u6790(PCA)",
+            label: "\u4e3b\u6210\u5206\u5206\u6790(PCA)",
+            shape: "dot",
+          },
+        ]);
+        edges = new vis.DataSet([
+          {
+            from: "\u5927\u6570\u636e\u5206\u6790",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528",
+          },
+          {
+            from: "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u751f\u547d\u5468\u671f",
+          },
+          {
+            from: "\u5927\u6570\u636e\u751f\u547d\u5468\u671f",
+            label: "USES_RESOURCE",
+            title: "USES_RESOURCE",
+            to: "None",
+          },
+          {
+            from: "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u9a71\u52a8\u56e0\u7d20",
+          },
+          {
+            from: "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "DIKW\u91d1\u5b57\u5854\u6a21\u578b",
+          },
+          {
+            from: "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5546\u52a1\u667a\u80fd\u7684\u53d1\u5c55\u8fc7\u7a0b",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7684\u6982\u5ff5",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7684\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u5b9a\u4e49\u3001\u7279\u5f81\u3001\u751f\u547d\u5468\u671f\u7b49",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7684\u6e17\u900f\u4e0e\u5f71\u54cd",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7684\u91cf\u5316\u8fdb\u7a0b",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u7684\u4ef7\u503c\u4e0e\u539f\u6cb9\u7684\u7c7b\u6bd4",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7684\u4ea7\u751f\u9636\u6bb5",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u4f20\u7edf\u6570\u636e\u5e93\u4e0e\u5927\u6570\u636e\u7684\u533a\u522b",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "IT\u7684\u53d1\u5c55\u5386\u7a0b",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7279\u5f81\u4e0e\u7c7b\u578b",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7279\u5f81\u4e0e\u7c7b\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7c7b\u578b",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7c7b\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7684\u79cd\u7c7b",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7c7b\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u7c7b\u578b\u6bd4\u4f8b",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7279\u5f81\u4e0e\u7c7b\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7279\u5f81",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7279\u5f81",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7684\u89c4\u6a21\u4e0e\u901f\u5ea6",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7684\u89c4\u6a21\u4e0e\u901f\u5ea6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7684\u89c4\u6a21",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7684\u89c4\u6a21\u4e0e\u901f\u5ea6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7684\u901f\u5ea6",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7279\u5f81",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u7684\u7279\u5f81",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u7f51\u7edc\u5927\u6570\u636e\u7279\u5f81",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "Volume",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "Variety",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "Velocity",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "Veracity",
+          },
+          {
+            from: "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "Value",
+          },
+          {
+            from: "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u6280\u672f\u4e0e\u6a21\u578b",
+          },
+          {
+            from: "\u5927\u6570\u636e\u6280\u672f\u4e0e\u6a21\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u7b2c\u56db\u7814\u7a76\u8303\u5f0f",
+          },
+          {
+            from: "\u7b2c\u56db\u7814\u7a76\u8303\u5f0f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5bc6\u96c6\u578b\u79d1\u5b66\u53d1\u73b0",
+          },
+          {
+            from: "\u5927\u6570\u636e\u6280\u672f\u4e0e\u6a21\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u6570\u636e\u8ba1\u7b97\u7cfb\u7edf\u7684\u4e09\u4e2a\u57fa\u672c\u5c42\u6b21",
+          },
+          {
+            from: "\u5927\u6570\u636e\u5206\u6790",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u83b7\u53d6",
+          },
+          {
+            from: "\u6570\u636e\u83b7\u53d6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u7c7b\u578b",
+          },
+          {
+            from: "\u6570\u636e\u7c7b\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u7ed3\u6784\u5316\u6570\u636e",
+          },
+          {
+            from: "\u6570\u636e\u7c7b\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u975e\u7ed3\u6784\u5316\u6570\u636e",
+          },
+          {
+            from: "\u6570\u636e\u7c7b\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u534a\u7ed3\u6784\u5316\u6570\u636e\u548c\u51c6\u7ed3\u6784\u5316\u6570\u636e",
+          },
+          {
+            from: "\u6570\u636e\u7c7b\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5185\u90e8\u6570\u636e\u4e0e\u5916\u90e8\u6570\u636e",
+          },
+          {
+            from: "\u6570\u636e\u83b7\u53d6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u91c7\u96c6",
+          },
+          {
+            from: "\u6570\u636e\u91c7\u96c6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6df1\u5c42\u7f51\u7edc(DeepWeb)",
+          },
+          {
+            from: "\u6df1\u5c42\u7f51\u7edc(DeepWeb)",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6df1\u7f51\u6570\u636e\u91c7\u96c6",
+          },
+          {
+            from: "\u6570\u636e\u91c7\u96c6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6697\u7f51(DarkWeb)",
+          },
+          {
+            from: "\u6570\u636e\u91c7\u96c6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "PageRank\u4e0eOPIC\u7b56\u7565",
+          },
+          {
+            from: "\u6570\u636e\u91c7\u96c6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "ETL(Extract,Transform,Load)",
+          },
+          {
+            from: "\u6570\u636e\u91c7\u96c6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u6e90\u9009\u62e9\u4e0e\u6570\u636e\u6536\u96c6",
+          },
+          {
+            from: "\u6570\u636e\u91c7\u96c6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u63d0\u53d6\u65b9\u6cd5",
+          },
+          {
+            from: "\u6570\u636e\u63d0\u53d6\u65b9\u6cd5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u589e\u91cf\u6570\u636e\u63d0\u53d6",
+          },
+          {
+            from: "\u589e\u91cf\u6570\u636e\u63d0\u53d6",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u589e\u91cf\u63d0\u53d6\u65b9\u6cd5",
+          },
+          {
+            from: "\u5927\u6570\u636e\u5206\u6790",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u8d28\u91cf\u4e0e\u9884\u5904\u7406",
+          },
+          {
+            from: "\u6570\u636e\u8d28\u91cf\u4e0e\u9884\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+          },
+          {
+            from: "\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u7ba1\u7406\u8fc7\u7a0b",
+          },
+          {
+            from: "\u6570\u636e\u7ba1\u7406\u8fc7\u7a0b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u7ba1\u7406\u7684\u8fc7\u7a0b",
+          },
+          {
+            from: "\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29",
+          },
+          {
+            from: "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u89c4\u7ea6",
+          },
+          {
+            from: "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5c5e\u6027\u5b50\u96c6\u9009\u62e9",
+          },
+          {
+            from: "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u538b\u7f29",
+          },
+          {
+            from: "\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u591a\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+          },
+          {
+            from: "\u591a\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u591a\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+          },
+          {
+            from: "\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+          },
+          {
+            from: "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5355\u6570\u636e\u6e90\u7684\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+          },
+          {
+            from: "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5355\u4e00\u6570\u636e\u6e90\u6a21\u578b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+          },
+          {
+            from: "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5355\u4e00\u6570\u636e\u6e90\u5b9e\u4f8b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+          },
+          {
+            from: "\u6570\u636e\u8d28\u91cf\u95ee\u9898",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u8d28\u91cf\u95ee\u9898\u5206\u7c7b",
+          },
+          {
+            from: "\u6570\u636e\u8d28\u91cf\u95ee\u9898\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u8d28\u91cf\u95ee\u9898\u5206\u7c7b",
+          },
+          {
+            from: "\u6570\u636e\u8d28\u91cf\u4e0e\u9884\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u9884\u5904\u7406",
+          },
+          {
+            from: "\u6570\u636e\u9884\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u9884\u5904\u7406",
+          },
+          {
+            from: "\u6570\u636e\u9884\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5b58\u50a8\u4e0e\u6570\u636e\u6e05\u6d17",
+          },
+          {
+            from: "\u6570\u636e\u9884\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u6e05\u6d17",
+          },
+          {
+            from: "\u6570\u636e\u6e05\u6d17",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u7f3a\u5931\u503c\u5904\u7406",
+          },
+          {
+            from: "\u6570\u636e\u6e05\u6d17",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u91cd\u590d\u8bb0\u5f55\u6e05\u6d17",
+          },
+          {
+            from: "\u6570\u636e\u6e05\u6d17",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u566a\u58f0\u6570\u636e\u6e05\u6d17",
+          },
+          {
+            from: "\u566a\u58f0\u6570\u636e\u6e05\u6d17",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u7bb1\u7b97\u6cd5",
+          },
+          {
+            from: "\u6570\u636e\u6e05\u6d17",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u6e05\u6d17\u548c\u5efa\u6a21",
+          },
+          {
+            from: "\u6570\u636e\u9884\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u8f6c\u6362",
+          },
+          {
+            from: "\u6570\u636e\u9884\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u96c6\u6210",
+          },
+          {
+            from: "\u5927\u6570\u636e\u5206\u6790",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+          },
+          {
+            from: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u8d44\u4ea7",
+          },
+          {
+            from: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee",
+          },
+          {
+            from: "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u8bbf\u95ee\u5c42",
+          },
+          {
+            from: "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5efa\u6a21",
+          },
+          {
+            from: "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "ACID\u4e0eBASE\u6a21\u578b",
+          },
+          {
+            from: "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5efa\u6a21\u5c42\u7ea7",
+          },
+          {
+            from: "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u7edf\u4e00\u6570\u636e\u8bbf\u95ee\u63a5\u53e3",
+          },
+          {
+            from: "\u7edf\u4e00\u6570\u636e\u8bbf\u95ee\u63a5\u53e3",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u6e90\u5305\u88c5\u5668",
+          },
+          {
+            from: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5b58\u50a8\u6280\u672f",
+          },
+          {
+            from: "\u6570\u636e\u5b58\u50a8\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u57fa\u4e8e\u5217\u7684\u5b58\u50a8",
+          },
+          {
+            from: "\u57fa\u4e8e\u5217\u7684\u5b58\u50a8",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u57fa\u4e8e\u5217\u5b58\u50a8\u7684\u8868",
+          },
+          {
+            from: "\u6570\u636e\u5b58\u50a8\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u538b\u7f29\u4e0e\u5206\u533a",
+          },
+          {
+            from: "\u6570\u636e\u5b58\u50a8\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5b58\u50a8\u67b6\u6784",
+          },
+          {
+            from: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "HDFS\u6570\u636e\u64cd\u4f5c",
+          },
+          {
+            from: "HDFS\u6570\u636e\u64cd\u4f5c",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "HDFS\u6570\u636e\u5199\u5165\u8fc7\u7a0b",
+          },
+          {
+            from: "HDFS\u6570\u636e\u64cd\u4f5c",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "HDFS\u6570\u636e\u8bfb\u53d6\u8fc7\u7a0b",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u533a\u5bb9\u9519\u6027",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf-\u4ee5HDFS\u4e3a\u4f8b",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u5b58\u50a8",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "HDFS\u67b6\u6784\u4e0e\u673a\u5236",
+          },
+          {
+            from: "HDFS\u67b6\u6784\u4e0e\u673a\u5236",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "HDFS\u5b58\u50a8\u673a\u5236",
+          },
+          {
+            from: "HDFS\u67b6\u6784\u4e0e\u673a\u5236",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "HDFS\u67b6\u6784",
+          },
+          {
+            from: "HDFS\u67b6\u6784\u4e0e\u673a\u5236",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "HDFS\u4e00\u6b21\u5199\u5165\u591a\u6b21\u8bfb\u53d6",
+          },
+          {
+            from: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u6570\u636e\u5e93",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u6570\u636e\u5e93",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "NewSQL\u6570\u636e\u5e93",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "NoSQL\u6570\u636e\u5e93",
+          },
+          {
+            from: "NoSQL\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u952e\u503c\u6570\u636e\u5e93",
+          },
+          {
+            from: "NoSQL\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u56fe\u6570\u636e\u5e93",
+          },
+          {
+            from: "NoSQL\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6587\u6863\u6570\u636e\u5e93",
+          },
+          {
+            from: "NoSQL\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "NoSQL\u6570\u636e\u5e93\u7c7b\u578b",
+          },
+          {
+            from: "NoSQL\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5217\u5b58\u50a8\u6570\u636e\u5e93",
+          },
+          {
+            from: "NoSQL\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "CAP\u5b9a\u7406",
+          },
+          {
+            from: "NoSQL\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "BASE\u6a21\u578b",
+          },
+          {
+            from: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+          },
+          {
+            from: "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5b58\u50a8\u4e0e\u5904\u7406\u5e73\u53f0",
+          },
+          {
+            from: "\u5927\u6570\u636e\u5206\u6790",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6279\u5904\u7406",
+          },
+          {
+            from: "\u6279\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "MapReduce\u8ba1\u7b97\u6a21\u578b",
+          },
+          {
+            from: "MapReduce\u8ba1\u7b97\u6a21\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "MapReduce\u8ba1\u7b97\u6a21\u578b",
+          },
+          {
+            from: "MapReduce\u8ba1\u7b97\u6a21\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u4efb\u52a1\u8c03\u5ea6\u4e0e\u8d44\u6e90\u7ba1\u7406",
+          },
+          {
+            from: "MapReduce\u8ba1\u7b97\u6a21\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "MapReduce\u5de5\u4f5c\u6d41\u7a0b",
+          },
+          {
+            from: "\u6279\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5fae\u91cf\u6279\u5904\u7406\u7cfb\u7edf",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u56fe\u8ba1\u7b97\u4e0e\u6d88\u606f\u4f20\u9012",
+          },
+          {
+            from: "\u56fe\u8ba1\u7b97\u4e0e\u6d88\u606f\u4f20\u9012",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b",
+          },
+          {
+            from: "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u8d85\u6b65(superstep)",
+          },
+          {
+            from: "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u56fe\u5206\u533a\u4e0e\u6d88\u606f\u4f20\u9012",
+          },
+          {
+            from: "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "BulkSynchronousParallel(BSP)",
+          },
+          {
+            from: "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "GooglePregel\u67b6\u6784",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406",
+          },
+          {
+            from: "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5185\u5b58\u8ba1\u7b97",
+          },
+          {
+            from: "\u5185\u5b58\u8ba1\u7b97",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6d41\u8ba1\u7b97\u6a21\u578b",
+          },
+          {
+            from: "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u8ba1\u7b97\u5f15\u64ce",
+          },
+          {
+            from: "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "Spark\u67b6\u6784",
+          },
+          {
+            from: "Spark\u67b6\u6784",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5f39\u6027\u5206\u5e03\u5f0f\u6570\u636e\u96c6(RDD)",
+          },
+          {
+            from: "Spark\u67b6\u6784",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u60f0\u6027\u6c42\u503c(LazyEvaluation)",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6d41\u5904\u7406",
+          },
+          {
+            from: "\u6d41\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6d41\u5904\u7406\u8ba1\u7b97\u6a21\u578b",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u67b6\u6784",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u8ba1\u7b97\u67b6\u6784",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u8ba1\u7b97\u67b6\u6784",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u7b56\u7565",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u8ba1\u7b97\u67b6\u6784",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u8ba1\u7b97",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u8ba1\u7b97",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u8ba1\u7b97",
+          },
+          {
+            from: "\u5206\u5e03\u5f0f\u8ba1\u7b97",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5206\u5e03\u5f0f\u5904\u7406",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u7279\u5f81\u5de5\u7a0b\u4e0e\u6570\u636e\u5206\u6790",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406",
+          },
+          {
+            from: "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u65e0\u5171\u4eab\u67b6\u6784",
+          },
+          {
+            from: "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406",
+          },
+          {
+            from: "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "MPP\u6570\u636e\u5e93",
+          },
+          {
+            from: "MPP\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u5206\u5e03\u4e0e\u5e76\u884c\u6027",
+          },
+          {
+            from: "MPP\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "Greenplum\u7269\u7406\u67b6\u6784",
+          },
+          {
+            from: "Greenplum\u7269\u7406\u67b6\u6784",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "Greenplum",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5185\u5b58\u6570\u636e\u5e93",
+          },
+          {
+            from: "\u5185\u5b58\u6570\u636e\u5e93",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5185\u5b58\u6570\u636e\u5e93-HANA",
+          },
+          {
+            from: "\u6570\u636e\u5904\u7406\u7cfb\u7edf",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u6316\u6398\u4e0e\u5206\u6790",
+          },
+          {
+            from: "\u6570\u636e\u6316\u6398\u4e0e\u5206\u6790",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6570\u636e\u6316\u6398\u7b97\u6cd5",
+          },
+          {
+            from: "\u6570\u636e\u6316\u6398\u7b97\u6cd5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f",
+          },
+          {
+            from: "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5377\u79ef\u795e\u7ecf\u7f51\u7edc",
+          },
+          {
+            from: "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6fc0\u6d3b\u51fd\u6570",
+          },
+          {
+            from: "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6743\u91cd\u548c\u504f\u7f6e",
+          },
+          {
+            from: "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6df1\u5ea6\u5b66\u4e60",
+          },
+          {
+            from: "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "TensorFlow\u67b6\u6784",
+          },
+          {
+            from: "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "TensorFlow2.0\u67b6\u6784",
+          },
+          {
+            from: "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6df1\u5ea6\u5b66\u4e60\u7b97\u6cd5",
+          },
+          {
+            from: "\u6570\u636e\u6316\u6398\u7b97\u6cd5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u673a\u5668\u5b66\u4e60\u57fa\u7840",
+          },
+          {
+            from: "\u673a\u5668\u5b66\u4e60\u57fa\u7840",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f",
+          },
+          {
+            from: "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u673a\u5668\u5b66\u4e60Pipeline",
+          },
+          {
+            from: "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6a21\u578b\u6301\u4e45\u5316",
+          },
+          {
+            from: "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "MLlib\u7b97\u6cd5",
+          },
+          {
+            from: "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u673a\u5668\u5b66\u4e60\u7b97\u6cd5",
+          },
+          {
+            from: "\u673a\u5668\u5b66\u4e60\u57fa\u7840",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+          },
+          {
+            from: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "K\u8fd1\u90bb\u7b97\u6cd5",
+          },
+          {
+            from: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u8bad\u7ec3\u6570\u636e\u4e0e\u6d4b\u8bd5\u6570\u636e",
+          },
+          {
+            from: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u652f\u6301\u5411\u91cf\u673a(SVM)",
+          },
+          {
+            from: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u8f6f\u95f4\u9694\u5206\u7c7b\u5668",
+          },
+          {
+            from: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6838\u51fd\u6570\u4e0e\u6838\u6280\u5de7",
+          },
+          {
+            from: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u76d1\u7763\u5b66\u4e60",
+          },
+          {
+            from: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u65e0\u76d1\u7763\u5b66\u4e60",
+          },
+          {
+            from: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6734\u7d20\u8d1d\u53f6\u65af\u5206\u7c7b\u7b97\u6cd5",
+          },
+          {
+            from: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5148\u9a8c\u6982\u7387",
+          },
+          {
+            from: "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u52a0\u6cd5\u5e73\u6ed1",
+          },
+          {
+            from: "\u673a\u5668\u5b66\u4e60\u57fa\u7840",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u805a\u7c7b\u5206\u6790",
+          },
+          {
+            from: "\u805a\u7c7b\u5206\u6790",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "K\u5747\u503c\u805a\u7c7b\u7b97\u6cd5",
+          },
+          {
+            from: "K\u5747\u503c\u805a\u7c7b\u7b97\u6cd5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u9009\u62e9\u6700\u4f73K\u503c",
+          },
+          {
+            from: "K\u5747\u503c\u805a\u7c7b\u7b97\u6cd5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u6b27\u51e0\u91cc\u5f97\u8ddd\u79bb",
+          },
+          {
+            from: "\u805a\u7c7b\u5206\u6790",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u805a\u7c7b\u7b97\u6cd5",
+          },
+          {
+            from: "\u673a\u5668\u5b66\u4e60\u57fa\u7840",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u7edf\u8ba1\u5206\u6790\u4e0e\u56de\u5f52",
+          },
+          {
+            from: "\u7edf\u8ba1\u5206\u6790\u4e0e\u56de\u5f52",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u7ebf\u6027\u56de\u5f52",
+          },
+          {
+            from: "\u7ebf\u6027\u56de\u5f52",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5747\u503c\u8ba1\u7b97",
+          },
+          {
+            from: "\u7ebf\u6027\u56de\u5f52",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u56de\u5f52\u65b9\u7a0b",
+          },
+          {
+            from: "\u6570\u636e\u6316\u6398\u7b97\u6cd5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u5173\u8054\u89c4\u5219\u6316\u6398",
+          },
+          {
+            from: "\u5173\u8054\u89c4\u5219\u6316\u6398",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "Apriori\u7b97\u6cd5",
+          },
+          {
+            from: "\u5173\u8054\u89c4\u5219\u6316\u6398",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u652f\u6301\u5ea6\u3001\u7f6e\u4fe1\u5ea6\u548c\u63d0\u5347\u5ea6",
+          },
+          {
+            from: "\u6570\u636e\u6316\u6398\u7b97\u6cd5",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u964d\u7ef4\u4e0e\u77e9\u9635\u5206\u89e3",
+          },
+          {
+            from: "\u964d\u7ef4\u4e0e\u77e9\u9635\u5206\u89e3",
+            label: "HAS_CHILD",
+            title: "HAS_CHILD",
+            to: "\u4e3b\u6210\u5206\u5206\u6790(PCA)",
+          },
+        ]);
 
-              
-
-              
-
-              // This method is responsible for drawing the graph, returns the drawn network
-              function drawGraph() {
-                  var container = document.getElementById('mynetwork');
-
-                  
-
-                  // parsing and collecting nodes and edges from the python
-                  nodes = new vis.DataSet([{"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u5206\u6790", "label": "\u5927\u6570\u636e\u5206\u6790", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5", "label": "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528", "label": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f", "label": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f", "shape": "dot"}, {"font": {"color": "white"}, "group": "Resource", "id": "None", "label": "None", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u9a71\u52a8\u56e0\u7d20", "label": "\u5927\u6570\u636e\u9a71\u52a8\u56e0\u7d20", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "DIKW\u91d1\u5b57\u5854\u6a21\u578b", "label": "DIKW\u91d1\u5b57\u5854\u6a21\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5546\u52a1\u667a\u80fd\u7684\u53d1\u5c55\u8fc7\u7a0b", "label": "\u5546\u52a1\u667a\u80fd\u7684\u53d1\u5c55\u8fc7\u7a0b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5", "label": "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7684\u6982\u5ff5", "label": "\u5927\u6570\u636e\u7684\u6982\u5ff5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u5b9a\u4e49\u3001\u7279\u5f81\u3001\u751f\u547d\u5468\u671f\u7b49", "label": "\u5927\u6570\u636e\u5b9a\u4e49\u3001\u7279\u5f81\u3001\u751f\u547d\u5468\u671f\u7b49", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7684\u6e17\u900f\u4e0e\u5f71\u54cd", "label": "\u5927\u6570\u636e\u7684\u6e17\u900f\u4e0e\u5f71\u54cd", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7684\u91cf\u5316\u8fdb\u7a0b", "label": "\u5927\u6570\u636e\u7684\u91cf\u5316\u8fdb\u7a0b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u7684\u4ef7\u503c\u4e0e\u539f\u6cb9\u7684\u7c7b\u6bd4", "label": "\u6570\u636e\u7684\u4ef7\u503c\u4e0e\u539f\u6cb9\u7684\u7c7b\u6bd4", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7684\u4ea7\u751f\u9636\u6bb5", "label": "\u5927\u6570\u636e\u7684\u4ea7\u751f\u9636\u6bb5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u4f20\u7edf\u6570\u636e\u5e93\u4e0e\u5927\u6570\u636e\u7684\u533a\u522b", "label": "\u4f20\u7edf\u6570\u636e\u5e93\u4e0e\u5927\u6570\u636e\u7684\u533a\u522b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "IT\u7684\u53d1\u5c55\u5386\u7a0b", "label": "IT\u7684\u53d1\u5c55\u5386\u7a0b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7279\u5f81\u4e0e\u7c7b\u578b", "label": "\u5927\u6570\u636e\u7279\u5f81\u4e0e\u7c7b\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7c7b\u578b", "label": "\u5927\u6570\u636e\u7c7b\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7684\u79cd\u7c7b", "label": "\u5927\u6570\u636e\u7684\u79cd\u7c7b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u7c7b\u578b\u6bd4\u4f8b", "label": "\u6570\u636e\u7c7b\u578b\u6bd4\u4f8b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7279\u5f81", "label": "\u5927\u6570\u636e\u7279\u5f81", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7684\u89c4\u6a21\u4e0e\u901f\u5ea6", "label": "\u5927\u6570\u636e\u7684\u89c4\u6a21\u4e0e\u901f\u5ea6", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7684\u89c4\u6a21", "label": "\u5927\u6570\u636e\u7684\u89c4\u6a21", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7684\u901f\u5ea6", "label": "\u5927\u6570\u636e\u7684\u901f\u5ea6", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81", "label": "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u7684\u7279\u5f81", "label": "\u5927\u6570\u636e\u7684\u7279\u5f81", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u7f51\u7edc\u5927\u6570\u636e\u7279\u5f81", "label": "\u7f51\u7edc\u5927\u6570\u636e\u7279\u5f81", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "Volume", "label": "Volume", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "Variety", "label": "Variety", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "Velocity", "label": "Velocity", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "Veracity", "label": "Veracity", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "Value", "label": "Value", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u6280\u672f\u4e0e\u6a21\u578b", "label": "\u5927\u6570\u636e\u6280\u672f\u4e0e\u6a21\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u7b2c\u56db\u7814\u7a76\u8303\u5f0f", "label": "\u7b2c\u56db\u7814\u7a76\u8303\u5f0f", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5bc6\u96c6\u578b\u79d1\u5b66\u53d1\u73b0", "label": "\u6570\u636e\u5bc6\u96c6\u578b\u79d1\u5b66\u53d1\u73b0", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u6570\u636e\u8ba1\u7b97\u7cfb\u7edf\u7684\u4e09\u4e2a\u57fa\u672c\u5c42\u6b21", "label": "\u5927\u6570\u636e\u8ba1\u7b97\u7cfb\u7edf\u7684\u4e09\u4e2a\u57fa\u672c\u5c42\u6b21", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u83b7\u53d6", "label": "\u6570\u636e\u83b7\u53d6", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u7c7b\u578b", "label": "\u6570\u636e\u7c7b\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u7ed3\u6784\u5316\u6570\u636e", "label": "\u7ed3\u6784\u5316\u6570\u636e", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u975e\u7ed3\u6784\u5316\u6570\u636e", "label": "\u975e\u7ed3\u6784\u5316\u6570\u636e", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u534a\u7ed3\u6784\u5316\u6570\u636e\u548c\u51c6\u7ed3\u6784\u5316\u6570\u636e", "label": "\u534a\u7ed3\u6784\u5316\u6570\u636e\u548c\u51c6\u7ed3\u6784\u5316\u6570\u636e", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5185\u90e8\u6570\u636e\u4e0e\u5916\u90e8\u6570\u636e", "label": "\u5185\u90e8\u6570\u636e\u4e0e\u5916\u90e8\u6570\u636e", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u91c7\u96c6", "label": "\u6570\u636e\u91c7\u96c6", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6df1\u5c42\u7f51\u7edc(DeepWeb)", "label": "\u6df1\u5c42\u7f51\u7edc(DeepWeb)", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6df1\u7f51\u6570\u636e\u91c7\u96c6", "label": "\u6df1\u7f51\u6570\u636e\u91c7\u96c6", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6697\u7f51(DarkWeb)", "label": "\u6697\u7f51(DarkWeb)", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "PageRank\u4e0eOPIC\u7b56\u7565", "label": "PageRank\u4e0eOPIC\u7b56\u7565", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "ETL(Extract,Transform,Load)", "label": "ETL(Extract,Transform,Load)", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u6e90\u9009\u62e9\u4e0e\u6570\u636e\u6536\u96c6", "label": "\u6570\u636e\u6e90\u9009\u62e9\u4e0e\u6570\u636e\u6536\u96c6", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u63d0\u53d6\u65b9\u6cd5", "label": "\u6570\u636e\u63d0\u53d6\u65b9\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u589e\u91cf\u6570\u636e\u63d0\u53d6", "label": "\u589e\u91cf\u6570\u636e\u63d0\u53d6", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u589e\u91cf\u63d0\u53d6\u65b9\u6cd5", "label": "\u589e\u91cf\u63d0\u53d6\u65b9\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u8d28\u91cf\u4e0e\u9884\u5904\u7406", "label": "\u6570\u636e\u8d28\u91cf\u4e0e\u9884\u5904\u7406", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u8d28\u91cf\u95ee\u9898", "label": "\u6570\u636e\u8d28\u91cf\u95ee\u9898", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u7ba1\u7406\u8fc7\u7a0b", "label": "\u6570\u636e\u7ba1\u7406\u8fc7\u7a0b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u7ba1\u7406\u7684\u8fc7\u7a0b", "label": "\u6570\u636e\u7ba1\u7406\u7684\u8fc7\u7a0b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29", "label": "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u89c4\u7ea6", "label": "\u6570\u636e\u89c4\u7ea6", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5c5e\u6027\u5b50\u96c6\u9009\u62e9", "label": "\u5c5e\u6027\u5b50\u96c6\u9009\u62e9", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u538b\u7f29", "label": "\u6570\u636e\u538b\u7f29", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u591a\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf", "label": "\u591a\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf", "label": "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5355\u6570\u636e\u6e90\u7684\u6570\u636e\u8d28\u91cf\u95ee\u9898", "label": "\u5355\u6570\u636e\u6e90\u7684\u6570\u636e\u8d28\u91cf\u95ee\u9898", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5355\u4e00\u6570\u636e\u6e90\u6a21\u578b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898", "label": "\u5355\u4e00\u6570\u636e\u6e90\u6a21\u578b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5355\u4e00\u6570\u636e\u6e90\u5b9e\u4f8b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898", "label": "\u5355\u4e00\u6570\u636e\u6e90\u5b9e\u4f8b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u8d28\u91cf\u95ee\u9898\u5206\u7c7b", "label": "\u6570\u636e\u8d28\u91cf\u95ee\u9898\u5206\u7c7b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u9884\u5904\u7406", "label": "\u6570\u636e\u9884\u5904\u7406", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5b58\u50a8\u4e0e\u6570\u636e\u6e05\u6d17", "label": "\u6570\u636e\u5b58\u50a8\u4e0e\u6570\u636e\u6e05\u6d17", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u6e05\u6d17", "label": "\u6570\u636e\u6e05\u6d17", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u7f3a\u5931\u503c\u5904\u7406", "label": "\u7f3a\u5931\u503c\u5904\u7406", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u91cd\u590d\u8bb0\u5f55\u6e05\u6d17", "label": "\u91cd\u590d\u8bb0\u5f55\u6e05\u6d17", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u566a\u58f0\u6570\u636e\u6e05\u6d17", "label": "\u566a\u58f0\u6570\u636e\u6e05\u6d17", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u7bb1\u7b97\u6cd5", "label": "\u5206\u7bb1\u7b97\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u6e05\u6d17\u548c\u5efa\u6a21", "label": "\u6570\u636e\u6e05\u6d17\u548c\u5efa\u6a21", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u8f6c\u6362", "label": "\u6570\u636e\u8f6c\u6362", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u96c6\u6210", "label": "\u6570\u636e\u96c6\u6210", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf", "label": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u8d44\u4ea7", "label": "\u6570\u636e\u8d44\u4ea7", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee", "label": "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u8bbf\u95ee\u5c42", "label": "\u6570\u636e\u8bbf\u95ee\u5c42", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5efa\u6a21", "label": "\u6570\u636e\u5efa\u6a21", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "ACID\u4e0eBASE\u6a21\u578b", "label": "ACID\u4e0eBASE\u6a21\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5efa\u6a21\u5c42\u7ea7", "label": "\u6570\u636e\u5efa\u6a21\u5c42\u7ea7", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u7edf\u4e00\u6570\u636e\u8bbf\u95ee\u63a5\u53e3", "label": "\u7edf\u4e00\u6570\u636e\u8bbf\u95ee\u63a5\u53e3", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u6e90\u5305\u88c5\u5668", "label": "\u6570\u636e\u6e90\u5305\u88c5\u5668", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5b58\u50a8\u6280\u672f", "label": "\u6570\u636e\u5b58\u50a8\u6280\u672f", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u57fa\u4e8e\u5217\u7684\u5b58\u50a8", "label": "\u57fa\u4e8e\u5217\u7684\u5b58\u50a8", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u57fa\u4e8e\u5217\u5b58\u50a8\u7684\u8868", "label": "\u57fa\u4e8e\u5217\u5b58\u50a8\u7684\u8868", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u538b\u7f29\u4e0e\u5206\u533a", "label": "\u6570\u636e\u538b\u7f29\u4e0e\u5206\u533a", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5b58\u50a8\u67b6\u6784", "label": "\u6570\u636e\u5b58\u50a8\u67b6\u6784", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf", "label": "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "HDFS\u6570\u636e\u64cd\u4f5c", "label": "HDFS\u6570\u636e\u64cd\u4f5c", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "HDFS\u6570\u636e\u5199\u5165\u8fc7\u7a0b", "label": "HDFS\u6570\u636e\u5199\u5165\u8fc7\u7a0b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "HDFS\u6570\u636e\u8bfb\u53d6\u8fc7\u7a0b", "label": "HDFS\u6570\u636e\u8bfb\u53d6\u8fc7\u7a0b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519", "label": "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u533a\u5bb9\u9519\u6027", "label": "\u5206\u533a\u5bb9\u9519\u6027", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf-\u4ee5HDFS\u4e3a\u4f8b", "label": "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf-\u4ee5HDFS\u4e3a\u4f8b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u5e03\u5f0f\u5b58\u50a8", "label": "\u5206\u5e03\u5f0f\u5b58\u50a8", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "HDFS\u67b6\u6784\u4e0e\u673a\u5236", "label": "HDFS\u67b6\u6784\u4e0e\u673a\u5236", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "HDFS\u5b58\u50a8\u673a\u5236", "label": "HDFS\u5b58\u50a8\u673a\u5236", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "HDFS\u67b6\u6784", "label": "HDFS\u67b6\u6784", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "HDFS\u4e00\u6b21\u5199\u5165\u591a\u6b21\u8bfb\u53d6", "label": "HDFS\u4e00\u6b21\u5199\u5165\u591a\u6b21\u8bfb\u53d6", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u5e03\u5f0f\u6570\u636e\u5e93", "label": "\u5206\u5e03\u5f0f\u6570\u636e\u5e93", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "NewSQL\u6570\u636e\u5e93", "label": "NewSQL\u6570\u636e\u5e93", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "NoSQL\u6570\u636e\u5e93", "label": "NoSQL\u6570\u636e\u5e93", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u952e\u503c\u6570\u636e\u5e93", "label": "\u952e\u503c\u6570\u636e\u5e93", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u56fe\u6570\u636e\u5e93", "label": "\u56fe\u6570\u636e\u5e93", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6587\u6863\u6570\u636e\u5e93", "label": "\u6587\u6863\u6570\u636e\u5e93", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "NoSQL\u6570\u636e\u5e93\u7c7b\u578b", "label": "NoSQL\u6570\u636e\u5e93\u7c7b\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5217\u5b58\u50a8\u6570\u636e\u5e93", "label": "\u5217\u5b58\u50a8\u6570\u636e\u5e93", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "CAP\u5b9a\u7406", "label": "CAP\u5b9a\u7406", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "BASE\u6a21\u578b", "label": "BASE\u6a21\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5b58\u50a8\u4e0e\u5904\u7406\u5e73\u53f0", "label": "\u6570\u636e\u5b58\u50a8\u4e0e\u5904\u7406\u5e73\u53f0", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5904\u7406\u7cfb\u7edf", "label": "\u6570\u636e\u5904\u7406\u7cfb\u7edf", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6279\u5904\u7406", "label": "\u6279\u5904\u7406", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "MapReduce\u8ba1\u7b97\u6a21\u578b", "label": "MapReduce\u8ba1\u7b97\u6a21\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u4efb\u52a1\u8c03\u5ea6\u4e0e\u8d44\u6e90\u7ba1\u7406", "label": "\u4efb\u52a1\u8c03\u5ea6\u4e0e\u8d44\u6e90\u7ba1\u7406", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "MapReduce\u5de5\u4f5c\u6d41\u7a0b", "label": "MapReduce\u5de5\u4f5c\u6d41\u7a0b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5fae\u91cf\u6279\u5904\u7406\u7cfb\u7edf", "label": "\u5fae\u91cf\u6279\u5904\u7406\u7cfb\u7edf", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u56fe\u8ba1\u7b97\u4e0e\u6d88\u606f\u4f20\u9012", "label": "\u56fe\u8ba1\u7b97\u4e0e\u6d88\u606f\u4f20\u9012", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b", "label": "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u8d85\u6b65(superstep)", "label": "\u8d85\u6b65(superstep)", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u56fe\u5206\u533a\u4e0e\u6d88\u606f\u4f20\u9012", "label": "\u56fe\u5206\u533a\u4e0e\u6d88\u606f\u4f20\u9012", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "BulkSynchronousParallel(BSP)", "label": "BulkSynchronousParallel(BSP)", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "GooglePregel\u67b6\u6784", "label": "GooglePregel\u67b6\u6784", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406", "label": "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5185\u5b58\u8ba1\u7b97", "label": "\u5185\u5b58\u8ba1\u7b97", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6d41\u8ba1\u7b97\u6a21\u578b", "label": "\u6d41\u8ba1\u7b97\u6a21\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u8ba1\u7b97\u5f15\u64ce", "label": "\u8ba1\u7b97\u5f15\u64ce", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "Spark\u67b6\u6784", "label": "Spark\u67b6\u6784", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5f39\u6027\u5206\u5e03\u5f0f\u6570\u636e\u96c6(RDD)", "label": "\u5f39\u6027\u5206\u5e03\u5f0f\u6570\u636e\u96c6(RDD)", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u60f0\u6027\u6c42\u503c(LazyEvaluation)", "label": "\u60f0\u6027\u6c42\u503c(LazyEvaluation)", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6d41\u5904\u7406", "label": "\u6d41\u5904\u7406", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6d41\u5904\u7406\u8ba1\u7b97\u6a21\u578b", "label": "\u6d41\u5904\u7406\u8ba1\u7b97\u6a21\u578b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5", "label": "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u67b6\u6784", "label": "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u67b6\u6784", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u5e03\u5f0f\u8ba1\u7b97\u67b6\u6784", "label": "\u5206\u5e03\u5f0f\u8ba1\u7b97\u67b6\u6784", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u5e03\u5f0f\u7b56\u7565", "label": "\u5206\u5e03\u5f0f\u7b56\u7565", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u5e03\u5f0f\u8ba1\u7b97", "label": "\u5206\u5e03\u5f0f\u8ba1\u7b97", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5206\u5e03\u5f0f\u5904\u7406", "label": "\u5206\u5e03\u5f0f\u5904\u7406", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u7279\u5f81\u5de5\u7a0b\u4e0e\u6570\u636e\u5206\u6790", "label": "\u7279\u5f81\u5de5\u7a0b\u4e0e\u6570\u636e\u5206\u6790", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406", "label": "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u65e0\u5171\u4eab\u67b6\u6784", "label": "\u65e0\u5171\u4eab\u67b6\u6784", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "MPP\u6570\u636e\u5e93", "label": "MPP\u6570\u636e\u5e93", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u5206\u5e03\u4e0e\u5e76\u884c\u6027", "label": "\u6570\u636e\u5206\u5e03\u4e0e\u5e76\u884c\u6027", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "Greenplum\u7269\u7406\u67b6\u6784", "label": "Greenplum\u7269\u7406\u67b6\u6784", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "Greenplum", "label": "Greenplum", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5185\u5b58\u6570\u636e\u5e93", "label": "\u5185\u5b58\u6570\u636e\u5e93", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5185\u5b58\u6570\u636e\u5e93-HANA", "label": "\u5185\u5b58\u6570\u636e\u5e93-HANA", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u6316\u6398\u4e0e\u5206\u6790", "label": "\u6570\u636e\u6316\u6398\u4e0e\u5206\u6790", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6570\u636e\u6316\u6398\u7b97\u6cd5", "label": "\u6570\u636e\u6316\u6398\u7b97\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f", "label": "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5377\u79ef\u795e\u7ecf\u7f51\u7edc", "label": "\u5377\u79ef\u795e\u7ecf\u7f51\u7edc", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6fc0\u6d3b\u51fd\u6570", "label": "\u6fc0\u6d3b\u51fd\u6570", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6743\u91cd\u548c\u504f\u7f6e", "label": "\u6743\u91cd\u548c\u504f\u7f6e", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6df1\u5ea6\u5b66\u4e60", "label": "\u6df1\u5ea6\u5b66\u4e60", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "TensorFlow\u67b6\u6784", "label": "TensorFlow\u67b6\u6784", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "TensorFlow2.0\u67b6\u6784", "label": "TensorFlow2.0\u67b6\u6784", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6df1\u5ea6\u5b66\u4e60\u7b97\u6cd5", "label": "\u6df1\u5ea6\u5b66\u4e60\u7b97\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u673a\u5668\u5b66\u4e60\u57fa\u7840", "label": "\u673a\u5668\u5b66\u4e60\u57fa\u7840", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f", "label": "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u673a\u5668\u5b66\u4e60Pipeline", "label": "\u673a\u5668\u5b66\u4e60Pipeline", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6a21\u578b\u6301\u4e45\u5316", "label": "\u6a21\u578b\u6301\u4e45\u5316", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "MLlib\u7b97\u6cd5", "label": "MLlib\u7b97\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u673a\u5668\u5b66\u4e60\u7b97\u6cd5", "label": "\u673a\u5668\u5b66\u4e60\u7b97\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "K\u8fd1\u90bb\u7b97\u6cd5", "label": "K\u8fd1\u90bb\u7b97\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u8bad\u7ec3\u6570\u636e\u4e0e\u6d4b\u8bd5\u6570\u636e", "label": "\u8bad\u7ec3\u6570\u636e\u4e0e\u6d4b\u8bd5\u6570\u636e", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u652f\u6301\u5411\u91cf\u673a(SVM)", "label": "\u652f\u6301\u5411\u91cf\u673a(SVM)", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u8f6f\u95f4\u9694\u5206\u7c7b\u5668", "label": "\u8f6f\u95f4\u9694\u5206\u7c7b\u5668", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6838\u51fd\u6570\u4e0e\u6838\u6280\u5de7", "label": "\u6838\u51fd\u6570\u4e0e\u6838\u6280\u5de7", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u76d1\u7763\u5b66\u4e60", "label": "\u76d1\u7763\u5b66\u4e60", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u65e0\u76d1\u7763\u5b66\u4e60", "label": "\u65e0\u76d1\u7763\u5b66\u4e60", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6734\u7d20\u8d1d\u53f6\u65af\u5206\u7c7b\u7b97\u6cd5", "label": "\u6734\u7d20\u8d1d\u53f6\u65af\u5206\u7c7b\u7b97\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5148\u9a8c\u6982\u7387", "label": "\u5148\u9a8c\u6982\u7387", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u52a0\u6cd5\u5e73\u6ed1", "label": "\u52a0\u6cd5\u5e73\u6ed1", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u805a\u7c7b\u5206\u6790", "label": "\u805a\u7c7b\u5206\u6790", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "K\u5747\u503c\u805a\u7c7b\u7b97\u6cd5", "label": "K\u5747\u503c\u805a\u7c7b\u7b97\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u9009\u62e9\u6700\u4f73K\u503c", "label": "\u9009\u62e9\u6700\u4f73K\u503c", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u6b27\u51e0\u91cc\u5f97\u8ddd\u79bb", "label": "\u6b27\u51e0\u91cc\u5f97\u8ddd\u79bb", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u805a\u7c7b\u7b97\u6cd5", "label": "\u805a\u7c7b\u7b97\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u7edf\u8ba1\u5206\u6790\u4e0e\u56de\u5f52", "label": "\u7edf\u8ba1\u5206\u6790\u4e0e\u56de\u5f52", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u7ebf\u6027\u56de\u5f52", "label": "\u7ebf\u6027\u56de\u5f52", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5747\u503c\u8ba1\u7b97", "label": "\u5747\u503c\u8ba1\u7b97", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u56de\u5f52\u65b9\u7a0b", "label": "\u56de\u5f52\u65b9\u7a0b", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u5173\u8054\u89c4\u5219\u6316\u6398", "label": "\u5173\u8054\u89c4\u5219\u6316\u6398", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "Apriori\u7b97\u6cd5", "label": "Apriori\u7b97\u6cd5", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u652f\u6301\u5ea6\u3001\u7f6e\u4fe1\u5ea6\u548c\u63d0\u5347\u5ea6", "label": "\u652f\u6301\u5ea6\u3001\u7f6e\u4fe1\u5ea6\u548c\u63d0\u5347\u5ea6", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u964d\u7ef4\u4e0e\u77e9\u9635\u5206\u89e3", "label": "\u964d\u7ef4\u4e0e\u77e9\u9635\u5206\u89e3", "shape": "dot"}, {"font": {"color": "white"}, "group": "CourseNode", "id": "\u4e3b\u6210\u5206\u5206\u6790(PCA)", "label": "\u4e3b\u6210\u5206\u5206\u6790(PCA)", "shape": "dot"}]);
-                  edges = new vis.DataSet([{"from": "\u5927\u6570\u636e\u5206\u6790", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5"}, {"from": "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528"}, {"from": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f"}, {"from": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f", "label": "USES_RESOURCE", "title": "USES_RESOURCE", "to": "None"}, {"from": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u9a71\u52a8\u56e0\u7d20"}, {"from": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "DIKW\u91d1\u5b57\u5854\u6a21\u578b"}, {"from": "\u5927\u6570\u636e\u751f\u547d\u5468\u671f\u4e0e\u5e94\u7528", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5546\u52a1\u667a\u80fd\u7684\u53d1\u5c55\u8fc7\u7a0b"}, {"from": "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5"}, {"from": "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7684\u6982\u5ff5"}, {"from": "\u5927\u6570\u636e\u7684\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u5b9a\u4e49\u3001\u7279\u5f81\u3001\u751f\u547d\u5468\u671f\u7b49"}, {"from": "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7684\u6e17\u900f\u4e0e\u5f71\u54cd"}, {"from": "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7684\u91cf\u5316\u8fdb\u7a0b"}, {"from": "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u7684\u4ef7\u503c\u4e0e\u539f\u6cb9\u7684\u7c7b\u6bd4"}, {"from": "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7684\u4ea7\u751f\u9636\u6bb5"}, {"from": "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u4f20\u7edf\u6570\u636e\u5e93\u4e0e\u5927\u6570\u636e\u7684\u533a\u522b"}, {"from": "\u5927\u6570\u636e\u57fa\u672c\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "IT\u7684\u53d1\u5c55\u5386\u7a0b"}, {"from": "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7279\u5f81\u4e0e\u7c7b\u578b"}, {"from": "\u5927\u6570\u636e\u7279\u5f81\u4e0e\u7c7b\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7c7b\u578b"}, {"from": "\u5927\u6570\u636e\u7c7b\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7684\u79cd\u7c7b"}, {"from": "\u5927\u6570\u636e\u7c7b\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u7c7b\u578b\u6bd4\u4f8b"}, {"from": "\u5927\u6570\u636e\u7279\u5f81\u4e0e\u7c7b\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7279\u5f81"}, {"from": "\u5927\u6570\u636e\u7279\u5f81", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7684\u89c4\u6a21\u4e0e\u901f\u5ea6"}, {"from": "\u5927\u6570\u636e\u7684\u89c4\u6a21\u4e0e\u901f\u5ea6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7684\u89c4\u6a21"}, {"from": "\u5927\u6570\u636e\u7684\u89c4\u6a21\u4e0e\u901f\u5ea6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7684\u901f\u5ea6"}, {"from": "\u5927\u6570\u636e\u7279\u5f81", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81"}, {"from": "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u7684\u7279\u5f81"}, {"from": "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u7f51\u7edc\u5927\u6570\u636e\u7279\u5f81"}, {"from": "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "Volume"}, {"from": "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "Variety"}, {"from": "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "Velocity"}, {"from": "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "Veracity"}, {"from": "\u5927\u6570\u636e\u7684\u4e94\u5927\u7279\u5f81", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "Value"}, {"from": "\u5927\u6570\u636e\u57fa\u7840\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u6280\u672f\u4e0e\u6a21\u578b"}, {"from": "\u5927\u6570\u636e\u6280\u672f\u4e0e\u6a21\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u7b2c\u56db\u7814\u7a76\u8303\u5f0f"}, {"from": "\u7b2c\u56db\u7814\u7a76\u8303\u5f0f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5bc6\u96c6\u578b\u79d1\u5b66\u53d1\u73b0"}, {"from": "\u5927\u6570\u636e\u6280\u672f\u4e0e\u6a21\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u6570\u636e\u8ba1\u7b97\u7cfb\u7edf\u7684\u4e09\u4e2a\u57fa\u672c\u5c42\u6b21"}, {"from": "\u5927\u6570\u636e\u5206\u6790", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u83b7\u53d6"}, {"from": "\u6570\u636e\u83b7\u53d6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u7c7b\u578b"}, {"from": "\u6570\u636e\u7c7b\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u7ed3\u6784\u5316\u6570\u636e"}, {"from": "\u6570\u636e\u7c7b\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u975e\u7ed3\u6784\u5316\u6570\u636e"}, {"from": "\u6570\u636e\u7c7b\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u534a\u7ed3\u6784\u5316\u6570\u636e\u548c\u51c6\u7ed3\u6784\u5316\u6570\u636e"}, {"from": "\u6570\u636e\u7c7b\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5185\u90e8\u6570\u636e\u4e0e\u5916\u90e8\u6570\u636e"}, {"from": "\u6570\u636e\u83b7\u53d6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u91c7\u96c6"}, {"from": "\u6570\u636e\u91c7\u96c6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6df1\u5c42\u7f51\u7edc(DeepWeb)"}, {"from": "\u6df1\u5c42\u7f51\u7edc(DeepWeb)", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6df1\u7f51\u6570\u636e\u91c7\u96c6"}, {"from": "\u6570\u636e\u91c7\u96c6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6697\u7f51(DarkWeb)"}, {"from": "\u6570\u636e\u91c7\u96c6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "PageRank\u4e0eOPIC\u7b56\u7565"}, {"from": "\u6570\u636e\u91c7\u96c6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "ETL(Extract,Transform,Load)"}, {"from": "\u6570\u636e\u91c7\u96c6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u6e90\u9009\u62e9\u4e0e\u6570\u636e\u6536\u96c6"}, {"from": "\u6570\u636e\u91c7\u96c6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u63d0\u53d6\u65b9\u6cd5"}, {"from": "\u6570\u636e\u63d0\u53d6\u65b9\u6cd5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u589e\u91cf\u6570\u636e\u63d0\u53d6"}, {"from": "\u589e\u91cf\u6570\u636e\u63d0\u53d6", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u589e\u91cf\u63d0\u53d6\u65b9\u6cd5"}, {"from": "\u5927\u6570\u636e\u5206\u6790", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u8d28\u91cf\u4e0e\u9884\u5904\u7406"}, {"from": "\u6570\u636e\u8d28\u91cf\u4e0e\u9884\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u8d28\u91cf\u95ee\u9898"}, {"from": "\u6570\u636e\u8d28\u91cf\u95ee\u9898", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u7ba1\u7406\u8fc7\u7a0b"}, {"from": "\u6570\u636e\u7ba1\u7406\u8fc7\u7a0b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u7ba1\u7406\u7684\u8fc7\u7a0b"}, {"from": "\u6570\u636e\u8d28\u91cf\u95ee\u9898", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29"}, {"from": "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u89c4\u7ea6"}, {"from": "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5c5e\u6027\u5b50\u96c6\u9009\u62e9"}, {"from": "\u6570\u636e\u89c4\u7ea6\u4e0e\u538b\u7f29", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u538b\u7f29"}, {"from": "\u6570\u636e\u8d28\u91cf\u95ee\u9898", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u591a\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf"}, {"from": "\u591a\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u591a\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf"}, {"from": "\u6570\u636e\u8d28\u91cf\u95ee\u9898", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf"}, {"from": "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5355\u6570\u636e\u6e90\u7684\u6570\u636e\u8d28\u91cf\u95ee\u9898"}, {"from": "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5355\u4e00\u6570\u636e\u6e90\u6a21\u578b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898"}, {"from": "\u5355\u6570\u636e\u6e90\u6570\u636e\u8d28\u91cf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5355\u4e00\u6570\u636e\u6e90\u5b9e\u4f8b\u5c42\u6570\u636e\u8d28\u91cf\u95ee\u9898"}, {"from": "\u6570\u636e\u8d28\u91cf\u95ee\u9898", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u8d28\u91cf\u95ee\u9898\u5206\u7c7b"}, {"from": "\u6570\u636e\u8d28\u91cf\u95ee\u9898\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u8d28\u91cf\u95ee\u9898\u5206\u7c7b"}, {"from": "\u6570\u636e\u8d28\u91cf\u4e0e\u9884\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u9884\u5904\u7406"}, {"from": "\u6570\u636e\u9884\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u9884\u5904\u7406"}, {"from": "\u6570\u636e\u9884\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5b58\u50a8\u4e0e\u6570\u636e\u6e05\u6d17"}, {"from": "\u6570\u636e\u9884\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u6e05\u6d17"}, {"from": "\u6570\u636e\u6e05\u6d17", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u7f3a\u5931\u503c\u5904\u7406"}, {"from": "\u6570\u636e\u6e05\u6d17", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u91cd\u590d\u8bb0\u5f55\u6e05\u6d17"}, {"from": "\u6570\u636e\u6e05\u6d17", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u566a\u58f0\u6570\u636e\u6e05\u6d17"}, {"from": "\u566a\u58f0\u6570\u636e\u6e05\u6d17", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u7bb1\u7b97\u6cd5"}, {"from": "\u6570\u636e\u6e05\u6d17", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u6e05\u6d17\u548c\u5efa\u6a21"}, {"from": "\u6570\u636e\u9884\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u8f6c\u6362"}, {"from": "\u6570\u636e\u9884\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u96c6\u6210"}, {"from": "\u5927\u6570\u636e\u5206\u6790", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf"}, {"from": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u8d44\u4ea7"}, {"from": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee"}, {"from": "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u8bbf\u95ee\u5c42"}, {"from": "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5efa\u6a21"}, {"from": "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "ACID\u4e0eBASE\u6a21\u578b"}, {"from": "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5efa\u6a21\u5c42\u7ea7"}, {"from": "\u6570\u636e\u5efa\u6a21\u4e0e\u8bbf\u95ee", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u7edf\u4e00\u6570\u636e\u8bbf\u95ee\u63a5\u53e3"}, {"from": "\u7edf\u4e00\u6570\u636e\u8bbf\u95ee\u63a5\u53e3", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u6e90\u5305\u88c5\u5668"}, {"from": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5b58\u50a8\u6280\u672f"}, {"from": "\u6570\u636e\u5b58\u50a8\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u57fa\u4e8e\u5217\u7684\u5b58\u50a8"}, {"from": "\u57fa\u4e8e\u5217\u7684\u5b58\u50a8", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u57fa\u4e8e\u5217\u5b58\u50a8\u7684\u8868"}, {"from": "\u6570\u636e\u5b58\u50a8\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u538b\u7f29\u4e0e\u5206\u533a"}, {"from": "\u6570\u636e\u5b58\u50a8\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5b58\u50a8\u67b6\u6784"}, {"from": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf"}, {"from": "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "HDFS\u6570\u636e\u64cd\u4f5c"}, {"from": "HDFS\u6570\u636e\u64cd\u4f5c", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "HDFS\u6570\u636e\u5199\u5165\u8fc7\u7a0b"}, {"from": "HDFS\u6570\u636e\u64cd\u4f5c", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "HDFS\u6570\u636e\u8bfb\u53d6\u8fc7\u7a0b"}, {"from": "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519"}, {"from": "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u533a\u5bb9\u9519\u6027"}, {"from": "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf-\u4ee5HDFS\u4e3a\u4f8b"}, {"from": "\u5206\u5e03\u5f0f\u5b58\u50a8\u4e0e\u5bb9\u9519", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u5b58\u50a8"}, {"from": "\u5206\u5e03\u5f0f\u6587\u4ef6\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "HDFS\u67b6\u6784\u4e0e\u673a\u5236"}, {"from": "HDFS\u67b6\u6784\u4e0e\u673a\u5236", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "HDFS\u5b58\u50a8\u673a\u5236"}, {"from": "HDFS\u67b6\u6784\u4e0e\u673a\u5236", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "HDFS\u67b6\u6784"}, {"from": "HDFS\u67b6\u6784\u4e0e\u673a\u5236", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "HDFS\u4e00\u6b21\u5199\u5165\u591a\u6b21\u8bfb\u53d6"}, {"from": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u6570\u636e\u5e93"}, {"from": "\u5206\u5e03\u5f0f\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u6570\u636e\u5e93"}, {"from": "\u5206\u5e03\u5f0f\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "NewSQL\u6570\u636e\u5e93"}, {"from": "\u5206\u5e03\u5f0f\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "NoSQL\u6570\u636e\u5e93"}, {"from": "NoSQL\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u952e\u503c\u6570\u636e\u5e93"}, {"from": "NoSQL\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u56fe\u6570\u636e\u5e93"}, {"from": "NoSQL\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6587\u6863\u6570\u636e\u5e93"}, {"from": "NoSQL\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "NoSQL\u6570\u636e\u5e93\u7c7b\u578b"}, {"from": "NoSQL\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5217\u5b58\u50a8\u6570\u636e\u5e93"}, {"from": "NoSQL\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "CAP\u5b9a\u7406"}, {"from": "NoSQL\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "BASE\u6a21\u578b"}, {"from": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf"}, {"from": "\u6570\u636e\u5b58\u50a8\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5b58\u50a8\u4e0e\u5904\u7406\u5e73\u53f0"}, {"from": "\u5927\u6570\u636e\u5206\u6790", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5904\u7406\u7cfb\u7edf"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6279\u5904\u7406"}, {"from": "\u6279\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "MapReduce\u8ba1\u7b97\u6a21\u578b"}, {"from": "MapReduce\u8ba1\u7b97\u6a21\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "MapReduce\u8ba1\u7b97\u6a21\u578b"}, {"from": "MapReduce\u8ba1\u7b97\u6a21\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u4efb\u52a1\u8c03\u5ea6\u4e0e\u8d44\u6e90\u7ba1\u7406"}, {"from": "MapReduce\u8ba1\u7b97\u6a21\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "MapReduce\u5de5\u4f5c\u6d41\u7a0b"}, {"from": "\u6279\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5fae\u91cf\u6279\u5904\u7406\u7cfb\u7edf"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u56fe\u8ba1\u7b97\u4e0e\u6d88\u606f\u4f20\u9012"}, {"from": "\u56fe\u8ba1\u7b97\u4e0e\u6d88\u606f\u4f20\u9012", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b"}, {"from": "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u8d85\u6b65(superstep)"}, {"from": "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u56fe\u5206\u533a\u4e0e\u6d88\u606f\u4f20\u9012"}, {"from": "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "BulkSynchronousParallel(BSP)"}, {"from": "\u5e76\u884c\u56fe\u8ba1\u7b97\u6a21\u578b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "GooglePregel\u67b6\u6784"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406"}, {"from": "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5185\u5b58\u8ba1\u7b97"}, {"from": "\u5185\u5b58\u8ba1\u7b97", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6d41\u8ba1\u7b97\u6a21\u578b"}, {"from": "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u8ba1\u7b97\u5f15\u64ce"}, {"from": "\u5185\u5b58\u8ba1\u7b97\u4e0e\u6570\u636e\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "Spark\u67b6\u6784"}, {"from": "Spark\u67b6\u6784", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5f39\u6027\u5206\u5e03\u5f0f\u6570\u636e\u96c6(RDD)"}, {"from": "Spark\u67b6\u6784", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u60f0\u6027\u6c42\u503c(LazyEvaluation)"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6d41\u5904\u7406"}, {"from": "\u6d41\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6d41\u5904\u7406\u8ba1\u7b97\u6a21\u578b"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u67b6\u6784"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u8ba1\u7b97\u67b6\u6784"}, {"from": "\u5206\u5e03\u5f0f\u8ba1\u7b97\u67b6\u6784", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u7b56\u7565"}, {"from": "\u5206\u5e03\u5f0f\u8ba1\u7b97\u67b6\u6784", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u8ba1\u7b97"}, {"from": "\u5206\u5e03\u5f0f\u8ba1\u7b97", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u8ba1\u7b97"}, {"from": "\u5206\u5e03\u5f0f\u8ba1\u7b97", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5206\u5e03\u5f0f\u5904\u7406"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf\u6982\u5ff5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u7279\u5f81\u5de5\u7a0b\u4e0e\u6570\u636e\u5206\u6790"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406"}, {"from": "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u65e0\u5171\u4eab\u67b6\u6784"}, {"from": "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406"}, {"from": "\u5927\u89c4\u6a21\u5e76\u884c\u5904\u7406", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "MPP\u6570\u636e\u5e93"}, {"from": "MPP\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u5206\u5e03\u4e0e\u5e76\u884c\u6027"}, {"from": "MPP\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "Greenplum\u7269\u7406\u67b6\u6784"}, {"from": "Greenplum\u7269\u7406\u67b6\u6784", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "Greenplum"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5185\u5b58\u6570\u636e\u5e93"}, {"from": "\u5185\u5b58\u6570\u636e\u5e93", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5185\u5b58\u6570\u636e\u5e93-HANA"}, {"from": "\u6570\u636e\u5904\u7406\u7cfb\u7edf", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u6316\u6398\u4e0e\u5206\u6790"}, {"from": "\u6570\u636e\u6316\u6398\u4e0e\u5206\u6790", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6570\u636e\u6316\u6398\u7b97\u6cd5"}, {"from": "\u6570\u636e\u6316\u6398\u7b97\u6cd5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f"}, {"from": "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5377\u79ef\u795e\u7ecf\u7f51\u7edc"}, {"from": "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6fc0\u6d3b\u51fd\u6570"}, {"from": "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6743\u91cd\u548c\u504f\u7f6e"}, {"from": "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6df1\u5ea6\u5b66\u4e60"}, {"from": "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "TensorFlow\u67b6\u6784"}, {"from": "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "TensorFlow2.0\u67b6\u6784"}, {"from": "\u6df1\u5ea6\u5b66\u4e60\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6df1\u5ea6\u5b66\u4e60\u7b97\u6cd5"}, {"from": "\u6570\u636e\u6316\u6398\u7b97\u6cd5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u673a\u5668\u5b66\u4e60\u57fa\u7840"}, {"from": "\u673a\u5668\u5b66\u4e60\u57fa\u7840", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f"}, {"from": "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u673a\u5668\u5b66\u4e60Pipeline"}, {"from": "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6a21\u578b\u6301\u4e45\u5316"}, {"from": "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "MLlib\u7b97\u6cd5"}, {"from": "\u673a\u5668\u5b66\u4e60\u5de5\u5177\u4e0e\u6280\u672f", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u673a\u5668\u5b66\u4e60\u7b97\u6cd5"}, {"from": "\u673a\u5668\u5b66\u4e60\u57fa\u7840", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b"}, {"from": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "K\u8fd1\u90bb\u7b97\u6cd5"}, {"from": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u8bad\u7ec3\u6570\u636e\u4e0e\u6d4b\u8bd5\u6570\u636e"}, {"from": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u652f\u6301\u5411\u91cf\u673a(SVM)"}, {"from": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u8f6f\u95f4\u9694\u5206\u7c7b\u5668"}, {"from": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6838\u51fd\u6570\u4e0e\u6838\u6280\u5de7"}, {"from": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u76d1\u7763\u5b66\u4e60"}, {"from": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u65e0\u76d1\u7763\u5b66\u4e60"}, {"from": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6734\u7d20\u8d1d\u53f6\u65af\u5206\u7c7b\u7b97\u6cd5"}, {"from": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5148\u9a8c\u6982\u7387"}, {"from": "\u76d1\u7763\u5b66\u4e60\u4e0e\u5206\u7c7b", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u52a0\u6cd5\u5e73\u6ed1"}, {"from": "\u673a\u5668\u5b66\u4e60\u57fa\u7840", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u805a\u7c7b\u5206\u6790"}, {"from": "\u805a\u7c7b\u5206\u6790", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "K\u5747\u503c\u805a\u7c7b\u7b97\u6cd5"}, {"from": "K\u5747\u503c\u805a\u7c7b\u7b97\u6cd5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u9009\u62e9\u6700\u4f73K\u503c"}, {"from": "K\u5747\u503c\u805a\u7c7b\u7b97\u6cd5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u6b27\u51e0\u91cc\u5f97\u8ddd\u79bb"}, {"from": "\u805a\u7c7b\u5206\u6790", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u805a\u7c7b\u7b97\u6cd5"}, {"from": "\u673a\u5668\u5b66\u4e60\u57fa\u7840", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u7edf\u8ba1\u5206\u6790\u4e0e\u56de\u5f52"}, {"from": "\u7edf\u8ba1\u5206\u6790\u4e0e\u56de\u5f52", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u7ebf\u6027\u56de\u5f52"}, {"from": "\u7ebf\u6027\u56de\u5f52", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5747\u503c\u8ba1\u7b97"}, {"from": "\u7ebf\u6027\u56de\u5f52", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u56de\u5f52\u65b9\u7a0b"}, {"from": "\u6570\u636e\u6316\u6398\u7b97\u6cd5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u5173\u8054\u89c4\u5219\u6316\u6398"}, {"from": "\u5173\u8054\u89c4\u5219\u6316\u6398", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "Apriori\u7b97\u6cd5"}, {"from": "\u5173\u8054\u89c4\u5219\u6316\u6398", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u652f\u6301\u5ea6\u3001\u7f6e\u4fe1\u5ea6\u548c\u63d0\u5347\u5ea6"}, {"from": "\u6570\u636e\u6316\u6398\u7b97\u6cd5", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u964d\u7ef4\u4e0e\u77e9\u9635\u5206\u89e3"}, {"from": "\u964d\u7ef4\u4e0e\u77e9\u9635\u5206\u89e3", "label": "HAS_CHILD", "title": "HAS_CHILD", "to": "\u4e3b\u6210\u5206\u5206\u6790(PCA)"}]);
-
-                  nodeColors = {};
-                  allNodes = nodes.get({ returnType: "Object" });
-                  for (nodeId in allNodes) {
-                    nodeColors[nodeId] = allNodes[nodeId].color;
-                  }
-                  allEdges = edges.get({ returnType: "Object" });
-                  // adding nodes and edges to the graph
-                  data = {nodes: nodes, edges: edges};
-
-                  var options = {
-    "configure": {
-        "enabled": false
-    },
-    "edges": {
-        "color": {
-            "inherit": true
-        },
-        "smooth": {
-            "enabled": true,
-            "type": "dynamic"
+        nodeColors = {};
+        allNodes = nodes.get({ returnType: "Object" });
+        for (nodeId in allNodes) {
+          nodeColors[nodeId] = allNodes[nodeId].color;
         }
-    },
-    "interaction": {
-        "dragNodes": true,
-        "hideEdgesOnDrag": true,
-        "hideNodesOnDrag": false
-    },
-    "physics": {
-        "barnesHut": {
-            "avoidOverlap": 0,
-            "centralGravity": 0.3,
-            "damping": 0.09,
-            "gravitationalConstant": -8000,
-            "springConstant": 0.001,
-            "springLength": 200
-        },
-        "enabled": true,
-        "stabilization": {
-            "enabled": true,
-            "fit": true,
-            "iterations": 1000,
-            "onlyDynamicEdges": false,
-            "updateInterval": 50
-        }
-    }
-};
+        allEdges = edges.get({ returnType: "Object" });
+        // adding nodes and edges to the graph
+        data = { nodes: nodes, edges: edges };
 
-                  
+        var options = {
+          configure: {
+            enabled: false,
+          },
+          edges: {
+            color: {
+              inherit: true,
+            },
+            smooth: {
+              enabled: true,
+              type: "dynamic",
+            },
+          },
+          interaction: {
+            dragNodes: true,
+            hideEdgesOnDrag: true,
+            hideNodesOnDrag: false,
+          },
+          physics: {
+            barnesHut: {
+              avoidOverlap: 0,
+              centralGravity: 0.3,
+              damping: 0.09,
+              gravitationalConstant: -8000,
+              springConstant: 0.001,
+              springLength: 200,
+            },
+            enabled: true,
+            stabilization: {
+              enabled: true,
+              fit: true,
+              iterations: 1000,
+              onlyDynamicEdges: false,
+              updateInterval: 50,
+            },
+          },
+        };
 
+        network = new vis.Network(container, data, options);
 
-                  
+        network.on("stabilizationProgress", function (params) {
+          document.getElementById("loadingBar").removeAttribute("style");
+          var maxWidth = 496;
+          var minWidth = 20;
+          var widthFactor = params.iterations / params.total;
+          var width = Math.max(minWidth, maxWidth * widthFactor);
+          document.getElementById("bar").style.width = width + "px";
+          document.getElementById("text").innerHTML =
+            Math.round(widthFactor * 100) + "%";
+        });
+        network.once("stabilizationIterationsDone", function () {
+          document.getElementById("text").innerHTML = "100%";
+          document.getElementById("bar").style.width = "496px";
+          document.getElementById("loadingBar").style.opacity = 0;
+          // really clean the dom element
+          setTimeout(function () {
+            document.getElementById("loadingBar").style.display = "none";
+          }, 500);
+        });
 
-                  network = new vis.Network(container, data, options);
-
-                  
-
-                  
-
-                  
-
-
-                  
-                      network.on("stabilizationProgress", function(params) {
-                          document.getElementById('loadingBar').removeAttribute("style");
-                          var maxWidth = 496;
-                          var minWidth = 20;
-                          var widthFactor = params.iterations/params.total;
-                          var width = Math.max(minWidth,maxWidth * widthFactor);
-                          document.getElementById('bar').style.width = width + 'px';
-                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
-                      });
-                      network.once("stabilizationIterationsDone", function() {
-                          document.getElementById('text').innerHTML = '100%';
-                          document.getElementById('bar').style.width = '496px';
-                          document.getElementById('loadingBar').style.opacity = 0;
-                          // really clean the dom element
-                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
-                      });
-                  
-
-                  return network;
-
-              }
-              drawGraph();
-        </script>
-    </body>
+        return network;
+      }
+      drawGraph();
+    </script>
+  </body>
 </html>

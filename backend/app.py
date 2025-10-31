@@ -50,7 +50,6 @@ CURRENT_NODE = None
 CURRENT_PDF_PATH = None
 
 
-# Pydantic 模型
 class ChatMessage(BaseModel):
     message: str
     history: List[List[str]] = []
@@ -103,6 +102,11 @@ class QuizComplete(BaseModel):
 class LoginRequest(BaseModel):
     username: str
     password: str
+
+
+class DeleteResourceRequest(BaseModel):
+    node_name: str
+    resource_index: int
 
 
 @app.get("/")
@@ -179,7 +183,6 @@ async def chat(data: ChatMessage):
     code = LanguageHandler.code_from_display(lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(message)
 
-    # 创建针对当前PDF的retriever
     current_retriever = None
     if CURRENT_PDF_PATH and os.path.exists(CURRENT_PDF_PATH):
         from langchain_core.vectorstores import VectorStoreRetriever
@@ -193,9 +196,9 @@ async def chat(data: ChatMessage):
             def _get_relevant_documents(
                 self, query: str, *, run_manager: CallbackManagerForRetrieverRun = None
             ):
-                # 获取向量存储
+
                 vectorstore = rag_service._get_vectorstore()
-                # 使用metadata过滤，只检索当前PDF
+
                 docs = vectorstore.similarity_search(
                     query, k=4, filter={"source": self.pdf_path}
                 )
@@ -354,22 +357,19 @@ async def start_quiz(data: QuizStart):
             def _get_relevant_documents(
                 self, query: str, *, run_manager: CallbackManagerForRetrieverRun = None
             ):
-                # 获取向量存储
+
                 vectorstore = rag_service._get_vectorstore()
 
-                # 检索当前PDF
                 docs = vectorstore.similarity_search(
                     query, k=3, filter={"source": self.pdf_path}
                 )
                 logger.info(f"🔍 Found {len(docs)} docs from current PDF")
 
-                # 如果有Question文件内容，添加相关问题到上下文
                 if self.question_file_content:
                     from langchain_core.documents import Document
 
-                    # 将Question文件内容作为额外文档
                     question_doc = Document(
-                        page_content=self.question_file_content[:2000],  # 限制长度
+                        page_content=self.question_file_content[:2000],
                         metadata={"source": "question_bank"},
                     )
                     docs.append(question_doc)
@@ -498,7 +498,6 @@ async def create_learning_plan(data: LearningPlanRequest):
 
     plan.generate_plan_from_prompt(user_input)
 
-    # 添加DDL和优先级信息
     deadline_days = data.deadline_days if hasattr(data, "deadline_days") else 7
     deadline_date = (datetime.now() + timedelta(days=deadline_days)).strftime(
         "%Y-%m-%d"
@@ -546,13 +545,11 @@ async def generate_summary(data: SummaryRequest):
     code = LanguageHandler.code_from_display(data.lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(data.topic)
 
-    # 创建针对当前节点相关PDF的retriever
     current_retriever = None
     if CURRENT_PDF_PATH and os.path.exists(CURRENT_PDF_PATH):
         from langchain_core.vectorstores import VectorStoreRetriever
         from langchain_core.callbacks import CallbackManagerForRetrieverRun
 
-        # 收集当前PDF所属grandchild下的所有great-grandchildren的PDF
         related_pdfs = find_grandchild_and_collect_pdfs(CURRENT_PDF_PATH)
 
         if related_pdfs:
@@ -569,10 +566,9 @@ async def generate_summary(data: SummaryRequest):
                     *,
                     run_manager: CallbackManagerForRetrieverRun = None,
                 ):
-                    # 获取向量存储
+
                     vectorstore = rag_service._get_vectorstore()
 
-                    # 从所有相关PDF中检索
                     all_docs = []
                     for pdf_path in self.pdf_paths:
                         docs = vectorstore.similarity_search(
@@ -584,7 +580,6 @@ async def generate_summary(data: SummaryRequest):
                         f"🔍 Summary retrieval: found {len(all_docs)} docs from {len(self.pdf_paths)} PDFs"
                     )
 
-                    # 返回最相关的文档（限制总数）
                     return all_docs[:8]
 
             current_retriever = SummaryFilteredRetriever(
@@ -595,7 +590,7 @@ async def generate_summary(data: SummaryRequest):
             logger.info(f"✅ Created summary retriever for {len(related_pdfs)} PDFs")
         else:
             logger.info(f"⚠️ No related PDFs found, using current PDF only")
-            # 如果没找到相关PDF，至少使用当前PDF
+
             from langchain_core.vectorstores import VectorStoreRetriever
             from langchain_core.callbacks import CallbackManagerForRetrieverRun
 
@@ -710,7 +705,6 @@ async def upload_files(files: List[UploadFile] = File(...), node_name: str = "")
         file_ext = Path(filename).suffix.lower()
         temp_path = save_dir / filename
 
-        # 保存上传的文件
         with open(temp_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
@@ -724,7 +718,6 @@ async def upload_files(files: List[UploadFile] = File(...), node_name: str = "")
     if not newly_added_paths:
         raise HTTPException(status_code=400, detail="No valid files processed")
 
-    # 更新 JSON
     try:
         with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
             graph_data = json.load(f)
@@ -758,7 +751,6 @@ async def upload_files(files: List[UploadFile] = File(...), node_name: str = "")
         with open(KNOWLEDGE_JSON_PATH, "w", encoding="utf-8") as f:
             json.dump(graph_data, f, indent=2, ensure_ascii=False)
 
-        # 添加到 RAG
         ingest_error = rag_service.ingest_paths(newly_added_paths)
         if ingest_error:
             return {
@@ -772,6 +764,49 @@ async def upload_files(files: List[UploadFile] = File(...), node_name: str = "")
         }
 
     raise HTTPException(status_code=404, detail=f"Node '{node_name}' not found")
+
+
+@app.post("/api/delete-resource")
+async def delete_resource(data: DeleteResourceRequest):
+    """删除节点的指定资源"""
+    try:
+        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+            graph_data = json.load(f)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Knowledge graph not found")
+
+    updated = False
+    for child in graph_data.get("children", []):
+        for grandchild in child.get("grandchildren", []):
+            for great_grandchild in grandchild.get("great-grandchildren", []):
+                if great_grandchild.get("name") == data.node_name:
+                    resources = great_grandchild.get("resource_path", [])
+                    if isinstance(resources, str):
+                        resources = [resources] if resources else []
+                        great_grandchild["resource_path"] = resources
+
+                    if 0 <= data.resource_index < len(resources):
+                        deleted_resource = resources.pop(data.resource_index)
+                        logger.info(
+                            f"Deleted resource: {deleted_resource} from node: {data.node_name}"
+                        )
+                        updated = True
+                        break
+            if updated:
+                break
+        if updated:
+            break
+
+    if updated:
+        with open(KNOWLEDGE_JSON_PATH, "w", encoding="utf-8") as f:
+            json.dump(graph_data, f, indent=2, ensure_ascii=False)
+
+        return {"success": True, "message": "Resource deleted successfully"}
+
+    raise HTTPException(
+        status_code=404,
+        detail=f"Node '{data.node_name}' not found or invalid resource index",
+    )
 
 
 @app.post("/api/pdf/select")
@@ -809,6 +844,17 @@ async def get_languages():
     return LanguageHandler.dropdown_choices()
 
 
+@app.get("/api/students")
+async def get_students():
+    """获取所有学生信息"""
+    try:
+        with open("data/Users/student.json", "r", encoding="utf-8") as f:
+            students = json.load(f)
+        return students
+    except FileNotFoundError:
+        return []
+
+
 @app.get("/api/learning-plans")
 async def get_learning_plans():
     """获取所有学习计划文件列表"""
@@ -831,7 +877,6 @@ async def get_learning_plans():
         except Exception as e:
             logger.error(f"Error reading plan file {file_path}: {e}")
 
-    # 按文件名排序（最新的在前）
     plan_files.sort(key=lambda x: x["filename"], reverse=True)
     return plan_files
 
@@ -857,11 +902,10 @@ def find_and_update_node(node, target_name):
         node["flag"] = "1"
         return True
 
-    # 检查 great-grandchildren
     if "great-grandchildren" in node and node["great-grandchildren"]:
         for child in node["great-grandchildren"]:
             if find_and_update_node(child, target_name):
-                # 检查是否所有子节点都完成
+
                 all_complete = all(
                     c.get("flag") == "1" for c in node["great-grandchildren"]
                 )
@@ -883,14 +927,12 @@ async def get_learning_progress():
 
     children = graph_data.get("children", [])
 
-    # 统计章节进度
     total_chapters = len(children)
     completed_chapters = sum(1 for c in children if c.get("flag") == "1")
     chapter_progress = (
         (completed_chapters / total_chapters * 100) if total_chapters > 0 else 0
     )
 
-    # 统计小节进度
     total_sections = 0
     completed_sections = 0
     for child in children:
@@ -901,7 +943,6 @@ async def get_learning_progress():
         (completed_sections / total_sections * 100) if total_sections > 0 else 0
     )
 
-    # 统计知识点进度
     total_points = 0
     completed_points = 0
 
@@ -921,7 +962,6 @@ async def get_learning_progress():
 
     point_progress = (completed_points / total_points * 100) if total_points > 0 else 0
 
-    # 整体进度
     overall_progress = (chapter_progress + section_progress + point_progress) / 3
 
     return {
@@ -957,7 +997,6 @@ async def complete_quiz(data: QuizComplete):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Knowledge graph not found")
 
-    # 检查是否通过测验（8/10 = 80%）
     pass_threshold = 0.8
     score_ratio = data.score / data.total if data.total > 0 else 0
     passed = score_ratio >= pass_threshold
@@ -969,14 +1008,12 @@ async def complete_quiz(data: QuizComplete):
             "passed": False,
         }
 
-    # 查找节点并更新flag
     updated = False
     for child in graph_data.get("children", []):
         for grandchild in child.get("grandchildren", []):
             if find_and_update_node(grandchild, data.node_name):
                 updated = True
 
-                # 检查是否所有 grandchildren 都完成
                 all_grandchildren_complete = all(
                     gc.get("flag") == "1" for gc in child.get("grandchildren", [])
                 )
@@ -988,7 +1025,7 @@ async def complete_quiz(data: QuizComplete):
             break
 
     if updated:
-        # 检查并更新root层级
+
         all_children_complete = all(
             c.get("flag") == "1" for c in graph_data.get("children", [])
         )

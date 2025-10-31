@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Education 教师端</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="/static/css/teacher.css" />
+    <script src="/static/js/teacher.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <div class="logo">
+          <span class="logo-icon">🎓</span>
+          <h1>AI-Education</h1>
+        </div>
+        <div class="nav-item active" onclick="switchTab('courses')">
+          <span class="nav-icon">📚</span>
+          <span class="nav-text">课程资源</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('students')">
+          <span class="nav-icon">🧑‍🎓</span>
+          <span class="nav-text">学生管理</span>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div id="courses-section" class="content-section active">
+          <div class="header">
+            <h2>课程资源管理</h2>
+            <p>管理和组织您的课程资源</p>
+          </div>
+          <div class="course-tree" id="courseTree"></div>
+        </div>
+
+        <div id="students-section" class="content-section">
+          <div class="header">
+            <h2>学生信息管理</h2>
+            <p>查看学生学习情况和进度</p>
+          </div>
+          <div class="students-grid" id="studentsGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="progressModal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <h2 id="modalStudentName" style="color: #333; margin-bottom: 10px"></h2>
+        <p style="color: #999; font-size: 14px">学习进度跟踪</p>
+        <div id="progressChart"></div>
+      </div>
+    </div>
+
+    <div class="upload-modal" id="uploadModal">
+      <div class="upload-content">
+        <h3>上传资源到：<span id="uploadNodeName"></span></h3>
+        <input type="file" id="uploadFiles" multiple accept=".pdf,.PDF" />
+        <div>
+          <button onclick="confirmUpload()">确认上传</button>
+          <button class="cancel" onclick="closeUploadModal()">取消</button>
+        </div>
+        <div id="uploadStatus" style="margin-top: 15px; color: #666"></div>
+      </div>
+    </div>
+  </body>
+</html>
