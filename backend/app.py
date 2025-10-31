@@ -114,11 +114,6 @@ async def root():
     return FileResponse("backend/static/login.html")
 
 
-@app.get("/index.html")
-async def get_index_page():
-    return FileResponse("backend/static/index.html")
-
-
 @app.get("/teacher.html")
 async def get_teacher_page():
     return FileResponse("backend/static/teacher.html")
