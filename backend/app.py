@@ -29,6 +29,7 @@ from SummaryModule import StudySummaryGenerator
 from tools.language_handler import LanguageHandler
 from tools.rag_service import get_rag_service
 from tools.covert_resource import convert_to_pdf
+from tools.llm_logger import get_llm_logger
 
 app = FastAPI(title="AI-Education API")
 
@@ -102,6 +103,14 @@ class QuizComplete(BaseModel):
 class LoginRequest(BaseModel):
     username: str
     password: str
+
+
+class LLMLogRequest(BaseModel):
+    messages: List[Dict[str, str]]
+    response: Dict[str, Any]
+    model: str
+    module: str
+    metadata: Optional[Dict] = None
 
 
 class DeleteResourceRequest(BaseModel):
@@ -1036,6 +1045,37 @@ async def complete_quiz(data: QuizComplete):
         }
 
     raise HTTPException(status_code=404, detail=f"Node '{data.node_name}' not found")
+
+
+@app.post("/api/llm-log")
+async def log_llm_call(data: LLMLogRequest):
+    """Log LLM call from frontend or backend"""
+    try:
+        llm_logger = get_llm_logger()
+        response_obj = type('Response', (), {
+            'content': data.response.get('choices', [{}])[0].get('message', {}).get('content', ''),
+            'response_metadata': {
+                'id': data.response.get('id', ''),
+                'object': data.response.get('object', ''),
+                'created': data.response.get('created', 0),
+                'model': data.response.get('model', ''),
+                'finish_reason': data.response.get('choices', [{}])[0].get('finish_reason', ''),
+                'token_usage': data.response.get('usage', {}),
+                'system_fingerprint': data.response.get('system_fingerprint', '')
+            }
+        })()
+        
+        llm_logger.log_llm_call(
+            messages=data.messages,
+            response=response_obj,
+            model=data.model,
+            module=data.module,
+            metadata=data.metadata
+        )
+        return {"success": True, "message": "LLM call logged"}
+    except Exception as e:
+        logger.error(f"Error logging LLM call: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to log LLM call: {str(e)}")
 
 
 if __name__ == "__main__":

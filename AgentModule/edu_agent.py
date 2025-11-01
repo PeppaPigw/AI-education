@@ -16,6 +16,7 @@ from tools.edu_tools import (
     current_weekday,
     detect_language,
 )
+from tools.llm_logger import get_llm_logger
 from dotenv import load_dotenv
 import os
 
@@ -162,6 +163,22 @@ def run_agent(
         result = executor.invoke({"input": question, "language": lang})
 
         output = result["output"]
+
+        llm_logger = get_llm_logger()
+        llm_logger.log_llm_call(
+            messages=[{"role": "user", "content": question}],
+            response=type(
+                "Response", (), {"content": output, "response_metadata": {}}
+            )(),
+            model=model_name,
+            module="AgentModule.edu_agent",
+            metadata={
+                "function": "run_agent",
+                "language": lang,
+                "used_retriever": used_retriever,
+            },
+        )
+
         print("-" * 80)
         print("✅ Agent回答:")
         print(f"   {output}")
@@ -205,6 +222,16 @@ def run_agent(
         try:
             msg = llm.invoke(question)
             output = getattr(msg, "content", str(msg))
+
+            llm_logger = get_llm_logger()
+            llm_logger.log_llm_call(
+                messages=[{"role": "user", "content": question}],
+                response=msg,
+                model=model_name,
+                module="AgentModule.edu_agent",
+                metadata={"function": "run_agent_fallback", "language": lang},
+            )
+
             print(f"✅ Fallback LLM回答: {output}")
             logger.info(f"Fallback LLM output: {output}")
         except Exception as e:

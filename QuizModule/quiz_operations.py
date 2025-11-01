@@ -5,6 +5,7 @@ from LearningPlanModule.learning_plan import LearningPlan
 from tools.auto_answer import auto_answer
 from tools.rag_service import RAGService
 from tools.rag_utils import get_context_or_empty
+from tools.llm_logger import get_llm_logger
 import logging
 from dotenv import load_dotenv
 import os
@@ -37,6 +38,16 @@ def prepare_quiz_questions(
     # Generate topics
     topic_prompt = generate_topic_list_prompt(prompt_subject, language)
     topic_result = llm.invoke(topic_prompt.format_prompt(subject=prompt_subject))
+    
+    llm_logger = get_llm_logger()
+    llm_logger.log_llm_call(
+        messages=[{"role": "user", "content": topic_prompt.format_prompt(subject=prompt_subject).to_string()}],
+        response=topic_result,
+        model=model_name,
+        module="QuizModule.quiz_operations",
+        metadata={"function": "prepare_quiz_questions", "step": "generate_topics", "subject": subject, "language": language}
+    )
+    
     topics = [t.strip() for t in topic_result.content.split("\n") if t.strip()]
     if not topics:
         return [], used_retriever
@@ -79,6 +90,16 @@ def prepare_quiz_questions(
         )
 
     question_sets = question_chain.batch([{"topic": t} for t in topics])
+
+    llm_logger = get_llm_logger()
+    for topic, qset in zip(topics, question_sets):
+        llm_logger.log_llm_call(
+            messages=[{"role": "user", "content": f"Generate questions for topic: {topic}"}],
+            response=qset,
+            model=model_name,
+            module="QuizModule.quiz_operations",
+            metadata={"function": "prepare_quiz_questions", "step": "generate_questions", "topic": topic, "language": language}
+        )
 
     questions_list = []
     for topic, qset in zip(topics, question_sets):

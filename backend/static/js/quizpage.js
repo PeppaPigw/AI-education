@@ -123,10 +123,24 @@ async function generateQuestions(topic) {
     const data = await response.json();
     const content = data.choices[0].message.content.trim();
 
-    // 尝试解析 JSON（处理可能的 markdown 标记）
+    try {
+      await fetch("/api/llm-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: prompt }],
+          response: data,
+          model: "inclusionAI/Ling-mini-2.0",
+          module: "frontend.quizpage",
+          metadata: { function: "generateQuestions", topic: topic },
+        }),
+      });
+    } catch (logError) {
+      console.error("Failed to log LLM call:", logError);
+    }
+
     let jsonContent = content;
 
-    // 移除可能的 markdown 代码块标记
     if (content.startsWith("```json")) {
       jsonContent = content.replace(/```json\s*/, "").replace(/```\s*$/, "");
     } else if (content.startsWith("```")) {
@@ -141,35 +155,28 @@ async function generateQuestions(topic) {
   }
 }
 
-// 页面加载时自动加载题目
 window.onload = function () {
   loadQuestions();
 };
 
 async function loadQuestions() {
   try {
-    // 获取主题
     const topic = getTopicFromURL();
-    quizTopic = topic; // 保存到全局变量
+    quizTopic = topic;
 
-    // 更新加载提示
     document.querySelector(
       ".json-upload p"
     ).textContent = `正在为主题"${topic}"生成测验题目...`;
 
-    // 调用 API 生成题目
     const questionsData = await generateQuestions(topic);
 
-    // 处理题目
     processQuestions(questionsData);
 
-    // 开始测验
     startQuiz();
   } catch (error) {
     alert("题目生成失败，请刷新页面重试！");
     console.error("题目生成错误:", error);
 
-    // 显示错误信息
     document.querySelector(".json-upload p").textContent =
       "题目生成失败，请刷新页面重试";
     document.getElementById("loadingSpinner").style.display = "none";
@@ -179,7 +186,6 @@ async function loadQuestions() {
 function processQuestions(jsonData) {
   questions = [];
 
-  // 处理选择题
   if (jsonData["single-choice"]) {
     jsonData["single-choice"].forEach((q) => {
       questions.push({
@@ -192,13 +198,11 @@ function processQuestions(jsonData) {
     totalChoiceQuestions = jsonData["single-choice"].length;
   }
 
-  // 处理简答题
   if (jsonData["short-answer"]) {
     jsonData["short-answer"].forEach((q) => {
       questions.push({
         type: "text",
         question: q.question,
-        // 简答题由 LLM 评分，不需要预设答案
       });
     });
   }
@@ -359,7 +363,26 @@ async function evaluateTextAnswer(question, answer) {
     const data = await response.json();
     const result = data.choices[0].message.content.trim();
 
-    // 解析结果 (格式: "分数|反馈")
+    try {
+      await fetch("/api/llm-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: prompt }],
+          response: data,
+          model: "inclusionAI/Ling-mini-2.0",
+          module: "frontend.quizpage",
+          metadata: {
+            function: "evaluateTextAnswer",
+            question: question,
+            answer: answer,
+          },
+        }),
+      });
+    } catch (logError) {
+      console.error("Failed to log LLM call:", logError);
+    }
+
     const parts = result.split("|");
     const scoreStr = parts[0].trim();
     const feedback = parts.length > 1 ? parts[1].trim() : "已评分";
@@ -369,7 +392,6 @@ async function evaluateTextAnswer(question, answer) {
     return { score, feedback };
   } catch (error) {
     console.error("LLM评分错误:", error);
-    // 如果API调用失败，给予中性反馈
     return { score: 1, feedback: "评分系统暂时不可用，已自动给分。" };
   }
 }
@@ -385,7 +407,6 @@ async function nextQuestion() {
       return;
     }
 
-    // 显示加载提示
     const feedback = document.getElementById("feedback");
     const nextBtn = document.getElementById("nextBtn");
     feedback.className = "feedback loading show";
@@ -393,7 +414,6 @@ async function nextQuestion() {
       '<span class="loading-spinner"></span> 正在评分中，请稍候...';
     nextBtn.disabled = true;
 
-    // 调用LLM评分
     const evalResult = await evaluateTextAnswer(q.question, textAnswer);
 
     userAnswers[currentIndex] = {
@@ -410,7 +430,6 @@ async function nextQuestion() {
       feedback.textContent = `✗ ${evalResult.feedback}`;
     }
 
-    // 等待2秒后继续，让用户看到反馈
     await new Promise((resolve) => setTimeout(resolve, 2000));
     nextBtn.disabled = false;
   }
@@ -479,7 +498,6 @@ async function showResults() {
   resultScreen.classList.add("show");
   document.getElementById("progressBar").style.width = "100%";
 
-  // 提交测验完成状态
   if (quizTopic && percentage >= 80) {
     try {
       const response = await fetch("/api/quiz/complete", {

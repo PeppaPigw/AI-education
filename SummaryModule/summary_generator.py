@@ -4,6 +4,7 @@ import logging
 from tools.language_handler import LanguageHandler
 from tools.rag_service import RAGService
 from tools.rag_utils import get_context_or_empty
+from tools.llm_logger import get_llm_logger
 
 logger = logging.getLogger(__name__)
 
@@ -83,4 +84,14 @@ Respond in {language}.
 
         chain = self.base_prompt | self.llm
         response = chain.invoke({"input": input_text, "language": lang})
+        
+        llm_logger = get_llm_logger()
+        llm_logger.log_llm_call(
+            messages=[{"role": "user", "content": f"Generate summary for: {input_text[:200]}..."}],
+            response=response,
+            model=model_name,
+            module="SummaryModule.summary_generator",
+            metadata={"function": "generate_summary", "language": lang, "used_retriever": used_retriever}
+        )
+        
         return response.content, used_retriever

@@ -1,0 +1,161 @@
+[
+  {
+    "timestamp": "2025-11-01T13:01:12.306668",
+    "module": "SummaryModule.summary_generator",
+    "metadata": {
+      "function": "generate_summary",
+      "language": "zh",
+      "used_retriever": true
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Generate summary for: 5.1 当前研究热点\n•  边缘计算与大数据融合：在数据源附近进行实时处理，减少延迟。\n•  联邦学习与隐私计算：在不共享原始数据的前提下进行联合建模。\n•  AI驱动的数据治理：利用AI自动识别数据质量、异常与合规风险。\n5.2 重大挑战\n•  数据主权与跨境传输限制\n•  数据孤岛与系统集成难题\n•  数据安全与隐私保护的技术瓶颈\n•  海量数据存储与高效检索的平衡\n5.3 未来发展趋势（3-..."
+        }
+      ]
+    },
+    "response": {
+      "id": "019a3dca3a579095742804bc574dc167",
+      "object": "chat.completion",
+      "created": 1761973272,
+      "model": "",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "# 大数据生命周期与应用学习指南\n\n## 1. 学习目标\n- 理解大数据生命周期的各个阶段及其相互关系\n- 掌握大数据分析的核心概念与关键技术\n- 能够设计并实施大数据处理流程与相关应用系统\n\n## 2. 引言\n大数据生命周期是指数据在其存在期间所经历的一系列有序阶段，涵盖数据的产生、流动、存储、处理、分析、使用及最终销毁。其核心特征包括：\n- 海量性（Volume）\n- 高速性（Velocity）\n- 多样性（Variety）\n- 价值密度低（Value）\n- 真实性（Veracity）\n\n这些特征决定了大数据生命周期管理的复杂性。\n\n## 3. 核心知识体系\n\n### 3.1 大数据生命周期的定义与特征\n大数据生命周期（Big Data Lifecycle）是指数据从产生到最终销毁或归档的整个过程。其核心特征包括：\n- **海量性（Volume）**：数据规模达到传统工具难以处理的程度。\n- **高速性（Velocity）**：数据生成与流转速度极快，实时性要求高。\n- **多样性（Variety）**：数据格式、结构、来源高度异构。\n- **价值密度低（Value）**：数据中蕴含高价值的信息比例较低。\n- **真实性（Veracity）**：数据质量与可信度参差不齐。\n\n### 3.2 大数据生命周期的阶段划分\n大数据生命周期通常划分为以下六个核心阶段：\n1. **数据产生（Data Generation）**\n2. **数据收集与传输（Data Collection & Transport）**\n3. **数据存储与管理（Data Storage & Management）**\n4. **数据处理与分析（Data Processing & Analysis）**\n5. **数据应用与价值实现（Data Application & Value Realization）**\n6. **数据销毁与归档（Data Disposal & Archival）**\n\n每个阶段都有其独特的技术挑战与管理策略。\n\n### 3.3 数据产生阶段\n#### 3.3.1 数据来源与类型\n- **社交媒体数据**：用户发布的内容、点赞、评论等。\n- **电子商务数据**：用户浏览、点击、购买等行为数据。\n- **医疗健康数据**：患者生理数据、可穿戴设备数据等。\n- **物联网设备数据**：传感器采集的温度、湿度等数据。\n\n#### 3.3.2 关键技术组件\n- **分布式计算框架**：如MapReduce、Spark\n- **实时数据采集与边缘计算**：如Kafka、Flink\n- **非结构化数据处理技术**：如NLP、CV、深度学习\n- **数据质量与治理工具**：如DataCleaner、Great Expectations\n\n### 3.4 数据产生阶段的典型应用场景\n- **智慧城市**：交通与环境监测\n- **智能制造**：设备状态预测\n- **社交媒体**：情感分析与舆情监控\n- **电子商务**：用户行为分析与推荐系统\n- **医疗健康**：实时患者监控与诊断支持\n\n## 4. 数据收集与传输阶段\n### 4.1.1 技术实现步骤\n1. **数据采集**：使用Kafka构建实时数据采集管道，将用户行为日志流式传输至消息队列。\n2. **数据传输**：通过加密通道保障数据传输安全。\n\n### 4.1.2 常见问题与解决方案\n- **数据延迟问题**：边缘计算节点预处理数据，减少中心系统负担。\n- **数据噪声干扰**：引入异常检测算法（如Isolation Forest）过滤无效数据。\n- **隐私泄露风险**：采用差分隐私（Differential Privacy）技术对敏感信息进行模糊处理。\n\n### 4.1.3 代码示例：实时流数据处理（Spark Streaming）\n```python\nfrom pyspark import SparkContext\nfrom pyspark.streaming import StreamingContext\n\n# 创建SparkContext与StreamingContext\nsc = SparkContext(\"local[2]\", \"DataGenerationApp\")\nssc = StreamingContext(sc, batchDuration=1)\n\n# 模拟数据生成（如Kafka流）\nlines = ssc.socketTextStream(\"localhost\", 9999)\n\n# 数据处理：统计每分钟内出现频率最高的单词\ndef process_time(rdd):\n    if not rdd.isEmpty():\n        counts = (rdd\n                  .flatMap(lambda line: line.split(\" \"))\n                  .map(lambda word: (word, 1))\n                  .reduceByKey(lambda a, b: a + b)\n                  .sortBy(lambda x: x[1], ascending=False))\n        counts.saveAsTextFile(\"output/word_counts\")\n\nlines.foreachRDD(process_time)\nssc.start()\nssc.awaitTermination()\n```\n\n## 5. 数据存储与管理阶段\n### 5.1.1 技术实现步骤\n1. **数据存储**：将原始数据存入HDFS或云存储中的数据湖中，支持后续多样化分析。\n2. **数据管理**：使用数据清洗技术去除重复与异常值。\n\n### 5.1.2 常见问题与解决方案\n- **数据冗余**：使用数据去重技术。\n- **数据不一致**：采用数据同步与一致性检查工具。\n\n### 5.1.3 代码示例：使用Apache Spark进行大数据处理\n```python\nfrom pyspark.sql import SparkSession\n\n# 创建SparkSession\nspark = SparkSession.builder \\\n    .appName(\"BigDataLifecycleExample\") \\\n    .getOrCreate()\n\n# 模拟大数据采集阶段\ndata = [(\"Alice\", 34), (\"Bob\", 45), (\"Charlie\", 29)]\ncolumns = [\"Name\", \"Age\"]\ndf = spark.createDataFrame(data, columns)\n\n# 数据处理与分析阶段\ndf_filtered = df.filter(df.Age > 30)\ndf_sorted = df_filtered.sort(\"Age\")\n\n# 数据可视化与洞察提取（此处简化为输出）\ndf_sorted.show()\n\n# 停止 Spark 会话\nspark.stop()\n```\n\n### 5.2 数据存储与管理阶段的关键技术与挑战\n- **分布式存储系统**：如HDFS、Ceph\n- **数据湖架构**：如Azure Data Lake、AWS S3\n- **数据清洗与预处理**：如Pandas、DataCleaner\n- **数据安全与隐私保护**：如加密技术、访问控制\n\n## 6. 数据处理与分析阶段\n### 6.1.1 技术实现步骤\n1. **数据处理**：使用Spark进行实时ETL处理。\n2. **数据分析**：应用协同过滤算法进行推荐建模。\n\n### 6.1.2 常见问题与解决方案\n- **数据延迟**：优化边缘计算节点处理。\n- **数据质量低**：使用数据清洗与质量检查工具。\n\n### 6.1.3 代码示例：实时流数据处理（Spark Streaming）\n```python\nfrom pyspark import SparkContext\nfrom pyspark.streaming import StreamingContext\n\n# 创建SparkContext与StreamingContext\nsc = SparkContext(\"local[2]\", \"DataGenerationApp\")\nssc = StreamingContext(sc, batchDuration=1)\n\n# 模拟数据生成（如Kafka流）\nlines = ssc.socketTextStream(\"localhost\", 9999)\n\n# 数据处理：统计每分钟内出现频率最高的单词\ndef process_time(rdd):\n    if not rdd.isEmpty():\n        counts = (rdd\n                  .flatMap(lambda line: line.split(\" \"))\n                  .map(lambda word: (word, 1))\n                  .reduceByKey(lambda a, b: a + b)\n                  .sortBy(lambda x: x[1], ascending=False))\n        counts.saveAsTextFile(\"output/word_counts\")\n\nlines.foreachRDD(process_time)\nssc.start()\nssc.awaitTermination()\n```\n\n### 6.2 数据处理与分析阶段的关键技术与挑战\n- **分布式计算框架**：如MapReduce、Spark\n- **流处理引擎**：如Kafka Streams、Apache Storm\n- **机器学习平台**：如TensorFlow、PyTorch\n- **数据治理与质量管理工具**：如DataCleaner、Great Expectations\n\n### 6.3 数据处理与分析阶段的典型应用场景\n- **实时推荐系统**：基于用户行为数据的实时分析。\n- **用户画像构建**：综合多源数据构建用户特征。\n- **运营优化与风险控制**：通过数据分析优化运营策略与风险控制。\n\n## 7. 数据应用与价值实现阶段\n### 7.1.1 技术实现步骤\n1. **数据应用**：将分析结果转化为实际价值，包括商业智能、预测性建模、实时决策支持、个性化推荐系统、运营优化与风险控制。\n2. **价值实现**：通过数据分析提升业务决策效率和准确性。\n\n### 7.1.2 常见问题与解决方案\n- **数据应用不深入**：加强业务理解与数据融合。\n- **价值实现不明显**：优化分析模型与业务场景匹配。\n\n### 7.1.3 代码示例：协同过滤算法推荐建模\n```python\nfrom pyspark.ml.recommendation import ALS\nfrom pyspark.sql import SparkSession\n\n# 创建SparkSession\nspark = SparkSession.builder \\\n    .appName(\"RecommendationSystem\") \\\n    .getOrCreate()\n\n# 加载数据\ndata = spark.read.format(\"libsvm\").load(\"data.txt\")\n\n# 构建推荐模型\nals = ALS(maxIter=5, regParam=0.01, userCol=\"user\", itemCol=\"item\", ratingCol=\"rating\")\nmodel = als.fit(data)\n\n# 预测\ntest_data = spark.createDataFrame([(0, \"foo\"), (1, \"bar\")], [\"user\", \"item\"])\nprediction = model.transform(test_data)\nprediction.show()\n\n# 停止 Spark 会话\nspark.stop()\n```\n\n### 7.2 数据应用与价值实现阶段的关键技术与挑战\n- **商业智能（BI）**：如Tableau、Power BI\n- **预测性建模**：如时间序列分析、回归模型\n- **实时决策支持**：如实时数据分析、监控平台\n- **个性化推荐系统**：如协同过滤、内容推荐\n- **运营优化与风险控制**：如异常检测、风险评估模型\n\n## 8. 数据销毁与归档阶段\n### 8.1.1 技术实现步骤\n1. **数据归档**：将历史数据归档以满足法律要求。\n2. **数据销毁**：执行安全销毁流程，确保数据隐私与合规性。\n\n### 8.1.2 常见问题与解决方案\n- **数据合规性**：确保符合GDPR、CCPA等法规。\n- **数据销毁安全性**：使用数据擦除、逻辑删除与物理覆盖等技术。\n\n### 8.1.3 代码示例：数据销毁与归档\n```python\nimport os\nimport shutil\n\n# 数据归档\ndef archive_data(source_dir, archive_dir):\n    for item in os.listdir(source_dir):\n        source_path = os.path.join(source_dir, item)\n        archive_path = os.path.join(archive_dir, item)\n        if os.path.isfile(source_path):\n            shutil.move(source_path, archive_path)\n\n# 数据销毁\ndef secure_destroy(data_dir):\n    for item in os.listdir(data_dir):\n        file_path = os.path.join(data_dir, item)\n        if os.path.isfile(file_path):\n            with open(file_path, \"ba\") as f:\n                f.write(os.urandom(100))\n            os.remove(file_path)\n\n# 执行归档与销毁\narchive_data(\"raw_data\", \"archived_data\")\nsecure_destroy(\"processed_data\")\n```\n\n### 8.2 数据销毁与归档阶段的关键技术与挑战\n- **数据擦除（Data Wiping）**：使用物理覆盖技术确保数据不可恢复。\n- **逻辑删除与物理覆盖**：确保数据在逻辑上被删除的同时，物理上仍存在冗余副本。\n- **冷数据归档与热数据清理**：根据数据访问频率进行分层管理。\n- **符合GDPR等法规的数据销毁流程**：确保数据销毁过程符合法律要求。\n\n## 9. 章节总结\n### 9.1 大数据生命周期的定义与特征\n- 涵盖数据从产生到销毁的全过程。\n- 核心特征包括海量性、高速性、多样性、价值密度低、真实性。\n\n### 9.2 各阶段的技术挑战与管理策略\n- **数据产生阶段**：分布式计算、实时采集、非结构化数据处理、数据质量治理。\n- **数据收集与传输阶段**：实时流处理、加密传输、边缘计算。\n- **数据存储与管理阶段**：分布式存储、数据湖、数据清洗。\n- **数据处理与分析阶段**：分布式计算、流处理、机器学习、数据治理。\n- **数据应用与价值实现阶段**：商业智能、预测性建模、实时决策、个性化推荐、运营优化。\n- **数据销毁与归档阶段**：数据擦除、逻辑删除、冷热数据分层、合规销毁。\n\n### 9.3 未来发展趋势\n- 自动化数据生命周期管理（ADLM）\n- 边缘智能与实时DIKW转化\n- 跨学科融合的智慧构建\n- 区块链支持的数据可信流转\n\n## 10. 未来趋势与挑战\n### 10.1 智能化数据治理平台\n- 集成数据清洗、语义解析、知识推理与智慧决策的全流程自动化系统。\n\n### 10.2 边缘智能与实时DIKW转化\n- 在物联网与边缘计算环境中，实现数据的即时处理与智慧决策。\n\n### 10.3 跨学科融合的智慧构建\n- 结合认知科学、神经科学与人机交互，提升智慧系统的认知与适应能力。\n\n### 10.4 区块链支持的数据可信流转\n- 利用区块链技术确保数据在各层级转化中的完整性与可追溯性。\n\n## 11. 实践操作指南\n### 11.1 构建一个简单的IoT数据产生与分析系统\n1. **设备端数据采集**：使用树莓派或ESP32采集温度、湿度等传感器数据。\n2. **数据传输**：通过MQTT协议将数据发送至本地边缘服务器或云平台。\n3. **数据处理**：使用Spark进行实时ETL处理。\n4. **数据分析**：应用深度学习模型进行特征学习与分类识别。\n5. **结果可视化**：通过D3.js仪表盘展示分析结果。\n\n### 11.2 构建一个电子商务用户行为分析系统\n1. **数据产生**：用户浏览、点击、购买等行为数据。\n2. **数据收集与传输**：使用Kafka构建实时数据采集管道。\n3. **数据存储与管理**：将原始数据存入HDFS或云存储中的数据湖中。\n4. **数据处理与分析**：使用Spark进行实时ETL处理，应用协同过滤算法进行推荐建模。\n5. **数据应用与价值实现**：构建用户画像，优化推荐系统，提升运营效率。\n6. **数据销毁与归档**：归档历史数据，执行安全销毁流程。\n\n## 12. 关键公式与符号\n- **DIKW模型**：Data → Information → Knowledge → Wisdom\n- **MapReduce模型**：Map（映射）→ Reduce（归约）\n- **Spark Core API**：RDD（弹性分布式数据集）→ DataFrame → Dataset\n- **差分隐私**：$DP(\\epsilon, \\delta)$，其中$\\epsilon$为隐私预算，$\\delta$为失败概率\n- **区块链数据完整性**：哈希链（Hashing Chain）\n\n## 13. 重要概念与示例\n- **分布式计算**：如MapReduce、Spark\n- **实时流处理**：如Kafka Streams、Apache Storm\n- **协同过滤算法**：基于用户或物品的推荐模型\n- **差分隐私**：保护个体隐私的同时提供统计信息\n- **区块链数据溯源**：确保数据来源可追溯\n\n## 14. 应用场景与上下文用法\n### 14.1 智慧城市中的交通与环境监测\n- **数据产生**：传感器采集交通流量、环境参数。\n- **数据处理与分析**：使用Spark进行实时数据分析，识别交通拥堵与污染趋势。\n- **数据应用**：优化交通信号灯控制，提升城市交通效率。\n- **数据销毁与归档**：归档历史数据，执行安全销毁流程。\n\n### 14.2 智能制造中的设备状态预测\n- **数据产生**：设备传感器采集的运行数据。\n- **数据处理与分析**：使用Spark进行实时ETL，应用机器学习模型预测设备故障。\n- **数据应用**：提前预警设备故障，减少停机时间。\n- **数据销毁与归档**：归档历史设备数据，执行安全销毁流程。\n\n### 14.3 社交媒体情感分析与舆情监控\n- **数据产生**：用户发布的内容、点赞、评论等。\n- **数据处理与分析**：使用NLP技术进行情感分析，构建图数据库分析用户关系。\n- **数据应用**：实时监控舆情，优化营销策略。\n- **数据销毁与归档**：归档历史数据，执行安全销毁流程。\n\n### 14.4 电子商务中的用户行为分析与推荐系统\n- **数据产生**：用户浏览、点击、购买等行为数据。\n- **数据处理与分析**：使用Spark进行实时ETL，应用协同过滤算法进行推荐建模。\n- **数据应用**：构建个性化推荐系统，提升用户满意度。\n- **数据销毁与归档**：归档历史交易数据，执行安全销毁流程。\n\n### 14.5 医疗健康中的实时患者监控与诊断支持\n- **数据产生**：医疗设备实时采集患者生理数据。\n- **数据处理与分析**：使用Spark进行实时ETL，应用机器学习模型预测疾病发展趋势。\n- **数据应用**：提供个性化治疗方案，支持临床决策。\n- **数据销毁与归档**：归档历史诊疗数据，执行安全销毁流程。\n\n## 15. 有用的地方\n- **图表**：使用图表展示数据生命周期各阶段的关系。\n- **公式**：使用公式展示差分隐私的计算过程。\n- **逻辑步骤**：使用步骤列表展示数据处理与分析流程。\n\n---\n\n**备注**：本学习指南旨在帮助学生理解和掌握大数据生命周期的各个阶段及其关键技术，为实际应用和考试准备提供全面的知识体系。"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 3007,
+        "completion_tokens": 3945,
+        "total_tokens": 6952
+      },
+      "system_fingerprint": ""
+    }
+  },
+  {
+    "timestamp": "2025-11-01T13:01:52.238743",
+    "module": "frontend.quizpage",
+    "metadata": {
+      "function": "generateQuestions",
+      "topic": "半结构化数据和准结构化数据"
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "# 角色与任务 🎯\n你是一位资深的**教育评估专家**和**专业命题人**。你的任务是根据给定的核心主题，生成一套高质量、严谨的测验题。\n\n# 核心主题\n我们的课程是大数据分析基础。因此题目与大数据相关。\n本套测验的核心主题是：**半结构化数据和准结构化数据**\n\n# 质量与严谨性要求 🧐\n1.  **专业性**：题目必须反映该主题的核心概念和关键知识点。\n2.  **严谨性**：问题表述清晰无歧义，答案唯一且正确。\n3.  **迷惑性（选择题）**：错误选项 (Distractors) 必须具有高度的迷惑性，是基于常见误解设计的，而不能是明显无关的选项。\n\n# 数量与格式要求 (【强制】)\n请**严格且仅**输出一个符合以下格式的 JSON 对象。**禁止**在 JSON 对象前后添加任何开场白、解释、总结或 Markdown 标记 (如 ```json ... ```)。\n\n**数量**：必须包含 **8 个** `single-choice` 题目 和 **2 个** `short-answer` 题目。\n\n!!!注意fillinblank是简答题而不是填空题。选择题需要给出答案。选择题包含三个字段[question,options,right-answer]。主观题包含一个字段\"question\"\n\n**JSON 格式**：\n{\n  \"title\": \"半结构化数据和准结构化数据\",\n  \"single-choice\": [\n    {\n      \"question\": \"（这里是第 1 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 3 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 4 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 5 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 6 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 7 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 8 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"（这里是第 1 个简答题）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个简答题）\"\n    }\n  ]\n}\n再次提示：\n1.主观题不是填空题，应该是答题者用一段话回答。\n2. 选择题必须把答案一起输出在json中"
+        }
+      ]
+    },
+    "response": {
+      "id": "019a3dcb18daae0516ed090edfe0d9dd",
+      "object": "chat.completion",
+      "created": 1761973311,
+      "model": "inclusionAI/Ling-mini-2.0",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"title\": \"半结构化数据和准结构化数据\",\n  \"single-choice\": [\n    {\n      \"question\": \"以下哪种数据形式典型的属于半结构化数据？\",\n      \"options\": [\"A. 纯文本文件\", \"B. XML文档\", \"C. 二进制图片文件\", \"D. 固定宽度格式的CSV文件\"]\n    },\n    {\n      \"question\": \"以下数据中，哪一种最可能属于准结构化数据？\",\n      \"options\": [\"A. SQL数据库表\", \"B. JSON格式的日志文件\", \"C. 关系型数据库中的记录\", \"D. 结构化电子表格\"]\n    },\n    {\n      \"question\": \"关于半结构化数据的描述错误的是？\",\n      \"options\": [\"A. 不需要预定义模式\", \"B. 包含嵌套结构\", \"C. 与XML相同\", \"D. 易于解析和处理\"]\n    },\n    {\n      \"question\": \"在以下数据格式中，哪一个是典型的半结构化数据格式？\",\n      \"options\": [\"A. 固定长度记录\", \"B. JSON\", \"C. 关系型数据库表\", \"D. 连续数值流\"]\n    },\n    {\n      \"question\": \"半结构化数据和非结构化数据的主要区别是？\",\n      \"options\": [\"A. 半结构化数据有固定的数据模型，非结构化没有\", \"B. 半结构化数据包含标签化的元素，非结构化没有\", \"C. 半结构化数据是文本，非结构二是二进制\", \"D. 半结构化数据无法用XML表示\"]\n    },\n    {\n      \"question\": \"以下哪项不是半结构化数据的典型应用？\",\n      \"options\": [\"A. 日志文件\", \"B. 数据库表\", \"C. XML文档\", \"D. JSON数据\"]\n    },\n    {\n      \"question\": \"关于准结构化数据，以下哪项是正确的？\",\n      \"options\": [\"A. 必须使用XML格式\", \"B. 可以包含嵌套结构和标记\", \"C. 与半结构化数据完全相同\", \"D. 无法被解析\"]\n    },\n    {\n      \"question\": \"半结构化数据的典型代表是？\",\n      \"options\": [\"A. 关系型数据库\", \"B. 文档型数据库（如MongoDB）\", \"C. 静态网页HTML\", \"D. 结构化数据仓库\"]\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"请简述什么是半结构化数据，并给出一个实际应用的例子。\"\n    },\n    {\n      \"question\": \"请解释准结构化数据与半结构化数据的区别，并举例说明。\"\n    }\n  ]\n}"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1007,
+        "completion_tokens": 588,
+        "total_tokens": 1595
+      },
+      "system_fingerprint": ""
+    }
+  },
+  {
+    "timestamp": "2025-11-01T13:02:18.542768",
+    "module": "frontend.quizpage",
+    "metadata": {
+      "function": "evaluateTextAnswer",
+      "question": "请简述什么是半结构化数据，并给出一个实际应用的例子。",
+      "answer": "213231"
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "请你作为一个评分老师，评判以下学生的简答题答案。\n\n题目：请简述什么是半结构化数据，并给出一个实际应用的例子。\n\n学生答案：213231\n\n评分标准：\n1. 答案是否理解并回答了问题的核心内容\n2. 答案是否有实质性的内容（不是空洞或敷衍的回答）\n3. 答案的逻辑是否清晰、表达是否连贯\n4. 答案是否包含了相关的知识点\n\n如果答案满足以上大部分标准，有一定的质量和深度，请回复\"1|优秀的回答！你的答案涵盖了关键要点。\"\n如果答案基本合理但不够完整或深入，请回复\"1|回答正确，但还可以更加深入。\"\n如果答案明显错误、不相关、过于简单或空洞，请回复\"0|回答需要改进。请确保理解题目要求，并提供更具体的内容。\"\n\n输出格式：[分数]|[反馈]，其中分数为0或1。"
+        }
+      ]
+    },
+    "response": {
+      "id": "019a3dcb896dfb82dd717ed8f1caa7b7",
+      "object": "chat.completion",
+      "created": 1761973340,
+      "model": "inclusionAI/Ling-mini-2.0",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "0|回答需要改进。请确保理解题目要求，并提供更具体的内容。"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 208,
+        "completion_tokens": 15,
+        "total_tokens": 223
+      },
+      "system_fingerprint": ""
+    }
+  },
+  {
+    "timestamp": "2025-11-01T13:02:34.427209",
+    "module": "frontend.quizpage",
+    "metadata": {
+      "function": "evaluateTextAnswer",
+      "question": "请解释准结构化数据与半结构化数据的区别，并举例说明。",
+      "answer": "结构化数据和非结构化数据是可收集数据的两大类别。结构化数据是整齐地放入数据表的数据，包括数字、短文本和日期等离散数据类型。由于其大小或性质，非结构化数据无法整齐地放入数据表：例如，音频和视频文件以及大型文本文档。有时，数字或文本数据可能是非结构化的，因为将其建模为表的做法效率低下。例如，传感器数据是恒定的数值流，但是如果创建一个包含两列（时间戳和传感器值）的表，则效率低下且不切实际。结构化数据和非结构化数据在现代分析中都至关重要"
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "请你作为一个评分老师，评判以下学生的简答题答案。\n\n题目：请解释准结构化数据与半结构化数据的区别，并举例说明。\n\n学生答案：结构化数据和非结构化数据是可收集数据的两大类别。结构化数据是整齐地放入数据表的数据，包括数字、短文本和日期等离散数据类型。由于其大小或性质，非结构化数据无法整齐地放入数据表：例如，音频和视频文件以及大型文本文档。有时，数字或文本数据可能是非结构化的，因为将其建模为表的做法效率低下。例如，传感器数据是恒定的数值流，但是如果创建一个包含两列（时间戳和传感器值）的表，则效率低下且不切实际。结构化数据和非结构化数据在现代分析中都至关重要\n\n评分标准：\n1. 答案是否理解并回答了问题的核心内容\n2. 答案是否有实质性的内容（不是空洞或敷衍的回答）\n3. 答案的逻辑是否清晰、表达是否连贯\n4. 答案是否包含了相关的知识点\n\n如果答案满足以上大部分标准，有一定的质量和深度，请回复\"1|优秀的回答！你的答案涵盖了关键要点。\"\n如果答案基本合理但不够完整或深入，请回复\"1|回答正确，但还可以更加深入。\"\n如果答案明显错误、不相关、过于简单或空洞，请回复\"0|回答需要改进。请确保理解题目要求，并提供更具体的内容。\"\n\n输出格式：[分数]|[反馈]，其中分数为0或1。"
+        }
+      ]
+    },
+    "response": {
+      "id": "019a3dcbc67465f47b7a9f93d7babcd1",
+      "object": "chat.completion",
+      "created": 1761973356,
+      "model": "inclusionAI/Ling-mini-2.0",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "1|回答正确，但还可以更加深入。\n\n该学生回答了对数据分类的理解，但未具体区分准结构化数据与半结构化数据，也没有提供明确的例子来说明两者的区别。此外，回答中提到的结构化数据与非结构化数据的分类并不完全符合题目要求的准结构化数据与半结构化数据的区别。"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 314,
+        "completion_tokens": 60,
+        "total_tokens": 374
+      },
+      "system_fingerprint": ""
+    }
+  }
+]

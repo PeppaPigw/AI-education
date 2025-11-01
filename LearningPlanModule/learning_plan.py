@@ -4,6 +4,7 @@ from datetime import date, timedelta, datetime
 from langchain_openai import ChatOpenAI
 from tools.rag_service import RAGService
 from tools.rag_utils import get_context_or_empty
+from tools.llm_logger import get_llm_logger
 from dotenv import load_dotenv
 import os
 
@@ -114,6 +115,16 @@ class LearningPlan:
         )
         try:
             response = self.llm.invoke(prompt)
+            
+            llm_logger = get_llm_logger()
+            llm_logger.log_llm_call(
+                messages=[{"role": "user", "content": prompt}],
+                response=response,
+                model=model_name,
+                module="LearningPlanModule.learning_plan",
+                metadata={"function": "recommend_materials", "topic": topic, "language": self.user_language}
+            )
+            
             materials = [m for m in response.content.split("\n") if m]
             return materials
         except Exception as e:
