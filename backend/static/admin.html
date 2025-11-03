@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI-Education 管理员端</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="/static/css/admin.css" />
+    <script src="/static/js/admin.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar Navigation -->
+      <div class="sidebar">
+        <div class="logo">
+          <span class="logo-icon">👨‍💼</span>
+          <h1>AI-Education</h1>
+          <p class="logo-subtitle">管理员控制台</p>
+        </div>
+        <div class="nav-item active" onclick="switchTab('users')">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">用户管理</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('tokens')">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Token使用统计</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('conversations')">
+          <span class="nav-icon">💬</span>
+          <span class="nav-text">对话记录</span>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="main-content">
+        <!-- User Management Section -->
+        <div id="users-section" class="content-section active">
+          <div class="header">
+            <h2>用户管理</h2>
+            <p>查看和管理所有教师及学生信息</p>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="search-container">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input
+                type="text"
+                id="userSearch"
+                placeholder="搜索教师或学生名称..."
+                onkeyup="filterUsers()"
+              />
+            </div>
+          </div>
+
+          <!-- Teachers Section -->
+          <div class="section-container">
+            <div class="section-header">
+              <h3>👨‍🏫 教师信息 <span class="count-badge" id="teacherCount">0</span></h3>
+            </div>
+            <div class="teachers-grid" id="teachersGrid"></div>
+          </div>
+
+          <!-- Students Section -->
+          <div class="section-container">
+            <div class="section-header">
+              <h3>🧑‍🎓 学生信息 <span class="count-badge" id="studentCount">0</span></h3>
+            </div>
+            <div class="students-grid" id="studentsGrid"></div>
+          </div>
+        </div>
+
+        <!-- Token Usage Section -->
+        <div id="tokens-section" class="content-section">
+          <div class="header">
+            <h2>Token 使用统计</h2>
+            <p>实时追踪 LLM API 的 Token 使用情况</p>
+          </div>
+
+          <!-- Summary Cards -->
+          <div class="summary-cards">
+            <div class="summary-card">
+              <div class="summary-icon">📅</div>
+              <div class="summary-content">
+                <div class="summary-label">一周内总用量</div>
+                <div class="summary-value" id="weeklyTokens">0</div>
+              </div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-icon">📆</div>
+              <div class="summary-content">
+                <div class="summary-label">一月内总用量</div>
+                <div class="summary-value" id="monthlyTokens">0</div>
+              </div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-icon">🌐</div>
+              <div class="summary-content">
+                <div class="summary-label">全部时间用量</div>
+                <div class="summary-value" id="totalTokens">0</div>
+              </div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-icon">📈</div>
+              <div class="summary-content">
+                <div class="summary-label">今日平均</div>
+                <div class="summary-value" id="avgTokens">0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart Container -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>每日 Token 使用趋势</h3>
+              <div class="chart-controls">
+                <button class="chart-btn active" onclick="changeTimeRange('week')">近7天</button>
+                <button class="chart-btn" onclick="changeTimeRange('month')">近30天</button>
+                <button class="chart-btn" onclick="changeTimeRange('all')">全部</button>
+              </div>
+            </div>
+            <div id="tokenChart" class="chart"></div>
+          </div>
+
+          <!-- Model Usage Distribution -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>模型使用分布</h3>
+            </div>
+            <div id="modelChart" class="chart"></div>
+          </div>
+        </div>
+
+        <!-- Conversations Section -->
+        <div id="conversations-section" class="content-section">
+          <div class="header">
+            <h2>LLM 对话记录</h2>
+            <p>查看所有 LLM API 调用的详细信息</p>
+          </div>
+
+          <!-- Filter Bar -->
+          <div class="filter-container">
+            <div class="filter-group">
+              <label>模型筛选</label>
+              <select id="modelFilter" onchange="filterConversations()">
+                <option value="">全部模型</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>时间范围</label>
+              <select id="timeFilter" onchange="filterConversations()">
+                <option value="all">全部时间</option>
+                <option value="today">今天</option>
+                <option value="week">近7天</option>
+                <option value="month">近30天</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>搜索</label>
+              <input
+                type="text"
+                id="conversationSearch"
+                placeholder="搜索对话内容..."
+                onkeyup="filterConversations()"
+              />
+            </div>
+          </div>
+
+          <!-- Conversations List -->
+          <div class="conversations-container" id="conversationsContainer"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+

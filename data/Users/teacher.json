@@ -1,0 +1,24 @@
+[
+  {
+    "name": "teacherA",
+    "username": "teawangqiyu",
+    "password": "123456",
+    "email": "peppapigwqy@gmail.com",
+    "role": "teacher",
+    "students": [
+      "WangQiyu",
+      "LiuYiming",
+      "MouLongyu",
+      "YuanYijun",
+      "CaiHaozhan"
+    ]
+  },
+  {
+    "name": "teacherB",
+    "username": "tealiuyiming",
+    "password": "123456",
+    "email": "liuyiming@gmail.com",
+    "role": "teacher",
+    "students": ["studentA", "studentB", "studentC", "studentD"]
+  }
+]

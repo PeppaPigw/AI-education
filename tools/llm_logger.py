@@ -22,6 +22,7 @@ class LLMLogger:
         if self._initialized:
             return
         self.log_file = Path("data/Log/llm_log.json")
+        print("已加载LLM_log.json")
         self.log_file.parent.mkdir(parents=True, exist_ok=True)
         if not self.log_file.exists():
             self.log_file.write_text("[]", encoding="utf-8")

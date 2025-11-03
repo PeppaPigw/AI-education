@@ -42,6 +42,7 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="backend/static"), name="static")
+app.mount("/data", StaticFiles(directory="data"), name="data")
 
 rag_service = get_rag_service()
 retriever = rag_service.get_retriever()
@@ -859,6 +860,31 @@ async def get_students():
         return []
 
 
+@app.get("/api/teachers")
+async def get_teachers():
+    """获取所有教师信息"""
+    try:
+        with open("data/Users/teacher.json", "r", encoding="utf-8") as f:
+            teachers = json.load(f)
+        return teachers
+    except FileNotFoundError:
+        return []
+
+
+@app.get("/api/llm-logs")
+async def get_llm_logs():
+    """获取所有LLM调用日志"""
+    try:
+        with open("data/Log/llm_log.json", "r", encoding="utf-8") as f:
+            logs = json.load(f)
+        return logs
+    except FileNotFoundError:
+        return []
+    except json.JSONDecodeError:
+        logger.error("Failed to parse llm_log.json")
+        return []
+
+
 @app.get("/api/learning-plans")
 async def get_learning_plans():
     """获取所有学习计划文件列表"""
@@ -1052,25 +1078,33 @@ async def log_llm_call(data: LLMLogRequest):
     """Log LLM call from frontend or backend"""
     try:
         llm_logger = get_llm_logger()
-        response_obj = type('Response', (), {
-            'content': data.response.get('choices', [{}])[0].get('message', {}).get('content', ''),
-            'response_metadata': {
-                'id': data.response.get('id', ''),
-                'object': data.response.get('object', ''),
-                'created': data.response.get('created', 0),
-                'model': data.response.get('model', ''),
-                'finish_reason': data.response.get('choices', [{}])[0].get('finish_reason', ''),
-                'token_usage': data.response.get('usage', {}),
-                'system_fingerprint': data.response.get('system_fingerprint', '')
-            }
-        })()
-        
+        response_obj = type(
+            "Response",
+            (),
+            {
+                "content": data.response.get("choices", [{}])[0]
+                .get("message", {})
+                .get("content", ""),
+                "response_metadata": {
+                    "id": data.response.get("id", ""),
+                    "object": data.response.get("object", ""),
+                    "created": data.response.get("created", 0),
+                    "model": data.response.get("model", ""),
+                    "finish_reason": data.response.get("choices", [{}])[0].get(
+                        "finish_reason", ""
+                    ),
+                    "token_usage": data.response.get("usage", {}),
+                    "system_fingerprint": data.response.get("system_fingerprint", ""),
+                },
+            },
+        )()
+
         llm_logger.log_llm_call(
             messages=data.messages,
             response=response_obj,
             model=data.model,
             module=data.module,
-            metadata=data.metadata
+            metadata=data.metadata,
         )
         return {"success": True, "message": "LLM call logged"}
     except Exception as e:

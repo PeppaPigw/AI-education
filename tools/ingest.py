@@ -7,7 +7,6 @@ from typing import List
 from langchain_core.documents import Document
 from langchain_community.document_loaders import (
     CSVLoader,
-    PyPDFLoader,
     TextLoader,
     UnstructuredEPubLoader,
     UnstructuredHTMLLoader,
@@ -19,13 +18,14 @@ from langchain_community.document_loaders import (
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from tools.rag_service import get_rag_service
+from tools.pdf_ocr_loader import PDFOCRLoader
 
 
 LOADERS = {
     ".txt": TextLoader,
     ".md": UnstructuredMarkdownLoader,
     ".markdown": UnstructuredMarkdownLoader,
-    ".pdf": PyPDFLoader,
+    ".pdf": PDFOCRLoader,
     ".docx": UnstructuredWordDocumentLoader,
     ".pptx": UnstructuredPowerPointLoader,
     ".html": UnstructuredHTMLLoader,

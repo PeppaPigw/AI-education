@@ -1,5 +1,6 @@
 deep_translator==1.11.4
 docx==0.2.4
+easyocr==1.7.2
 fastapi==0.120.0
 gradio==5.49.1
 langchain==1.0.2
@@ -15,6 +16,7 @@ neo4j==6.0.2
 nltk==3.9.2
 plotly==6.3.1
 pydantic==2.12.3
+PyMuPDF==1.24.14
 pytest==8.4.2
 python-dotenv==1.2.1
 pyvis==0.3.2

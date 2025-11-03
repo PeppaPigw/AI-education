@@ -15,9 +15,9 @@ from langchain_classic.retrievers import MultiQueryRetriever
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.document_loaders import (
     UnstructuredFileLoader,
-    PyPDFLoader,
     Docx2txtLoader,
 )
+from tools.pdf_ocr_loader import PDFOCRLoader
 
 logging.getLogger("pypdf").setLevel(logging.ERROR)
 logging.getLogger("pdfminer").setLevel(logging.ERROR)
@@ -169,7 +169,7 @@ class RAGService:
             if isinstance(item, str):
                 # 根据文件扩展名选择合适的加载器
                 if item.lower().endswith(".pdf"):
-                    loader = PyPDFLoader(item)
+                    loader = PDFOCRLoader(item)
                 elif item.lower().endswith(".docx"):
                     loader = Docx2txtLoader(item)
                 else:

@@ -5,6 +5,7 @@
     "username": "stuwangqiyu",
     "password": "123456",
     "email": "peppapigwqy@gmail.com",
+    "teacher": "teacherA",
     "learning_goals": [
       "大数据基础概念",
       "数据获取",
@@ -80,6 +81,7 @@
     "username": "stuliuyiming",
     "password": "123456",
     "email": "",
+    "teacher": "teacherA",
     "learning_goals": ["大数据开发", "参加数据分析比赛"],
     "preference": {
       "course_topic": [
@@ -149,6 +151,7 @@
     "img": "/static/img/member-03.jpg",
     "username": "stumoulongyu",
     "password": "123456",
+    "teacher": "teacherA",
     "email": "",
     "learning_goals": ["通过大数据考试", "参加数据分析比赛"],
     "preference": {
@@ -220,6 +223,7 @@
     "username": "stuyuanyijun",
     "password": "123456",
     "email": "",
+    "teacher": "teacherA",
     "learning_goals": [
       "大数据基础概念",
       "数据获取",
@@ -295,6 +299,301 @@
     "username": "stucaihaozhan",
     "password": "123456",
     "email": "",
+    "teacher": "teacherA",
+    "learning_goals": [
+      "大数据基础概念",
+      "数据获取",
+      "数据质量与预处理",
+      "数据存储系统"
+    ],
+    "preference": {
+      "course_topic": [
+        {
+          "name": "大数据基础分析",
+          "hierarchy": "great-grandchildren"
+        },
+        { "name": "数据存储", "hierarchy": "great-grandchildren" }
+      ],
+      "course_type": [{ "name": "在线课程" }, { "name": "实践课程" }]
+    },
+    "progress": [
+      {
+        "topic": "大数据基础概念",
+        "date": [
+          ["2025-09-01", 0],
+          ["2025-09-05", 40],
+          ["2025-09-07", 60],
+          ["2025-09-10", 80],
+          [null, null],
+          ["2025-09-25", 90],
+          ["2025-09-28", 100]
+        ]
+      },
+      {
+        "topic": "数据获取",
+        "date": [
+          ["2025-09-03", 0],
+          ["2025-09-04", 20],
+          ["2025-09-06", 35],
+          [null, null],
+          ["2025-09-14", 70],
+          ["2025-09-16", 100]
+        ]
+      },
+      {
+        "topic": "数据质量与预处理",
+        "date": [
+          ["2025-10-03", 0],
+          ["2025-10-04", 10]
+        ]
+      },
+      {
+        "topic": "数据存储系统",
+        "date": [["2025-10-05", 0]]
+      },
+      {
+        "topic": "数据处理系统",
+        "date": [["2025-10-06", 0]]
+      },
+      {
+        "topic": "大数据平台与工具",
+        "date": [["2025-10-08", 0]]
+      },
+      {
+        "topic": "大数据应用与挑战",
+        "date": [["2025-10-10", 0]]
+      },
+      {
+        "topic": "数据存储系统",
+        "date": [["2025-10-12", 0]]
+      }
+    ]
+  },
+  {
+    "stu_name": "studentA",
+    "img": "/static/img/member-02.jpg",
+    "username": "stuwangqiyu",
+    "password": "123456",
+    "email": "peppapigwqy@gmail.com",
+    "teacher": "teacherB",
+    "learning_goals": [
+      "大数据基础概念",
+      "数据获取",
+      "数据质量与预处理",
+      "数据存储系统"
+    ],
+    "preference": {
+      "course_topic": [
+        {
+          "name": "大数据基础分析",
+          "hierarchy": "great-grandchildren"
+        },
+        { "name": "数据存储", "hierarchy": "great-grandchildren" }
+      ],
+      "course_type": [{ "name": "在线课程" }, { "name": "实践课程" }]
+    },
+    "progress": [
+      {
+        "topic": "大数据基础概念",
+        "date": [
+          ["2025-09-01", 0],
+          ["2025-09-05", 40],
+          ["2025-09-07", 60],
+          ["2025-09-10", 80],
+          [null, null],
+          ["2025-09-25", 90],
+          ["2025-09-28", 100]
+        ]
+      },
+      {
+        "topic": "数据获取",
+        "date": [
+          ["2025-09-03", 0],
+          ["2025-09-04", 20],
+          ["2025-09-06", 35],
+          [null, null],
+          ["2025-09-14", 70],
+          ["2025-09-16", 100]
+        ]
+      },
+      {
+        "topic": "数据质量与预处理",
+        "date": [
+          ["2025-10-03", 0],
+          ["2025-10-04", 10]
+        ]
+      },
+      {
+        "topic": "数据存储系统",
+        "date": [["2025-10-05", 0]]
+      },
+      {
+        "topic": "数据处理系统",
+        "date": [["2025-10-06", 0]]
+      },
+      {
+        "topic": "大数据平台与工具",
+        "date": [["2025-10-08", 0]]
+      },
+      {
+        "topic": "大数据应用与挑战",
+        "date": [["2025-10-10", 0]]
+      },
+      {
+        "topic": "数据存储系统",
+        "date": [["2025-10-12", 0]]
+      }
+    ]
+  },
+  {
+    "stu_name": "studentB",
+    "img": "static/img/member-01.jpg",
+    "username": "stuliuyiming",
+    "password": "123456",
+    "email": "",
+    "teacher": "teacherB",
+    "learning_goals": ["大数据开发", "参加数据分析比赛"],
+    "preference": {
+      "course_topic": [
+        {
+          "name": "大数据基础分析",
+          "hierarchy": "great-grandchildren"
+        },
+        { "name": "数据存储", "hierarchy": "great-grandchildren" }
+      ],
+      "course_type": [{ "name": "电子版书籍" }, { "name": "项目比赛" }]
+    },
+    "progress": [
+      {
+        "topic": "大数据基础概念",
+        "date": [
+          ["2025-09-01", 0],
+          ["2025-09-05", 40],
+          ["2025-09-07", 60],
+          ["2025-09-10", 80],
+          [null, null],
+          ["2025-09-25", 90],
+          ["2025-09-28", 100]
+        ]
+      },
+      {
+        "topic": "数据获取",
+        "date": [
+          ["2025-09-03", 0],
+          ["2025-09-04", 20],
+          ["2025-09-06", 35],
+          [null, null],
+          ["2025-09-14", 70],
+          ["2025-09-16", 100]
+        ]
+      },
+      {
+        "topic": "数据质量与预处理",
+        "date": [
+          ["2025-10-03", 0],
+          ["2025-10-04", 10]
+        ]
+      },
+      {
+        "topic": "数据存储系统",
+        "date": [["2025-10-05", 0]]
+      },
+      {
+        "topic": "数据处理系统",
+        "date": [["2025-10-06", 0]]
+      },
+      {
+        "topic": "大数据平台与工具",
+        "date": [["2025-10-08", 0]]
+      },
+      {
+        "topic": "大数据应用与挑战",
+        "date": [["2025-10-10", 0]]
+      },
+      {
+        "topic": "数据存储系统",
+        "date": [["2025-10-12", 0]]
+      }
+    ]
+  },
+  {
+    "stu_name": "studentC",
+    "img": "/static/img/member-03.jpg",
+    "username": "stumoulongyu",
+    "password": "123456",
+    "teacher": "teacherB",
+    "email": "",
+    "learning_goals": ["通过大数据考试", "参加数据分析比赛"],
+    "preference": {
+      "course_topic": [
+        {
+          "name": "大数据基础分析",
+          "hierarchy": "great-grandchildren"
+        },
+        { "name": "数据存储", "hierarchy": "great-grandchildren" }
+      ],
+      "course_type": [{ "name": "电子版书籍" }, { "name": "考试" }]
+    },
+    "progress": [
+      {
+        "topic": "大数据基础概念",
+        "date": [
+          ["2025-09-01", 0],
+          ["2025-09-05", 40],
+          ["2025-09-07", 60],
+          ["2025-09-10", 80],
+          [null, null],
+          ["2025-09-25", 90],
+          ["2025-09-28", 100]
+        ]
+      },
+      {
+        "topic": "数据获取",
+        "date": [
+          ["2025-09-03", 0],
+          ["2025-09-04", 20],
+          ["2025-09-06", 35],
+          [null, null],
+          ["2025-09-14", 70],
+          ["2025-09-16", 100]
+        ]
+      },
+      {
+        "topic": "数据质量与预处理",
+        "date": [
+          ["2025-10-03", 0],
+          ["2025-10-04", 10]
+        ]
+      },
+      {
+        "topic": "数据存储系统",
+        "date": [["2025-10-05", 0]]
+      },
+      {
+        "topic": "数据处理系统",
+        "date": [["2025-10-06", 0]]
+      },
+      {
+        "topic": "大数据平台与工具",
+        "date": [["2025-10-08", 0]]
+      },
+      {
+        "topic": "大数据应用与挑战",
+        "date": [["2025-10-10", 0]]
+      },
+      {
+        "topic": "数据存储系统",
+        "date": [["2025-10-12", 0]]
+      }
+    ]
+  },
+  {
+    "stu_name": "studentD",
+    "img": "/static/img/member-04.jpg",
+    "username": "stuyuanyijun",
+    "password": "123456",
+    "email": "",
+    "teacher": "teacherB",
     "learning_goals": [
       "大数据基础概念",
       "数据获取",
