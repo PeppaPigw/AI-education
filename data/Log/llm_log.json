@@ -435,5 +435,280 @@
       },
       "system_fingerprint": ""
     }
+  },
+  {
+    "timestamp": "2025-11-09T11:30:24.641940",
+    "module": "frontend.quizpage",
+    "metadata": {
+      "function": "generateQuestions",
+      "topic": "商务智能的发展过程"
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "# 角色与任务 🎯\n你是一位资深的**教育评估专家**和**专业命题人**。你的任务是根据给定的核心主题，生成一套高质量、严谨的测验题。\n\n# 核心主题\n我们的课程是大数据分析基础。因此题目与大数据相关。\n本套测验的核心主题是：**商务智能的发展过程**\n\n# 质量与严谨性要求 🧐\n1.  **专业性**：题目必须反映该主题的核心概念和关键知识点。\n2.  **严谨性**：问题表述清晰无歧义，答案唯一且正确。\n3.  **迷惑性（选择题）**：错误选项 (Distractors) 必须具有高度的迷惑性，是基于常见误解设计的，而不能是明显无关的选项。\n\n# 数量与格式要求 (【强制】)\n请**严格且仅**输出一个符合以下格式的 JSON 对象。**禁止**在 JSON 对象前后添加任何开场白、解释、总结或 Markdown 标记 (如 ```json ... ```)。\n\n**数量**：必须包含 **8 个** `single-choice` 题目 和 **2 个** `short-answer` 题目。\n\n!!!注意fillinblank是简答题而不是填空题。选择题需要给出答案。选择题包含三个字段[question,options,right-answer]。主观题包含一个字段\"question\"\n\n**JSON 格式**：\n{\n  \"title\": \"商务智能的发展过程\",\n  \"single-choice\": [\n    {\n      \"question\": \"（这里是第 1 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 3 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 4 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 5 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 6 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 7 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 8 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"（这里是第 1 个简答题）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个简答题）\"\n    }\n  ]\n}\n再次提示：\n1.主观题不是填空题，应该是答题者用一段话回答。\n2. 选择题必须把答案一起输出在json中"
+        }
+      ]
+    },
+    "response": {
+      "id": "019a66aa2ea5e81868ddef5f732c6132",
+      "object": "chat.completion",
+      "created": 1762659020,
+      "model": "inclusionAI/Ling-mini-2.0",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"title\": \"商务智能的发展过程\",\n  \"single-choice\": [\n    {\n      \"question\": \"商务智能的起源可以追溯到哪个年代？\",\n      \"options\": [\"A. 20世纪50年代\", \"B. 20世纪70年代\", \"C. 20世纪80年代\", \"D. 21世纪初\"]\",\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"商务智能（BI）作为独立学科的概念首次在哪一年被提出？\",\n      \"options\": [\"A. 1989\", \"B. 1996\", \"C. 2001\", \"D. 2004\"]\",\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"哪一年Gartner首次正式提出“商务智能”这一术语？\",\n      \"options\": [\"A. 1989\", \"B. 1991\", \"C. 1996\", \"D. 2000\"]\",\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"商务智能系统主要依赖哪些技术？\",\n      \"options\": [\"A. 数据仓库、OLAP、数据挖掘\", \"B. 人工智能、区块链、云计算\", \"C. 自然语言处理、图像识别\", \"D. 物联网、边缘计算\"]\",\n      \"right-answer\": \"A\"\n    },\n    {\n      \"question\": \"哪一年商业报告生成系统（BRMS）成为商务智能的重要组成部分？\",\n      \"options\": [\"A. 1980年代\", \"B. 1990年代\", \"C. 2000年代\", \"D. 2010年代\"]\",\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"商务智能的发展阶段中，哪一个阶段强调实时分析和决策支持？\",\n      \"options\": [\"A. 报告阶段\", \"B. 仪表盘和分析阶段\", \"C. 预测分析和优化阶段\", \"D. 认知智能和自动化阶段\"]\",\n      \"right-answer\": \"D\"\n    },\n    {\n      \"question\": \"在大数据时代，商务智能强调哪些新的能力？\",\n      \"options\": [\"A. 实时处理、非结构化数据集成\", \"B. 数据加密、身份认证\", \"C. 网络安全、防火墙配置\", \"D. 数据库管理、SQL查询\"]\",\n      \"right-answer\": \"A\"\n    },\n    {\n      \"question\": \"哪一年“Business Intelligence and E-Business”一文首次系统阐述了商务智能与企业电子化的关系？\",\n      \"options\": [\"A. 1996\", \"B. 1999\", \"C. 2003\", \"D. 2006\"]\",\n      \"right-answer\": \"B\"\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"请简述商务智能的发展历程分为哪几个主要阶段？\"\n    },\n    {\n      \"question\": \"在大数据背景下，商务智能有哪些新的发展趋势？\"\n    }\n  ]\n}"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1003,
+        "completion_tokens": 722,
+        "total_tokens": 1725
+      },
+      "system_fingerprint": ""
+    }
+  },
+  {
+    "timestamp": "2025-11-09T11:30:32.125073",
+    "module": "frontend.quizpage",
+    "metadata": {
+      "function": "generateQuestions",
+      "topic": "商务智能的发展过程"
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "# 角色与任务 🎯\n你是一位资深的**教育评估专家**和**专业命题人**。你的任务是根据给定的核心主题，生成一套高质量、严谨的测验题。\n\n# 核心主题\n我们的课程是大数据分析基础。因此题目与大数据相关。\n本套测验的核心主题是：**商务智能的发展过程**\n\n# 质量与严谨性要求 🧐\n1.  **专业性**：题目必须反映该主题的核心概念和关键知识点。\n2.  **严谨性**：问题表述清晰无歧义，答案唯一且正确。\n3.  **迷惑性（选择题）**：错误选项 (Distractors) 必须具有高度的迷惑性，是基于常见误解设计的，而不能是明显无关的选项。\n\n# 数量与格式要求 (【强制】)\n请**严格且仅**输出一个符合以下格式的 JSON 对象。**禁止**在 JSON 对象前后添加任何开场白、解释、总结或 Markdown 标记 (如 ```json ... ```)。\n\n**数量**：必须包含 **8 个** `single-choice` 题目 和 **2 个** `short-answer` 题目。\n\n!!!注意fillinblank是简答题而不是填空题。选择题需要给出答案。选择题包含三个字段[question,options,right-answer]。主观题包含一个字段\"question\"\n\n**JSON 格式**：\n{\n  \"title\": \"商务智能的发展过程\",\n  \"single-choice\": [\n    {\n      \"question\": \"（这里是第 1 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 3 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 4 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 5 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 6 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 7 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 8 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"（这里是第 1 个简答题）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个简答题）\"\n    }\n  ]\n}\n再次提示：\n1.主观题不是填空题，应该是答题者用一段话回答。\n2. 选择题必须把答案一起输出在json中"
+        }
+      ]
+    },
+    "response": {
+      "id": "019a66aa4e62a410c860c75e66510c3e",
+      "object": "chat.completion",
+      "created": 1762659028,
+      "model": "inclusionAI/Ling-mini-2.0",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"title\": \"商务智能的发展过程\",\n  \"single-choice\": [\n    {\n      \"question\": \"商务智能的起源可以追溯到哪个年代？\",\n      \"options\": [\"A. 20世纪50年代\", \"B. 20世纪70年代\", \"C. 20世纪90年代\", \"D. 21世纪初\"]\",\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"以下哪一项不是商务智能早期发展的关键技术？\",\n      \"options\": [\"A. 数据仓库\", \"B. 关系型数据库\", \"C. ETL工具\", \"D. 人工智能\"]\",\n      \"right-answer\": \"D\"\n    },\n    {\n      \"question\": \"商务智能从报告系统向实时分析转变的关键推动力是什么？\",\n      \"options\": [\"A. 硬件性能提升\", \"B. 数据量爆炸增长\", \"C. 用户需求变化\", \"D. 互联网普及\"]\",\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"下列哪一项不属于商务智能的核心组件？\",\n      \"options\": [\"A. 数据可视化\", \"B. 文本分析\", \"C. 预测分析\", \"D. 知识发现\"]\",\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"商务智能平台最早是基于什么技术架构发展的？\",\n      \"options\": [\"A. 云计算\", \"B. 分布式计算\", \"C. 数据挖掘\", \"D. 机器学习\"]\",\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"在商务智能发展的哪个阶段，引入了数据挖掘技术？\",\n      \"options\": [\"A. 第一阶段（报告系统）\", \"B. 第二阶段（数据仪表盘）\", \"C. 第三阶段（预测分析）\", \"D. 第四阶段（实时分析）\"]\",\n      \"right-answer\": \"C\"\n    },\n    {\n      \"question\": \"以下哪项不是推动商务智能向商业决策智能化演进的关键因素？\",\n      \"options\": [\"A. 人工智能技术的应用\", \"B. 大数据处理能力的提升\", \"C. 传统报表系统的升级\", \"D. 移动互联网的普及\"]\",\n      \"right-answer\": \"C\"\n    },\n    {\n      \"question\": \"商务智能与大数据的关系是？\",\n      \"options\": [\"A. 商务智能是大数据的一个子集\", \"B. 大数据是商务智能的重要基础\", \"C. 商务智能依赖大数据技术\", \"D. 以上都对\"]\",\n      \"right-answer\": \"D\"\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"请简述商务智能从1.0到4.0的发展历程。\"\n    },\n    {\n      \"question\": \"当前商务智能发展的新趋势有哪些？请列举并简要说明。\"\n    }\n  ]\n}"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1003,
+        "completion_tokens": 668,
+        "total_tokens": 1671
+      },
+      "system_fingerprint": ""
+    }
+  },
+  {
+    "timestamp": "2025-11-09T11:30:59.056048",
+    "module": "frontend.quizpage",
+    "metadata": {
+      "function": "generateQuestions",
+      "topic": "DIKW金字塔模型"
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "# 角色与任务 🎯\n你是一位资深的**教育评估专家**和**专业命题人**。你的任务是根据给定的核心主题，生成一套高质量、严谨的测验题。\n\n# 核心主题\n我们的课程是大数据分析基础。因此题目与大数据相关。\n本套测验的核心主题是：**DIKW金字塔模型**\n\n# 质量与严谨性要求 🧐\n1.  **专业性**：题目必须反映该主题的核心概念和关键知识点。\n2.  **严谨性**：问题表述清晰无歧义，答案唯一且正确。\n3.  **迷惑性（选择题）**：错误选项 (Distractors) 必须具有高度的迷惑性，是基于常见误解设计的，而不能是明显无关的选项。\n\n# 数量与格式要求 (【强制】)\n请**严格且仅**输出一个符合以下格式的 JSON 对象。**禁止**在 JSON 对象前后添加任何开场白、解释、总结或 Markdown 标记 (如 ```json ... ```)。\n\n**数量**：必须包含 **8 个** `single-choice` 题目 和 **2 个** `short-answer` 题目。\n\n!!!注意fillinblank是简答题而不是填空题。选择题需要给出答案。选择题包含三个字段[question,options,right-answer]。主观题包含一个字段\"question\"\n\n**JSON 格式**：\n{\n  \"title\": \"DIKW金字塔模型\",\n  \"single-choice\": [\n    {\n      \"question\": \"（这里是第 1 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 3 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 4 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 5 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 6 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 7 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 8 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"（这里是第 1 个简答题）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个简答题）\"\n    }\n  ]\n}\n再次提示：\n1.主观题不是填空题，应该是答题者用一段话回答。\n2. 选择题必须把答案一起输出在json中"
+        }
+      ]
+    },
+    "response": {
+      "id": "019a66aab8f64f73504946441ca00305",
+      "object": "chat.completion",
+      "created": 1762659056,
+      "model": "inclusionAI/Ling-mini-2.0",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "```json\n{\n  \"title\": \"DIKW金字塔模型\",\n  \"single-choice\": [\n    {\n      \"question\": \"DIKW金字塔模型描述了数据、信息、知识和智慧之间的层级关系。其中，位于金字塔最底层的是？\",\n      \"options\": [\"A. 数据\", \"B. 信息\", \"C. 知识\", \"D. 智慧\"]\n    },\n    {\n      \"question\": \"在DIKW模型中，数据经过处理后成为？\",\n      \"options\": [\"A. 数据\", \"B. 信息\", \"C. 知识\", \"D. 智慧\"]\n    },\n    {\n      \"question\": \"DIKW金字塔模型表明，智慧是建立在什么之上的？\",\n      \"options\": [\"A. 数据\", \"B. 信息\", \"C. 知识\", \"D. 以上都不是\"]\n    },\n    {\n      \"question\": \"以下哪项最能体现DIKW模型的层级结构？\",\n      \"options\": [\"A. 数据 → 信息 → 知识 → 智慧\", \"B. 信息 → 数据 → 知识 → 智慧\", \"C. 知识 → 信息 → 数据 → 智慧\", \"D. 智慧 → 知识 → 信息 → 数据\"]\n    },\n    {\n      \"question\": \"在DIKW模型中，信息是对数据进行处理后产生的什么？\",\n      \"options\": [\"A. 原始事实\", \"B. 上下文解释\", \"C. 更高级别的抽象\", \"D. 决策建议\"]\n    },\n    {\n      \"question\": \"DIKW模型强调，随着抽象层次的提高，内容的？\",\n      \"options\": [\"A. 精确度降低\", \"B. 精确度增加\", \"C. 范围缩小\", \"D. 范围扩大\"]\n    },\n    {\n      \"question\": \"智慧在DIKW模型中处于最高层级，它依赖于？\",\n      \"options\": [\"A. 数据\", \"B. 信息\", \"C. 知识\", \"D. 以上全部\"]\n    },\n    {\n      \"question\": \"如果数据是未经处理的原始事实，那么信息是对数据的？\",\n      \"options\": [\"A. 存储\", \"B. 删除\", \"C. 加工\", \"D. 忽略\"]\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"请简要说明DIKW金字塔模型中各层级的含义及其相互关系。\"\n    },\n    {\n      \"question\": \"结合大数据分析的实际案例，说明从数据到智慧过程中每一步的作用和意义。\"\n    }\n  ]\n}\n```"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1003,
+        "completion_tokens": 561,
+        "total_tokens": 1564
+      },
+      "system_fingerprint": ""
+    }
+  },
+  {
+    "timestamp": "2025-11-09T11:31:16.116169",
+    "module": "frontend.quizpage",
+    "metadata": {
+      "function": "generateQuestions",
+      "topic": "暗网(DarkWeb)"
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "# 角色与任务 🎯\n你是一位资深的**教育评估专家**和**专业命题人**。你的任务是根据给定的核心主题，生成一套高质量、严谨的测验题。\n\n# 核心主题\n我们的课程是大数据分析基础。因此题目与大数据相关。\n本套测验的核心主题是：**暗网(DarkWeb)**\n\n# 质量与严谨性要求 🧐\n1.  **专业性**：题目必须反映该主题的核心概念和关键知识点。\n2.  **严谨性**：问题表述清晰无歧义，答案唯一且正确。\n3.  **迷惑性（选择题）**：错误选项 (Distractors) 必须具有高度的迷惑性，是基于常见误解设计的，而不能是明显无关的选项。\n\n# 数量与格式要求 (【强制】)\n请**严格且仅**输出一个符合以下格式的 JSON 对象。**禁止**在 JSON 对象前后添加任何开场白、解释、总结或 Markdown 标记 (如 ```json ... ```)。\n\n**数量**：必须包含 **8 个** `single-choice` 题目 和 **2 个** `short-answer` 题目。\n\n!!!注意fillinblank是简答题而不是填空题。选择题需要给出答案。选择题包含三个字段[question,options,right-answer]。主观题包含一个字段\"question\"\n\n**JSON 格式**：\n{\n  \"title\": \"暗网(DarkWeb)\",\n  \"single-choice\": [\n    {\n      \"question\": \"（这里是第 1 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 3 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 4 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 5 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 6 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 7 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 8 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"（这里是第 1 个简答题）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个简答题）\"\n    }\n  ]\n}\n再次提示：\n1.主观题不是填空题，应该是答题者用一段话回答。\n2. 选择题必须把答案一起输出在json中"
+        }
+      ]
+    },
+    "response": {
+      "id": "019a66aafaffb69473f0fc56ece15010",
+      "object": "chat.completion",
+      "created": 1762659072,
+      "model": "inclusionAI/Ling-mini-2.0",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"title\": \"暗网(DarkWeb)\",\n  \"single-choice\": [\n    {\n      \"question\": \"暗网区别于清网的唯一特征是访问方式必须使用特殊浏览器。以下哪项不属于支持暗网访问的浏览器？\",\n      \"options\": [\"A. Tor浏览器\", \"B. 百度浏览器\", \"C. I2P浏览器\", \"D. Freenet浏览器\"]\n    },\n    {\n      \"question\": \"在暗网中，用户可以通过加密通信隐藏身份。以下哪项不是暗网中常见的匿名协议？\",\n      \"options\": [\"A. I2P\", \"B. Tor\", \"C. HTTP\", \"D. Freenet\"]\n    },\n    {\n      \"question\": \"暗网上的内容通常具有高度隐蔽性。以下哪项描述的是暗网中最常见的非法内容？\",\n      \"options\": [\"A. 学术资料分享\", \"B. 加密货币交易\", \"C. 毒品与武器交易\", \"D. 社交媒体交流\"]\n    },\n    {\n      \"question\": \"暗网的深层结构由多层网络组成。以下哪项不属于暗网深层网络的一部分？\",\n      \"options\": [\"A. Clearnet\", \"B. I2P网络\", \"C. Tor网络\", \"D. Freenet网络\"]\n    },\n    {\n      \"question\": \"暗网中数据的传输通常采用加密方式。以下哪项加密方式不是暗网中常用的？\",\n      \"options\": [\"A. AES-256\", \"B. RSA-2048\", \"C. DES\", \"D. PGP\"]\n    },\n    {\n      \"question\": \"暗网的一个主要用途是为用户提供匿名表达的平台。以下哪项最可能是用户在暗网中进行的活动？\",\n      \"options\": [\"A. 举报腐败\", \"B. 政治言论\", \"C. 人才交流\", \"D. 合法网购\"]\n    },\n    {\n      \"question\": \"在暗网中，数据的存储方式也较为特殊。以下哪项描述的是暗网数据常见的存储形式？\",\n      \"options\": [\"A. 中心化数据库\", \"B. 去中心化网络\", \"C. 本地表存储\", \"D. 公开云存储\"]\n    },\n    {\n      \"question\": \"以下哪项不属于暗网的技术或协议？\",\n      \"options\": [\"A. Onion路由\", \"B. P2P文件共享\", \"C. I2P网络\", \"D. 区块链技术\"]\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"请简述暗网与清网的主要区别，并说明其技术基础。\"\n    },\n    {\n      \"question\": \"请列举并简要说明暗网中三种常见的匿名协议及其用途。\"\n    }\n  ]\n}"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1005,
+        "completion_tokens": 626,
+        "total_tokens": 1631
+      },
+      "system_fingerprint": ""
+    }
+  },
+  {
+    "timestamp": "2025-11-09T11:31:46.157001",
+    "module": "frontend.quizpage",
+    "metadata": {
+      "function": "evaluateTextAnswer",
+      "question": "请简述暗网与清网的主要区别，并说明其技术基础。",
+      "answer": "暗网与清网的主要区别在于访问权限和可发现性。清网是互联网的常规部分，可以通过标准搜索引擎（如百度、Google）访问，而暗网则需要特殊软件和权限才能进入，通常用于非法交易或匿名通信。"
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "请你作为一个评分老师，评判以下学生的简答题答案。\n\n题目：请简述暗网与清网的主要区别，并说明其技术基础。\n\n学生答案：暗网与清网的主要区别在于访问权限和可发现性。清网是互联网的常规部分，可以通过标准搜索引擎（如百度、Google）访问，而暗网则需要特殊软件和权限才能进入，通常用于非法交易或匿名通信。\n\n评分标准：\n1. 答案是否理解并回答了问题的核心内容\n2. 答案是否有实质性的内容（不是空洞或敷衍的回答）\n3. 答案的逻辑是否清晰、表达是否连贯\n4. 答案是否包含了相关的知识点\n\n如果答案满足以上大部分标准，有一定的质量和深度，请回复\"1|优秀的回答！你的答案涵盖了关键要点。\"\n如果答案基本合理但不够完整或深入，请回复\"1|回答正确，但还可以更加深入。\"\n如果答案明显错误、不相关、过于简单或空洞，请回复\"0|回答需要改进。请确保理解题目要求，并提供更具体的内容。\"\n\n输出格式：[分数]|[反馈]，其中分数为0或1。"
+        }
+      ]
+    },
+    "response": {
+      "id": "019a66ab7a42d9ea14c45efdbe17391f",
+      "object": "chat.completion",
+      "created": 1762659105,
+      "model": "inclusionAI/Ling-mini-2.0",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "1|回答正确，但还可以更加深入。\n\n学生的答案简要地描述了暗网与清网在访问权限和可发现性上的区别，并提到了清网可以通过标准搜索引擎访问，暗网则需要特殊软件和权限。虽然这回答了对问题的基本要求，但还可以更加深入。例如：\n\n- 可以进一步说明暗网使用的特殊技术，如Tor网络、I2P等。\n- 可以提及清网和暗网在数据处理、隐私保护等方面的不同。\n- 可以扩展关于暗网用途（如对言论自由的保护、记者的匿名通信等）和风险（如非法交易、恶意软件传播等）的讨论。\n\n这样的深入会提升答案的质量，使其更具学术价值和现实意义。"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 250,
+        "completion_tokens": 142,
+        "total_tokens": 392
+      },
+      "system_fingerprint": ""
+    }
+  },
+  {
+    "timestamp": "2025-11-09T11:32:24.406970",
+    "module": "frontend.quizpage",
+    "metadata": {
+      "function": "evaluateTextAnswer",
+      "question": "请列举并简要说明暗网中三种常见的匿名协议及其用途。",
+      "answer": "不知道"
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "请你作为一个评分老师，评判以下学生的简答题答案。\n\n题目：请列举并简要说明暗网中三种常见的匿名协议及其用途。\n\n学生答案：不知道\n\n评分标准：\n1. 答案是否理解并回答了问题的核心内容\n2. 答案是否有实质性的内容（不是空洞或敷衍的回答）\n3. 答案的逻辑是否清晰、表达是否连贯\n4. 答案是否包含了相关的知识点\n\n如果答案满足以上大部分标准，有一定的质量和深度，请回复\"1|优秀的回答！你的答案涵盖了关键要点。\"\n如果答案基本合理但不够完整或深入，请回复\"1|回答正确，但还可以更加深入。\"\n如果答案明显错误、不相关、过于简单或空洞，请回复\"0|回答需要改进。请确保理解题目要求，并提供更具体的内容。\"\n\n输出格式：[分数]|[反馈]，其中分数为0或1。"
+        }
+      ]
+    },
+    "response": {
+      "id": "019a66ac11d3de8a22dbb8a0d381685f",
+      "object": "chat.completion",
+      "created": 1762659144,
+      "model": "inclusionAI/Ling-mini-2.0",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "0|回答需要改进。请确保理解题目要求，并提供更具体的内容。"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 204,
+        "completion_tokens": 15,
+        "total_tokens": 219
+      },
+      "system_fingerprint": ""
+    }
+  },
+  {
+    "timestamp": "2025-11-09T11:32:58.394277",
+    "module": "frontend.quizpage",
+    "metadata": {
+      "function": "generateQuestions",
+      "topic": "数据获取"
+    },
+    "request": {
+      "model": "inclusionAI/Ling-mini-2.0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "# 角色与任务 🎯\n你是一位资深的**教育评估专家**和**专业命题人**。你的任务是根据给定的核心主题，生成一套高质量、严谨的测验题。\n\n# 核心主题\n我们的课程是大数据分析基础。因此题目与大数据相关。\n本套测验的核心主题是：**数据获取**\n\n# 质量与严谨性要求 🧐\n1.  **专业性**：题目必须反映该主题的核心概念和关键知识点。\n2.  **严谨性**：问题表述清晰无歧义，答案唯一且正确。\n3.  **迷惑性（选择题）**：错误选项 (Distractors) 必须具有高度的迷惑性，是基于常见误解设计的，而不能是明显无关的选项。\n\n# 数量与格式要求 (【强制】)\n请**严格且仅**输出一个符合以下格式的 JSON 对象。**禁止**在 JSON 对象前后添加任何开场白、解释、总结或 Markdown 标记 (如 ```json ... ```)。\n\n**数量**：必须包含 **8 个** `single-choice` 题目 和 **2 个** `short-answer` 题目。\n\n!!!注意fillinblank是简答题而不是填空题。选择题需要给出答案。选择题包含三个字段[question,options,right-answer]。主观题包含一个字段\"question\"\n\n**JSON 格式**：\n{\n  \"title\": \"数据获取\",\n  \"single-choice\": [\n    {\n      \"question\": \"（这里是第 1 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 3 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 4 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 5 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 6 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 7 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    },\n    {\n      \"question\": \"（这里是第 8 个选择题问题）\",\n      \"options\": [\"A. 选项A\", \"B. 选项B\", \"C. 选项C\", \"D. 选项D\"],\n      \"right-answer\": \"（A, B, C 或 D）\"\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"（这里是第 1 个简答题）\"\n    },\n    {\n      \"question\": \"（这里是第 2 个简答题）\"\n    }\n  ]\n}\n再次提示：\n1.主观题不是填空题，应该是答题者用一段话回答。\n2. 选择题必须把答案一起输出在json中"
+        }
+      ]
+    },
+    "response": {
+      "id": "019a66ac897270186ba0c5f9f9ba7899",
+      "object": "chat.completion",
+      "created": 1762659174,
+      "model": "inclusionAI/Ling-mini-2.0",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "{\n  \"title\": \"数据获取\",\n  \"single-choice\": [\n    {\n      \"question\": \"在大数据背景下，哪种方式最适合实时监测社交媒体情绪变化？\",\n      \"options\": [\"A. 电子邮件调查\", \"B. API接口抓取\", \"C. 纸质问卷\", \"D. 电话访谈\"] ,\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"物联网设备产生的大量数据通常通过哪种方式传输到云端进行分析？\",\n      \"options\": [\"A. 蓝牙连接\", \"B. MQTT协议\", \"C. USB直连\", \"D. 光纤\"] ,\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"在数据仓库建设中，哪种技术用于从非结构化数据源中提取有价值信息？\",\n      \"options\": [\"A. 机器学习\", \"B. 自然语言处理\", \"C. 数据挖掘\", \"D. 图像识别\"] ,\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"对于需要高精度定位的用户行为数据，最可能采用哪种采集手段？\",\n      \"options\": [\"A. 批量文件导入\", \"B. GPS实时追踪\", \"C. 短信验证码\", \"D. 图片识别\"] ,\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"在移动端App开发中，为了收集用户点击流数据，通常嵌入的组件是？\",\n      \"options\": [\"A. 数据清洗模块\", \"B. 用户行为追踪SDK\", \"C. 数据库优化器\", \"D. 网络请求管理器\"] ,\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"当传感器网络覆盖范围有限时，为扩展监测区域通常采用哪种拓扑结构？\",\n      \"options\": [\"A. 总线型\", \"B. 网状型\", \"C. 环型\", \"D. 星型\"] ,\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"在金融行业，用于高频交易数据采集的专用硬件通常称为什么？\",\n      \"options\": [\"A. 服务器集群\", \"B. FPGA加速卡\", \"C. 移动硬盘\", \"D. 云计算实例\"] ,\n      \"right-answer\": \"B\"\n    },\n    {\n      \"question\": \"面对非结构化的日志文件，哪种工具组合最能高效完成数据提取与清洗工作？\",\n      \"options\": [\"A. Photoshop + Excel\", \"B. Splunk + Pandas\", \"C. Word + Access\", \"D. Illustrator + SQL\"] ,\n      \"right-answer\": \"B\"\n    }\n  ],\n  \"short-answer\": [\n    {\n      \"question\": \"请简要说明大数据获取过程中数据采集阶段面临的三个主要挑战，并针对每个挑战提出至少一种解决方案。\"\n    },\n    {\n      \"question\": \"描述从物联网设备获取传感器数据流到构建实时分析平台的完整流程，并指出其中关键的数据转换步骤。\"\n    }\n  ]\n}"
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 999,
+        "completion_tokens": 678,
+        "total_tokens": 1677
+      },
+      "system_fingerprint": ""
+    }
   }
 ]
