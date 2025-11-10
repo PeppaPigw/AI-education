@@ -106,7 +106,7 @@ async function generateQuestions(topic) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "deepseek-ai/DeepSeek-V3.2-Exp",
+        model: "zai-org/GLM-4.5-Air",
         messages: [
           {
             role: "user",
@@ -130,7 +130,7 @@ async function generateQuestions(topic) {
         body: JSON.stringify({
           messages: [{ role: "user", content: prompt }],
           response: data,
-          model: "deepseek-ai/DeepSeek-V3.2-Exp",
+          model: "zai-org/GLM-4.5-Air",
           module: "frontend.quizpage",
           metadata: { function: "generateQuestions", topic: topic },
         }),
@@ -355,7 +355,7 @@ async function evaluateTextAnswer(question, answer) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "deepseek-ai/DeepSeek-V3.2-Exp",
+        model: "inclusionAI/Ling-mini-2.0",
         messages: [
           {
             role: "user",
@@ -375,7 +375,7 @@ async function evaluateTextAnswer(question, answer) {
         body: JSON.stringify({
           messages: [{ role: "user", content: prompt }],
           response: data,
-          model: "deepseek-ai/DeepSeek-V3.2-Exp",
+          model: "zai-org/GLM-4.5-Air",
           module: "frontend.quizpage",
           metadata: {
             function: "evaluateTextAnswer",

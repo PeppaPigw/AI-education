@@ -23,6 +23,10 @@
           <span class="nav-icon">🧑‍🎓</span>
           <span class="nav-text">学生管理</span>
         </div>
+        <div class="nav-item" onclick="switchTab('heatmap')">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">课程热度</span>
+        </div>
       </div>
 
       <div class="main-content">
@@ -40,6 +44,17 @@
             <p>查看学生学习情况和进度</p>
           </div>
           <div class="students-grid" id="studentsGrid"></div>
+        </div>
+
+        <div id="heatmap-section" class="content-section">
+          <div class="header">
+            <h2>课程热度分析</h2>
+            <p>查看各章节的学习热度分布</p>
+          </div>
+          <div class="heatmap-container">
+            <div id="heatmapChart"></div>
+            <div id="scoresChart"></div>
+          </div>
         </div>
       </div>
     </div>

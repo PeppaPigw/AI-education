@@ -12,6 +12,7 @@ async function loadData() {
 
     renderCourseTree();
     renderStudents();
+    renderHeatmap();
   } catch (error) {
     console.error("加载数据失败:", error);
   }
@@ -388,4 +389,294 @@ function showProgress(studentName) {
 
 function closeModal() {
   document.getElementById("progressModal").classList.remove("show");
+}
+
+function renderHeatmap() {
+  const topicStats = {};
+
+  studentData.forEach((student) => {
+    if (!student.progress) return;
+
+    student.progress.forEach((prog) => {
+      const topic = prog.topic;
+      if (!topicStats[topic]) {
+        topicStats[topic] = {
+          totalProgress: 0,
+          studentCount: 0,
+          progressList: [],
+        };
+      }
+
+      const latestProgress = prog.date
+        .filter((d) => d[0] !== null && d[1] !== null)
+        .map((d) => d[1])
+        .pop();
+
+      if (latestProgress !== undefined) {
+        topicStats[topic].totalProgress += latestProgress;
+        topicStats[topic].studentCount += 1;
+        topicStats[topic].progressList.push(latestProgress);
+      }
+    });
+  });
+
+  const topics = Object.keys(topicStats);
+  const heatmapData = topics.map((topic, index) => {
+    const stats = topicStats[topic];
+    const avgProgress =
+      stats.studentCount > 0 ? stats.totalProgress / stats.studentCount : 0;
+    return {
+      name: topic,
+      value: [index, avgProgress, stats.studentCount],
+      avgProgress: avgProgress,
+      studentCount: stats.studentCount,
+    };
+  });
+
+  const heatmapChart = echarts.init(document.getElementById("heatmapChart"));
+
+  const heatmapOption = {
+    title: {
+      text: "课程章节学习热度分布",
+      left: "center",
+      textStyle: { fontSize: 18, color: "#333", fontWeight: 600 },
+    },
+    tooltip: {
+      trigger: "item",
+      backgroundColor: "rgba(50,50,50,0.9)",
+      borderRadius: 8,
+      textStyle: { color: "#fff" },
+      formatter: function (params) {
+        const dataIndex = params.dataIndex;
+        const topic = topics[dataIndex];
+        const stats = topicStats[topic];
+        return `
+          <div style="padding: 5px;">
+            <strong>${topic}</strong><br/>
+            平均进度: ${Math.round(
+              stats.totalProgress / stats.studentCount
+            )}%<br/>
+            学习人数: ${stats.studentCount}人
+          </div>
+        `;
+      },
+    },
+    grid: {
+      left: "3%",
+      right: "7%",
+      bottom: "3%",
+      top: "15%",
+      containLabel: true,
+    },
+    xAxis: {
+      type: "value",
+      name: "平均学习进度 (%)",
+      min: 0,
+      max: 100,
+      axisLine: { lineStyle: { color: "#aaa" } },
+      splitLine: { lineStyle: { type: "dashed", color: "#ddd" } },
+    },
+    yAxis: {
+      type: "category",
+      data: topics,
+      axisLine: { lineStyle: { color: "#aaa" } },
+      axisLabel: {
+        fontSize: 12,
+        color: "#666",
+      },
+    },
+    series: [
+      {
+        type: "bar",
+        data: heatmapData.map((d) => d.avgProgress),
+        itemStyle: {
+          color: function (params) {
+            const value = params.value;
+            if (value >= 80) return "#7a6ad8";
+            if (value >= 60) return "#91CC75";
+            if (value >= 40) return "#FAC858";
+            if (value >= 20) return "#EE6666";
+            return "#ccc";
+          },
+          borderRadius: [0, 4, 4, 0],
+        },
+        label: {
+          show: true,
+          position: "right",
+          formatter: function (params) {
+            const topic = topics[params.dataIndex];
+            const stats = topicStats[topic];
+            const avgProgress = Math.round(
+              stats.totalProgress / stats.studentCount
+            );
+            return `${avgProgress}% (${stats.studentCount}人)`;
+          },
+          fontSize: 11,
+          color: "#666",
+        },
+        barWidth: "60%",
+        animationDuration: 1500,
+        animationEasing: "cubicOut",
+      },
+    ],
+  };
+
+  heatmapChart.setOption(heatmapOption);
+  window.addEventListener("resize", () => heatmapChart.resize());
+
+  renderScoresDistribution();
+}
+
+function renderScoresDistribution() {
+  const knowledgePoints = [];
+  const scoreStats = [];
+
+  function collectKnowledgePoints(children, parentName = "") {
+    if (!children) return;
+
+    children.forEach((child) => {
+      if (child.grandchildren) {
+        child.grandchildren.forEach((grand) => {
+          if (grand["great-grandchildren"]) {
+            grand["great-grandchildren"].forEach((great) => {
+              knowledgePoints.push({
+                name: great.name,
+                parent: grand.name,
+                chapter: child.name,
+              });
+            });
+          }
+        });
+      }
+    });
+  }
+
+  if (courseData && courseData.children) {
+    collectKnowledgePoints(courseData.children);
+  }
+
+  knowledgePoints.forEach((point, index) => {
+    const scores = [];
+    let passCount = 0;
+    let failCount = 0;
+    let notLearnedCount = 0;
+
+    studentData.forEach((student) => {
+      if (student.scores && student.scores[index] !== undefined) {
+        const score = student.scores[index];
+        if (score === -1) {
+          notLearnedCount++;
+        } else if (score === 0) {
+          failCount++;
+        } else {
+          passCount++;
+          scores.push(score);
+        }
+      }
+    });
+
+    const avgScore =
+      scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+
+    scoreStats.push({
+      name: point.name,
+      chapter: point.chapter,
+      avgScore: avgScore,
+      passCount: passCount,
+      failCount: failCount,
+      notLearnedCount: notLearnedCount,
+      totalStudents: studentData.length,
+    });
+  });
+
+  const topScores = scoreStats
+    .filter((s) => s.passCount > 0)
+    .sort((a, b) => b.avgScore - a.avgScore)
+    .slice(0, 15);
+
+  const scoresChart = echarts.init(document.getElementById("scoresChart"));
+
+  const scoresOption = {
+    title: {
+      text: "知识点平均成绩 TOP 15",
+      left: "center",
+      textStyle: { fontSize: 18, color: "#333", fontWeight: 600 },
+    },
+    tooltip: {
+      trigger: "axis",
+      backgroundColor: "rgba(50,50,50,0.9)",
+      borderRadius: 8,
+      textStyle: { color: "#fff" },
+      axisPointer: {
+        type: "shadow",
+      },
+      formatter: function (params) {
+        const data = topScores[params[0].dataIndex];
+        return `
+          <div style="padding: 5px;">
+            <strong>${data.name}</strong><br/>
+            章节: ${data.chapter}<br/>
+            平均分: ${Math.round(data.avgScore)}<br/>
+            通过: ${data.passCount}人<br/>
+            未通过: ${data.failCount}人<br/>
+            未学习: ${data.notLearnedCount}人
+          </div>
+        `;
+      },
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      top: "15%",
+      containLabel: true,
+    },
+    xAxis: {
+      type: "category",
+      data: topScores.map((s) => s.name),
+      axisLabel: {
+        rotate: 45,
+        fontSize: 11,
+        color: "#666",
+        interval: 0,
+      },
+      axisLine: { lineStyle: { color: "#aaa" } },
+    },
+    yAxis: {
+      type: "value",
+      name: "平均成绩",
+      min: 0,
+      max: 100,
+      axisLine: { lineStyle: { color: "#aaa" } },
+      splitLine: { lineStyle: { type: "dashed", color: "#ddd" } },
+    },
+    series: [
+      {
+        type: "bar",
+        data: topScores.map((s) => s.avgScore),
+        itemStyle: {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: "#7a6ad8" },
+            { offset: 1, color: "#9b8ee5" },
+          ]),
+          borderRadius: [4, 4, 0, 0],
+        },
+        label: {
+          show: true,
+          position: "top",
+          formatter: function (params) {
+            return Math.round(params.value);
+          },
+          fontSize: 10,
+          color: "#666",
+        },
+        barWidth: "50%",
+        animationDuration: 1500,
+        animationEasing: "cubicOut",
+      },
+    ],
+  };
+
+  scoresChart.setOption(scoresOption);
+  window.addEventListener("resize", () => scoresChart.resize());
 }
