@@ -85,7 +85,7 @@ function generate_QUESTION_TEMPLATE(core_topic) {
 }
 再次提示：
 1.主观题不是填空题，应该是答题者用一段话回答。
-2. 选择题必须把答案一起输出在json中`;
+2. 选择题必须把答案一起输出在json中。**每一个选择题都应当存在right-answer字段**`;
 }
 
 // 从 URL 参数获取主题
@@ -106,7 +106,7 @@ async function generateQuestions(topic) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "inclusionAI/Ling-mini-2.0",
+        model: "deepseek-ai/DeepSeek-V3.2-Exp",
         messages: [
           {
             role: "user",
@@ -130,7 +130,7 @@ async function generateQuestions(topic) {
         body: JSON.stringify({
           messages: [{ role: "user", content: prompt }],
           response: data,
-          model: "inclusionAI/Ling-mini-2.0",
+          model: "deepseek-ai/DeepSeek-V3.2-Exp",
           module: "frontend.quizpage",
           metadata: { function: "generateQuestions", topic: topic },
         }),
@@ -257,6 +257,11 @@ function renderQuestion() {
   } else {
     html += `
                               <textarea class="text-answer" id="textAnswer" placeholder="请在此输入你的答案..."></textarea>
+                              <div class="image-upload-section">
+                                  <label for="imageUpload" class="upload-btn">📷 上传图片答案</label>
+                                  <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                                  <div id="uploadStatus"></div>
+                              </div>
                               <div class="feedback" id="feedback"></div>
                           `;
   }
@@ -350,7 +355,7 @@ async function evaluateTextAnswer(question, answer) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "inclusionAI/Ling-mini-2.0",
+        model: "deepseek-ai/DeepSeek-V3.2-Exp",
         messages: [
           {
             role: "user",
@@ -370,7 +375,7 @@ async function evaluateTextAnswer(question, answer) {
         body: JSON.stringify({
           messages: [{ role: "user", content: prompt }],
           response: data,
-          model: "inclusionAI/Ling-mini-2.0",
+          model: "deepseek-ai/DeepSeek-V3.2-Exp",
           module: "frontend.quizpage",
           metadata: {
             function: "evaluateTextAnswer",
@@ -458,6 +463,46 @@ function previousQuestion() {
       currentIndex--;
       renderQuestion();
     }, 400);
+  }
+}
+
+async function handleImageUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const statusDiv = document.getElementById("uploadStatus");
+  statusDiv.innerHTML = '<span style="color: #7a6ad8;">正在识别图片...</span>';
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    const response = await fetch("/api/ocr/extract", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("图片识别失败");
+    }
+
+    const data = await response.json();
+    const textAnswer = document.getElementById("textAnswer");
+
+    if (textAnswer.value.trim()) {
+      textAnswer.value += "\n\n" + data.text;
+    } else {
+      textAnswer.value = data.text;
+    }
+
+    statusDiv.innerHTML = '<span style="color: #10b981;">✓ 图片识别成功</span>';
+    setTimeout(() => {
+      statusDiv.innerHTML = "";
+    }, 3000);
+  } catch (error) {
+    statusDiv.innerHTML =
+      '<span style="color: #ef4444;">✗ 图片识别失败，请重试</span>';
+    console.error("OCR Error:", error);
   }
 }
 

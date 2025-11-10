@@ -56,7 +56,9 @@
           <!-- Teachers Section -->
           <div class="section-container">
             <div class="section-header">
-              <h3>👨‍🏫 教师信息 <span class="count-badge" id="teacherCount">0</span></h3>
+              <h3>
+                👨‍🏫 教师信息 <span class="count-badge" id="teacherCount">0</span>
+              </h3>
             </div>
             <div class="teachers-grid" id="teachersGrid"></div>
           </div>
@@ -64,7 +66,9 @@
           <!-- Students Section -->
           <div class="section-container">
             <div class="section-header">
-              <h3>🧑‍🎓 学生信息 <span class="count-badge" id="studentCount">0</span></h3>
+              <h3>
+                🧑‍🎓 学生信息 <span class="count-badge" id="studentCount">0</span>
+              </h3>
             </div>
             <div class="students-grid" id="studentsGrid"></div>
           </div>
@@ -114,9 +118,18 @@
             <div class="chart-header">
               <h3>每日 Token 使用趋势</h3>
               <div class="chart-controls">
-                <button class="chart-btn active" onclick="changeTimeRange('week')">近7天</button>
-                <button class="chart-btn" onclick="changeTimeRange('month')">近30天</button>
-                <button class="chart-btn" onclick="changeTimeRange('all')">全部</button>
+                <button
+                  class="chart-btn active"
+                  onclick="changeTimeRange('week')"
+                >
+                  近7天
+                </button>
+                <button class="chart-btn" onclick="changeTimeRange('month')">
+                  近30天
+                </button>
+                <button class="chart-btn" onclick="changeTimeRange('all')">
+                  全部
+                </button>
               </div>
             </div>
             <div id="tokenChart" class="chart"></div>
@@ -129,6 +142,22 @@
             </div>
             <div id="modelChart" class="chart"></div>
           </div>
+
+          <!-- Module Usage Statistics -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>模块调用统计</h3>
+            </div>
+            <div id="moduleChart" class="chart"></div>
+          </div>
+
+          <!-- Module Token Usage Table -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>各模块 Token 使用详情</h3>
+            </div>
+            <div id="moduleTable" style="overflow-x: auto"></div>
+          </div>
         </div>
 
         <!-- Conversations Section -->
@@ -140,6 +169,12 @@
 
           <!-- Filter Bar -->
           <div class="filter-container">
+            <div class="filter-group">
+              <label>模块筛选</label>
+              <select id="moduleFilter" onchange="filterConversations()">
+                <option value="">全部模块</option>
+              </select>
+            </div>
             <div class="filter-group">
               <label>模型筛选</label>
               <select id="modelFilter" onchange="filterConversations()">
@@ -167,10 +202,12 @@
           </div>
 
           <!-- Conversations List -->
-          <div class="conversations-container" id="conversationsContainer"></div>
+          <div
+            class="conversations-container"
+            id="conversationsContainer"
+          ></div>
         </div>
       </div>
     </div>
   </body>
 </html>
-

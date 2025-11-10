@@ -15,9 +15,9 @@ const kgCenterX = kgWidth / 2;
 const kgCenterY = kgHeight / 2;
 
 const levelColors = [
-  "#3b82f6",
+  "#48cae4",
   "#8b5cf6",
-  "#ec4899",
+  "#ff4d6d",
   "#f59e0b",
   "#10b981",
   "#06b6d4",
@@ -81,6 +81,13 @@ function buildNodeTree(nodeList) {
   const childrenMap = {};
 
   nodeList.forEach((node) => {
+    if (
+      node.flag === undefined &&
+      node.mocKgNodeAvgStatisticsDto?.flag !== undefined
+    ) {
+      node.flag = node.mocKgNodeAvgStatisticsDto.flag;
+    }
+
     allNodesData[node.id] = node;
     if (!childrenMap[node.parentId]) {
       childrenMap[node.parentId] = [];
@@ -270,9 +277,11 @@ function updateKGGraph() {
   nodeElements
     .append("circle")
     .attr("r", (d) => d.radius)
-    .attr(
-      "fill",
-      (d) => levelColors[Math.min(d.level, levelColors.length - 1)]
+    .attr("fill", (d) => levelColors[Math.min(d.level, levelColors.length - 1)])
+    .attr("stroke", (d) => (d.flag === 1 ? "#ffd700" : "none"))
+    .attr("stroke-width", (d) => (d.flag === 1 ? 5 : 0))
+    .style("filter", (d) =>
+      d.flag === 1 ? "drop-shadow(0 0 8px #ffd700)" : "none"
     );
 
   nodeElements

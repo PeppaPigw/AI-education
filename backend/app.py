@@ -30,6 +30,7 @@ from tools.language_handler import LanguageHandler
 from tools.rag_service import get_rag_service
 from tools.covert_resource import convert_to_pdf
 from tools.llm_logger import get_llm_logger
+from tools.ocr_service import get_ocr_service
 
 app = FastAPI(title="AI-Education API")
 
@@ -1110,6 +1111,23 @@ async def log_llm_call(data: LLMLogRequest):
     except Exception as e:
         logger.error(f"Error logging LLM call: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to log LLM call: {str(e)}")
+
+
+@app.post("/api/ocr/extract")
+async def extract_text_from_image(image: UploadFile = File(...)):
+    """从上传的图片中提取文本"""
+    try:
+        image_data = await image.read()
+
+        ocr_service = get_ocr_service()
+        extracted_text = ocr_service.extract_text_from_image(image_data)
+
+        logger.info(f"✅ OCR extraction successful, text length: {len(extracted_text)}")
+
+        return {"success": True, "text": extracted_text, "message": "图片识别成功"}
+    except Exception as e:
+        logger.error(f"OCR extraction failed: {e}")
+        raise HTTPException(status_code=500, detail=f"图片识别失败: {str(e)}")
 
 
 if __name__ == "__main__":

@@ -502,3 +502,39 @@ body {
     padding: 40px 20px;
   }
 }
+
+.image-upload-section {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.upload-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #7a6ad8, #9b8ce0);
+  color: white;
+  padding: 14px 32px;
+  border-radius: 16px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(122, 106, 216, 0.25);
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(122, 106, 216, 0.35);
+}
+
+.upload-btn:active {
+  transform: translateY(0);
+}
+
+#uploadStatus {
+  min-height: 24px;
+  font-size: 0.95em;
+  font-weight: 500;
+}

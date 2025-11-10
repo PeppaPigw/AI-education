@@ -6,7 +6,7 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
-
+.history
 # IDE 和编辑器文件
 # Visual Studio Code
 .vscode/

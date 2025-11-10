@@ -36,8 +36,11 @@ async function loadAllData() {
     calculateTokenStats();
     renderTokenChart();
     renderModelChart();
+    renderModuleChart();
+    renderModuleTable();
     renderConversations();
     populateModelFilter();
+    populateModuleFilter();
   } catch (error) {
     console.error("加载数据失败:", error);
     // Show error message to user
@@ -465,6 +468,167 @@ function renderModelChart() {
   window.addEventListener("resize", () => chart.resize());
 }
 
+function renderModuleChart() {
+  const chartDom = document.getElementById("moduleChart");
+  const chart = echarts.init(chartDom);
+
+  const moduleMap = {};
+  llmLogData.forEach((log) => {
+    const module = log.module || "Unknown";
+    if (!moduleMap[module]) {
+      moduleMap[module] = { count: 0, tokens: 0 };
+    }
+    moduleMap[module].count += 1;
+    moduleMap[module].tokens += log.response?.usage?.total_tokens || 0;
+  });
+
+  const moduleData = Object.keys(moduleMap).map((module) => ({
+    name: getModuleName(module),
+    value: moduleMap[module].count,
+    tokens: moduleMap[module].tokens,
+  }));
+
+  const option = {
+    tooltip: {
+      trigger: "axis",
+      backgroundColor: "rgba(50,50,50,0.9)",
+      borderRadius: 8,
+      textStyle: { color: "#fff" },
+      axisPointer: {
+        type: "shadow",
+      },
+      formatter: (params) => {
+        const item = params[0];
+        const moduleEntry = moduleData[item.dataIndex];
+        return `${item.name}<br/>
+                调用次数: ${item.value}<br/>
+                总 Tokens: ${formatNumber(moduleEntry.tokens)}`;
+      },
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      top: 40,
+      containLabel: true,
+    },
+    xAxis: {
+      type: "category",
+      data: moduleData.map((d) => d.name),
+      axisLabel: {
+        interval: 0,
+        rotate: 30,
+      },
+    },
+    yAxis: {
+      type: "value",
+      name: "调用次数",
+      splitLine: {
+        lineStyle: {
+          type: "dashed",
+          color: "#e0e0e0",
+        },
+      },
+    },
+    series: [
+      {
+        name: "调用次数",
+        type: "bar",
+        data: moduleData.map((d) => d.value),
+        itemStyle: {
+          color: "#7b2cbf",
+          borderRadius: [8, 8, 0, 0],
+        },
+        emphasis: {
+          itemStyle: {
+            color: "#5a189a",
+          },
+        },
+      },
+    ],
+  };
+
+  chart.setOption(option);
+  window.addEventListener("resize", () => chart.resize());
+}
+
+function renderModuleTable() {
+  const container = document.getElementById("moduleTable");
+
+  const moduleMap = {};
+  llmLogData.forEach((log) => {
+    const module = log.module || "Unknown";
+    if (!moduleMap[module]) {
+      moduleMap[module] = {
+        count: 0,
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0,
+      };
+    }
+    const usage = log.response?.usage || {};
+    moduleMap[module].count += 1;
+    moduleMap[module].promptTokens += usage.prompt_tokens || 0;
+    moduleMap[module].completionTokens += usage.completion_tokens || 0;
+    moduleMap[module].totalTokens += usage.total_tokens || 0;
+  });
+
+  const modules = Object.keys(moduleMap).sort(
+    (a, b) => moduleMap[b].totalTokens - moduleMap[a].totalTokens
+  );
+
+  let html = `
+    <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+      <thead>
+        <tr style="background: #7a6ad8; color: white;">
+          <th style="padding: 16px; text-align: left; font-weight: 600;">模块名称</th>
+          <th style="padding: 16px; text-align: center; font-weight: 600;">调用次数</th>
+          <th style="padding: 16px; text-align: center; font-weight: 600;">Prompt Tokens</th>
+          <th style="padding: 16px; text-align: center; font-weight: 600;">Completion Tokens</th>
+          <th style="padding: 16px; text-align: center; font-weight: 600;">Total Tokens</th>
+          <th style="padding: 16px; text-align: center; font-weight: 600;">平均 Tokens/调用</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  modules.forEach((module, index) => {
+    const data = moduleMap[module];
+    const avgTokens = Math.round(data.totalTokens / data.count);
+    const rowColor = index % 2 === 0 ? "#f8f9fa" : "white";
+
+    html += `
+      <tr style="background: ${rowColor}; border-bottom: 1px solid #e0e0e0;">
+        <td style="padding: 14px; font-weight: 500; color: #333;">${getModuleName(
+          module
+        )}</td>
+        <td style="padding: 14px; text-align: center; color: #666;">${
+          data.count
+        }</td>
+        <td style="padding: 14px; text-align: center; color: #7a6ad8; font-weight: 500;">${formatNumber(
+          data.promptTokens
+        )}</td>
+        <td style="padding: 14px; text-align: center; color: #51cf66; font-weight: 500;">${formatNumber(
+          data.completionTokens
+        )}</td>
+        <td style="padding: 14px; text-align: center; color: #ff6b6b; font-weight: 600;">${formatNumber(
+          data.totalTokens
+        )}</td>
+        <td style="padding: 14px; text-align: center; color: #495057;">${formatNumber(
+          avgTokens
+        )}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+  `;
+
+  container.innerHTML = html;
+}
+
 function populateModelFilter() {
   const models = [
     ...new Set(llmLogData.map((log) => log.request?.model || "Unknown")),
@@ -479,6 +643,31 @@ function populateModelFilter() {
   });
 }
 
+function populateModuleFilter() {
+  const modules = [
+    ...new Set(llmLogData.map((log) => log.module || "Unknown")),
+  ];
+  const select = document.getElementById("moduleFilter");
+
+  modules.forEach((module) => {
+    const option = document.createElement("option");
+    option.value = module;
+    option.textContent = getModuleName(module);
+    select.appendChild(option);
+  });
+}
+
+function getModuleName(module) {
+  const moduleMap = {
+    "AgentModule.edu_agent": "AI助教",
+    "QuizModule.quiz_operations": "测验生成",
+    "SummaryModule.summary_generator": "知识总结",
+    "LearningPlanModule.learning_plan": "学习计划",
+    "frontend.quizpage": "前端测验",
+  };
+  return moduleMap[module] || module;
+}
+
 function renderConversations() {
   allConversations = llmLogData.map((log, index) => ({
     id: index,
@@ -489,6 +678,7 @@ function renderConversations() {
 }
 
 function filterConversations() {
+  const moduleFilter = document.getElementById("moduleFilter").value;
   const modelFilter = document.getElementById("modelFilter").value;
   const timeFilter = document.getElementById("timeFilter").value;
   const searchTerm = document
@@ -496,6 +686,10 @@ function filterConversations() {
     .value.toLowerCase();
 
   let filtered = [...allConversations];
+
+  if (moduleFilter) {
+    filtered = filtered.filter((log) => log.module === moduleFilter);
+  }
 
   if (modelFilter) {
     filtered = filtered.filter((log) => log.request?.model === modelFilter);
@@ -558,7 +752,7 @@ function displayConversations(conversations) {
             log.id
           })">
             <div class="conversation-title">
-              <h4>🤖 ${module}</h4>
+              <h4>🤖 ${getModuleName(module)}</h4>
               <div class="conversation-meta">
                 <span class="meta-tag">
                   <span class="meta-tag-icon">🕐</span>
