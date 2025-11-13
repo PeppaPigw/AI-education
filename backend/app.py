@@ -824,33 +824,68 @@ async def delete_resource(data: DeleteResourceRequest):
     )
 
 
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
+PROJECT_ROOT = BASE_DIR.parent if BASE_DIR.name == "backend" else BASE_DIR
+
+
 @app.post("/api/pdf/select")
 async def select_pdf(data: PDFSelection):
-    """选择当前阅读的PDF"""
     global CURRENT_PDF_PATH
-    pdf_path = data.pdf_path
 
-    if not os.path.exists(pdf_path):
-        raise HTTPException(status_code=404, detail="PDF not found")
+    raw_path = data.pdf_path.lstrip("/")
 
-    CURRENT_PDF_PATH = pdf_path
-    logger.info(f"📄 Selected PDF: {pdf_path}")
-    ingest_error = rag_service.ingest_paths([pdf_path])
-    if ingest_error:
-        logger.error(f"❌ Failed to ingest PDF: {ingest_error}")
-        return {"success": False, "error": ingest_error}
+    cleaned_path = raw_path.replace("backend/data/", "data/")
 
-    logger.info(f"✅ PDF ingested successfully: {pdf_path}")
-    return {"success": True, "pdf_path": pdf_path}
+    full_pdf_path = PROJECT_ROOT / cleaned_path
+
+    if not full_pdf_path.exists():
+
+        if full_pdf_path.suffix == ".PDF":
+            full_pdf_path = full_pdf_path.with_suffix(".pdf")
+            if full_pdf_path.exists():
+                logger.warning(f"🔧 Auto-fixed case: {full_pdf_path.name}")
+
+    if not full_pdf_path.exists():
+
+        fallback_path = BASE_DIR / cleaned_path
+        if fallback_path.exists():
+            full_pdf_path = fallback_path
+        else:
+            logger.error(f"❌ PDF really not found at: {full_pdf_path}")
+            raise HTTPException(
+                status_code=404, detail=f"PDF not found: {cleaned_path}"
+            )
+
+    CURRENT_PDF_PATH = str(full_pdf_path)
+    logger.info(f"✅ Selected PDF: {CURRENT_PDF_PATH}")
+
+    return {"success": True, "pdf_path": cleaned_path}
 
 
 @app.get("/api/pdf/{path:path}")
 async def get_pdf(path: str):
-    """获取 PDF 文件"""
-    if not os.path.exists(path):
+
+    cleaned_path = path.lstrip("/").replace("backend/data/", "data/")
+
+    full_path = PROJECT_ROOT / cleaned_path
+
+    if not full_path.exists():
+
+        if full_path.suffix == ".PDF":
+            fixed_path = full_path.with_suffix(".pdf")
+            if fixed_path.exists():
+                return FileResponse(str(fixed_path), media_type="application/pdf")
+
+        fallback_path = BASE_DIR / cleaned_path
+        if fallback_path.exists():
+            return FileResponse(str(fallback_path), media_type="application/pdf")
+
+        logger.error(f"❌ GET failed. Tried: {full_path}")
         raise HTTPException(status_code=404, detail="PDF not found")
 
-    return FileResponse(path, media_type="application/pdf")
+    return FileResponse(str(full_path), media_type="application/pdf")
 
 
 @app.get("/api/languages")
