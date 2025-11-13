@@ -110,12 +110,12 @@ def create_agent() -> AgentExecutor:
         model=model_name, temperature=0, base_url=base_url, api_key=api_key
     )
     agent = create_react_agent(llm, tools, DEFAULT_PROMPT)
-    # 🔥 修复：限制max_iterations为3，避免不必要的重复
+
     return AgentExecutor(
         agent=agent,
         tools=tools,
         verbose=True,
-        max_iterations=3,  # 最多3次迭代
+        max_iterations=3,
         handle_parsing_errors=True,
         early_stopping_method="force",
     )
@@ -140,7 +140,7 @@ def run_agent(
     if retriever:
         context = get_context_or_empty(question, retriever)
         if context:
-            # 🔥 增强日志：输出检索到的上下文
+
             print(f"\n📚 从RAG检索到的上下文 (长度: {len(context)} 字符):")
             print(f"   {context[:200]}..." if len(context) > 200 else f"   {context}")
             logger.info(f"Retrieved context (length: {len(context)}): {context[:500]}")
@@ -183,7 +183,7 @@ def run_agent(
         print("✅ Agent回答:")
         print(f"   {output}")
         logger.info(f"Agent output: {output}")
-    except Exception as e:  # pragma: no cover - agent execution errors
+    except Exception as e:
         output = f"Agent error: {e}"
         print(f"\n❌ Agent错误: {e}")
         logger.error(f"Agent error: {e}")

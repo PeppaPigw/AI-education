@@ -28,16 +28,12 @@ def test_get_rag_service_lazy_singleton(monkeypatch):
 
         class TestService(rag_service.RAGService):
             def __init__(self, *args, **kwargs):
-                # 1. 用 kwargs 捕获所有参数 (包括 base_url, model_name, api_key)
 
-                # 2. 用测试所需参数覆盖 kwargs 中可能存在的或必要的参数
                 kwargs["embeddings"] = FakeEmbeddings(size=32)
                 kwargs["persist_directory"] = tmpdir
                 kwargs["use_multiquery"] = False
 
-                # 3. 将包含所有必要参数 (API参数 + 测试参数) 的字典传给基类
-                # 这样 RAGService.__init__ 就能拿到它需要的 base_url 等参数了
-                super().__init__(*args, **kwargs)  # <--- 🌟 关键修改在这里
+                super().__init__(*args, **kwargs)
 
         monkeypatch.setattr(rag_service, "_instance", None)
         monkeypatch.setattr(rag_service, "RAGService", TestService)
@@ -48,7 +44,7 @@ def test_get_rag_service_lazy_singleton(monkeypatch):
 
 
 def test_ingest_and_retrieve(tmp_path):
-    # 🔥 修复：RAGService不接受base_url, model_name, api_key参数
+
     service = RAGService(
         embeddings=FakeEmbeddings(size=32),
         persist_directory=str(tmp_path),
@@ -62,13 +58,13 @@ def test_ingest_and_retrieve(tmp_path):
 
 
 def test_ingest_paths_lookup_error(monkeypatch, tmp_path, caplog):
-    def bad_load(self):  # pragma: no cover - test helper
+    def bad_load(self):
         raise LookupError("punkt not found")
 
     monkeypatch.setattr(UnstructuredFileLoader, "load", bad_load)
     file_path = tmp_path / "f.txt"
     file_path.write_text("test")
-    # 🔥 修复：RAGService不接受base_url, model_name, api_key参数
+
     service = RAGService(
         embeddings=FakeEmbeddings(size=32),
         persist_directory=str(tmp_path / "db"),
@@ -82,13 +78,13 @@ def test_ingest_paths_lookup_error(monkeypatch, tmp_path, caplog):
 
 
 def test_ingest_paths_import_error(monkeypatch, tmp_path, caplog):
-    def bad_load(self):  # pragma: no cover - test helper
+    def bad_load(self):
         raise ImportError("unstructured dependency missing")
 
     monkeypatch.setattr(UnstructuredFileLoader, "load", bad_load)
     file_path = tmp_path / "f.txt"
     file_path.write_text("test")
-    # 🔥 修复：RAGService不接受base_url, model_name, api_key参数
+
     service = RAGService(
         embeddings=FakeEmbeddings(size=32),
         persist_directory=str(tmp_path / "db2"),
@@ -117,7 +113,7 @@ def test_ingest_pdf(tmp_path):
     )
     pdf_path = tmp_path / "cats.pdf"
     pdf_path.write_bytes(base64.b64decode(pdf_b64))
-    # 🔥 修复：RAGService不接受base_url, model_name, api_key参数
+
     service = RAGService(
         embeddings=FakeEmbeddings(size=32),
         persist_directory=str(tmp_path / "db3"),
@@ -134,7 +130,7 @@ def test_ingest_docx(tmp_path):
     doc = DocxDocument()
     doc.add_paragraph("Cats are playful animals")
     doc.save(docx_path)
-    # 🔥 修复：RAGService不接受base_url, model_name, api_key参数
+
     service = RAGService(
         embeddings=FakeEmbeddings(size=32),
         persist_directory=str(tmp_path / "db4"),

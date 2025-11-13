@@ -21,11 +21,11 @@ import math
 from datetime import date, timedelta, datetime
 from pathlib import Path
 
-from AgentModule import create_agent
-from AgentModule.edu_agent import run_agent
-from LearningPlanModule import LearningPlan
-from QuizModule import generate_learning_plan_from_quiz, prepare_quiz_questions
-from SummaryModule import StudySummaryGenerator
+from AgentModule.qa_agent import QA_Agent
+from QuizModule.quiz_agent import Quiz_Agent
+from LearningPlanModule.plan_agent import Plan_Agent
+from SummaryModule.summary_agent import Summary_Agent
+from QuizModule import generate_learning_plan_from_quiz
 from tools.language_handler import LanguageHandler
 from tools.rag_service import get_rag_service
 from tools.covert_resource import convert_to_pdf
@@ -51,6 +51,11 @@ logger = logging.getLogger(__name__)
 KNOWLEDGE_JSON_PATH = "data/course/big_data.json"
 CURRENT_NODE = None
 CURRENT_PDF_PATH = None
+
+qa_agent = QA_Agent()
+quiz_agent = Quiz_Agent()
+summary_agent = Summary_Agent()
+plan_agent = Plan_Agent()
 
 
 class ChatMessage(BaseModel):
@@ -223,9 +228,8 @@ async def chat(data: ChatMessage):
         current_retriever = retriever
         logger.info(f"⚠️ No current PDF, using global retriever")
 
-    agent = create_agent()
-    result, used_fallback, used_retriever = run_agent(
-        message, executor=agent, retriever=current_retriever, return_details=True
+    result, used_fallback, used_retriever = qa_agent.chat(
+        message, retriever=current_retriever, return_details=True
     )
 
     logger.info(
@@ -399,7 +403,7 @@ async def start_quiz(data: QuizStart):
         current_retriever = retriever
         logger.info(f"⚠️ No current PDF, using global retriever")
 
-    questions, used_retriever = prepare_quiz_questions(
+    questions, used_retriever = quiz_agent.prepare_quiz_questions(
         data.subject, language=language, retriever=current_retriever
     )
 
@@ -498,11 +502,11 @@ async def create_learning_plan(data: LearningPlanRequest):
     code = LanguageHandler.code_from_display(data.lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(data.goals)
 
-    plan = LearningPlan(user_name=data.name, user_language=language)
+    plan_agent = Plan_Agent(user_name=data.name, user_language=language)
     goals_list = [g.strip() for g in data.goals.split(";") if g.strip()]
     user_input = {"goals": goals_list}
 
-    plan.generate_plan_from_prompt(user_input)
+    plan_agent.generate_plan_from_prompt(user_input)
 
     deadline_days = data.deadline_days if hasattr(data, "deadline_days") else 7
     deadline_date = (datetime.now() + timedelta(days=deadline_days)).strftime(
@@ -510,15 +514,15 @@ async def create_learning_plan(data: LearningPlanRequest):
     )
     priority = data.priority if hasattr(data, "priority") else "基础知识"
 
-    for entry in plan.learning_plan:
+    for entry in plan_agent.learning_plan:
         entry["deadline"] = deadline_date
         entry["priority"] = priority
 
-    plan.save_to_file()
+    plan_agent.save_to_file()
 
     return {
         "message": "Learning plan generated successfully",
-        "plan": plan.learning_plan,
+        "plan": plan_agent.learning_plan,
     }
 
 
@@ -531,11 +535,9 @@ async def create_learning_plan_from_quiz(data: LearningPlanFromQuiz):
     code = LanguageHandler.code_from_display(data.lang_choice)
     language = code if code != "auto" else data.state.get("language", "en")
 
-    plan = LearningPlan(
-        user_name=data.name, quiz_results=data.state["scores"], user_language=language
-    )
-    generated_plan = plan.generate_plan()
-    plan.save_to_file()
+    plan_agent = Plan_Agent(user_name=data.name, user_language=language)
+    generated_plan = plan_agent.generate_plan_from_quiz(data.state["scores"])
+    plan_agent.save_to_file()
 
     return {
         "message": "Learning plan generated from quiz results",
@@ -624,8 +626,7 @@ async def generate_summary(data: SummaryRequest):
         current_retriever = retriever
         logger.info(f"⚠️ No current PDF, using global retriever")
 
-    summarizer = StudySummaryGenerator(retriever=current_retriever)
-    summary, used_retriever = summarizer.generate_summary(
+    summary, used_retriever = summary_agent.generate_summary(
         data.topic, language=language, retriever=current_retriever
     )
 

@@ -7,8 +7,8 @@ import logging
 import nltk
 
 try:
-    import wikipedia  # type: ignore
-except Exception:  # pragma: no cover - wikipedia may not be installed
+    import wikipedia
+except Exception:
     wikipedia = None
 
 
@@ -19,7 +19,7 @@ def wikipedia_search(query: str) -> str:
         return "wikipedia library not available."
     try:
         return wikipedia.summary(query, sentences=3)
-    except Exception as e:  # pragma: no cover - network issues
+    except Exception as e:
         return f"Error fetching data from Wikipedia: {e}"
 
 
@@ -41,7 +41,7 @@ def define_word(word: str) -> str:
             return "No definition found."
         defs = {s.definition() for s in synsets}
         return "; ".join(sorted(defs))
-    except Exception as e:  # pragma: no cover
+    except Exception as e:
         return f"Error retrieving definition: {e}"
 
 
@@ -52,7 +52,7 @@ def calculator(expression: str) -> str:
         allowed_names = {"__builtins__": None}
         result = eval(expression, allowed_names, {})
         return str(result)
-    except Exception as e:  # pragma: no cover - invalid expression
+    except Exception as e:
         return f"Error evaluating expression: {e}"
 
 
@@ -73,5 +73,5 @@ def detect_language(text: str) -> str:
     """Detect the language of a given text sample."""
     try:
         return LanguageHandler.detect_language(text)
-    except Exception as e:  # pragma: no cover - detection errors
+    except Exception as e:
         return f"Error detecting language: {e}"

@@ -107,7 +107,7 @@ class LanguageHandler:
     @staticmethod
     def translate(text: str, target: str) -> str:
         """Translate text to the target language using deep-translator."""
-        # TODO: improve this feature, maybe use a different model for the whole LLM
+
         if not text or target == "auto":
             return text
         try:
