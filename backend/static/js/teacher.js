@@ -592,13 +592,20 @@ function renderScoresDistribution() {
   const topScores = scoreStats
     .filter((s) => s.passCount > 0)
     .sort((a, b) => b.avgScore - a.avgScore)
-    .slice(0, 15);
+    .slice(0, 10);
+
+  const bottomScores = scoreStats
+    .filter((s) => s.passCount > 0)
+    .sort((a, b) => a.avgScore - b.avgScore)
+    .slice(0, 10);
+
+  const combinedScores = [...topScores, ...bottomScores];
 
   const scoresChart = echarts.init(document.getElementById("scoresChart"));
 
   const scoresOption = {
     title: {
-      text: "知识点平均成绩 TOP 15",
+      text: "知识点平均成绩 TOP 10 & BOTTOM 10",
       left: "center",
       textStyle: { fontSize: 18, color: "#333", fontWeight: 600 },
     },
@@ -611,7 +618,7 @@ function renderScoresDistribution() {
         type: "shadow",
       },
       formatter: function (params) {
-        const data = topScores[params[0].dataIndex];
+        const data = combinedScores[params[0].dataIndex];
         return `
           <div style="padding: 5px;">
             <strong>${data.name}</strong><br/>
@@ -633,7 +640,7 @@ function renderScoresDistribution() {
     },
     xAxis: {
       type: "category",
-      data: topScores.map((s) => s.name),
+      data: combinedScores.map((s) => s.name),
       axisLabel: {
         rotate: 45,
         fontSize: 11,
@@ -646,21 +653,29 @@ function renderScoresDistribution() {
       type: "value",
       name: "平均成绩",
       min: 0,
-      max: 100,
+      max: 10,
       axisLine: { lineStyle: { color: "#aaa" } },
       splitLine: { lineStyle: { type: "dashed", color: "#ddd" } },
     },
     series: [
       {
         type: "bar",
-        data: topScores.map((s) => s.avgScore),
-        itemStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: "#7a6ad8" },
-            { offset: 1, color: "#9b8ee5" },
-          ]),
-          borderRadius: [4, 4, 0, 0],
-        },
+        data: combinedScores.map((s, index) => ({
+          value: s.avgScore,
+          itemStyle: {
+            color:
+              index < 10
+                ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: "#7a6ad8" },
+                    { offset: 1, color: "#9b8ee5" },
+                  ])
+                : new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: "#ff6b6b" },
+                    { offset: 1, color: "#ff8787" },
+                  ]),
+            borderRadius: [4, 4, 0, 0],
+          },
+        })),
         label: {
           show: true,
           position: "top",
