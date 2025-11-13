@@ -5,6 +5,7 @@ let answered = false;
 let userAnswers = [];
 let totalChoiceQuestions = 0;
 let quizTopic = "";
+let quizSummary = null;
 
 const API_URL = "https://api.siliconflow.cn/v1/chat/completions";
 const API_KEY = "sk-iujgwjycqgmvzxycfgyynuowipaykmbbcneerzvdnehpqvfs";
@@ -512,6 +513,7 @@ async function showResults() {
   const finalScore = document.getElementById("finalScore");
   const resultMessage = document.getElementById("resultMessage");
   const resultIcon = document.querySelector(".result-icon");
+  const analysisBtn = document.getElementById("analysisBtn");
 
   finalScore.textContent = `${score}/${questions.length}`;
 
@@ -543,6 +545,8 @@ async function showResults() {
   resultScreen.classList.add("show");
   document.getElementById("progressBar").style.width = "100%";
 
+  generateQuizSummary();
+
   if (quizTopic && percentage >= 80) {
     try {
       const response = await fetch("/api/quiz/complete", {
@@ -562,4 +566,125 @@ async function showResults() {
       console.error("Error recording quiz completion:", error);
     }
   }
+}
+
+async function generateQuizSummary() {
+  const analysisBtn = document.getElementById("analysisBtn");
+
+  let choiceDetails = "";
+  let textDetails = "";
+
+  questions.forEach((q, i) => {
+    if (q.type === "choice") {
+      const userAns = userAnswers[i];
+      if (userAns) {
+        choiceDetails += `题目 ${i + 1}: ${q.question}\n`;
+        choiceDetails += `学生选择: ${userAns.selected}\n`;
+        choiceDetails += `正确答案: ${q.answer}\n`;
+        choiceDetails += `结果: ${userAns.correct ? "✓ 正确" : "✗ 错误"}\n\n`;
+      }
+    } else if (q.type === "text") {
+      const userAns = userAnswers[i];
+      if (userAns) {
+        textDetails += `题目 ${i + 1}: ${q.question}\n`;
+        textDetails += `学生答案: ${userAns.answer}\n`;
+        textDetails += `得分: ${userAns.score}\n\n`;
+      }
+    }
+  });
+
+  if (!choiceDetails) choiceDetails = "无选择题";
+  if (!textDetails) textDetails = "无简答题";
+
+  const prompt = `你是一位专业的教育评估专家。请根据学生的测验结果，生成一份详细的测验总结报告。
+
+请分析以下内容：
+1. 学生在选择题中的表现，包括答对的题目和答错的题目
+2. 学生选择错误选项的原因分析（是概念混淆、知识点遗漏还是粗心大意）
+3. 学生在简答题中的表现和答题质量
+4. 针对错误的知识点，给出具体的学习建议
+
+请用中文输出，格式清晰，分点说明。总结应该具有建设性，帮助学生明确自己的薄弱环节。
+
+测验主题：${quizTopic}
+总分：${score}/${questions.length}
+
+选择题详情：
+${choiceDetails}
+
+简答题详情：
+${textDetails}
+
+请生成一份详细的测验总结报告。`;
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "inclusionAI/Ling-mini-2.0",
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API 请求失败: ${response.status}`);
+    }
+
+    const data = await response.json();
+    quizSummary = data.choices[0].message.content.trim();
+    analysisBtn.style.display = "inline-block";
+
+    try {
+      await fetch("/api/llm-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: prompt }],
+          response: data,
+          model: "inclusionAI/Ling-mini-2.0",
+          module: "frontend.quizpage",
+          metadata: {
+            function: "generateQuizSummary",
+            topic: quizTopic,
+            score: `${score}/${questions.length}`,
+          },
+        }),
+      });
+    } catch (logError) {
+      console.error("Failed to log LLM call:", logError);
+    }
+  } catch (error) {
+    console.error("生成测验总结失败:", error);
+  }
+}
+
+function showAnalysis() {
+  document.getElementById("resultScreen").style.display = "none";
+  const analysisScreen = document.getElementById("analysisScreen");
+  const analysisContent = document.getElementById("analysisContent");
+
+  if (quizSummary) {
+    const renderedMarkdown = marked.parse(quizSummary);
+    analysisContent.innerHTML = `<div>${renderedMarkdown}</div>`;
+  } else {
+    analysisContent.innerHTML =
+      '<div style="color: #ef4444; text-align: center;">测验总结生成失败</div>';
+  }
+
+  analysisScreen.style.display = "block";
+  analysisScreen.classList.add("show");
+}
+
+function hideAnalysis() {
+  document.getElementById("analysisScreen").style.display = "none";
+  document.getElementById("resultScreen").style.display = "block";
 }

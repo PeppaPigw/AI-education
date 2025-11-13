@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>在线测验</title>
     <link rel="stylesheet" href="/static/css/quizpage.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   </head>
   <body>
     <div
@@ -63,6 +64,48 @@
           感谢你的认真作答。
         </div>
         <div class="result-buttons">
+          <button
+            class="btn"
+            id="analysisBtn"
+            onclick="showAnalysis()"
+            style="display: none"
+          >
+            📊 测试分析
+          </button>
+          <button class="btn" onclick="location.reload()">重新开始</button>
+          <button
+            class="btn btn-secondary"
+            onclick="window.location.href='/static/coursecontent.html'"
+          >
+            返回课程
+          </button>
+        </div>
+      </div>
+
+      <div class="result-screen" id="analysisScreen" style="display: none">
+        <div class="result-icon">📊</div>
+        <h2>测试分析</h2>
+        <div
+          id="analysisContent"
+          style="
+            text-align: left;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            max-height: 500px;
+            overflow-y: auto;
+            line-height: 1.8;
+          "
+        >
+          <div style="color: #7a6ad8; text-align: center">
+            正在生成测验总结...
+          </div>
+        </div>
+        <div class="result-buttons">
+          <button class="btn btn-secondary" onclick="hideAnalysis()">
+            ← 返回结果
+          </button>
           <button class="btn" onclick="location.reload()">重新开始</button>
           <button
             class="btn btn-secondary"

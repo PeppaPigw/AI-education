@@ -107,6 +107,14 @@ class QuizComplete(BaseModel):
     total: int
 
 
+class QuizSummaryRequest(BaseModel):
+    topic: str
+    score: int
+    total: int
+    user_answers: List[Dict[str, Any]]
+    questions: List[Dict[str, Any]]
+
+
 class LoginRequest(BaseModel):
     username: str
     password: str

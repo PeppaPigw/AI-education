@@ -10,21 +10,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadAllData() {
   try {
-    // Load teachers
     const teacherRes = await fetch("/api/teachers");
     if (!teacherRes.ok) {
       throw new Error(`Failed to load teachers: ${teacherRes.status}`);
     }
     teacherData = await teacherRes.json();
 
-    // Load students
     const studentRes = await fetch("/api/students");
     if (!studentRes.ok) {
       throw new Error(`Failed to load students: ${studentRes.status}`);
     }
     studentData = await studentRes.json();
 
-    // Load LLM logs
     const logRes = await fetch("/api/llm-logs");
     if (!logRes.ok) {
       throw new Error(`Failed to load LLM logs: ${logRes.status}`);
@@ -43,7 +40,7 @@ async function loadAllData() {
     populateModuleFilter();
   } catch (error) {
     console.error("加载数据失败:", error);
-    // Show error message to user
+
     const errorMsg = document.createElement("div");
     errorMsg.className = "error-message";
     errorMsg.style.cssText =

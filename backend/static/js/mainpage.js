@@ -1,6 +1,5 @@
 console.log("AI-Education Main Page Loaded");
 
-// 知识图谱全局变量
 let kgData = null;
 let allNodesData = {};
 let expandedNodes = new Set();
@@ -278,10 +277,10 @@ function updateKGGraph() {
     .append("circle")
     .attr("r", (d) => d.radius)
     .attr("fill", (d) => levelColors[Math.min(d.level, levelColors.length - 1)])
-    .attr("stroke", (d) => (d.flag === 1 ? "#ffd700" : "none"))
+    .attr("stroke", (d) => (d.flag === 1 ? "#ff0000ff" : "none"))
     .attr("stroke-width", (d) => (d.flag === 1 ? 5 : 0))
     .style("filter", (d) =>
-      d.flag === 1 ? "drop-shadow(0 0 8px #ffd700)" : "none"
+      d.flag === 1 ? "drop-shadow(0 0 8px #ff0000ff)" : "none"
     );
 
   nodeElements
@@ -463,7 +462,6 @@ function kgDrag(simulation) {
     .on("end", dragended);
 }
 
-// 查找当前学习的节点
 function findCurrentNodes(graphData) {
   let currentChapter = null;
   let currentSection = null;
@@ -543,27 +541,23 @@ function findCurrentNodes(graphData) {
   return { currentChapter, currentSection, currentPoint };
 }
 
-// 加载学习进度
 fetch("/api/learning-progress")
   .then((response) => response.json())
   .then((data) => {
     console.log("Learning progress data loaded:", data);
 
-    // 更新章节进度
     document.getElementById(
       "chapter-progress"
     ).textContent = `已完成 ${data.chapters.completed}/${data.chapters.total} 章 (${data.chapters.progress}%)`;
     document.getElementById("chapter-progress-bar").style.width =
       data.chapters.progress + "%";
 
-    // 更新小节进度
     document.getElementById(
       "section-progress"
     ).textContent = `已完成 ${data.sections.completed}/${data.sections.total} 节 (${data.sections.progress}%)`;
     document.getElementById("section-progress-bar").style.width =
       data.sections.progress + "%";
 
-    // 更新知识点进度
     document.getElementById(
       "point-progress"
     ).textContent = `已完成 ${data.points.completed}/${data.points.total} 个 (${data.points.progress}%)`;
@@ -577,22 +571,18 @@ fetch("/api/learning-progress")
     document.getElementById("point-progress").textContent = "加载失败";
   });
 
-// 加载知识图谱
 fetch("/api/knowledge-graph")
   .then((response) => response.json())
   .then((data) => {
     console.log("Knowledge graph data loaded:", data);
     if (data && (data.name || data.root_name)) {
-      // 兼容两种数据格式
       if (data.name && !data.root_name) {
         data.root_name = data.name;
       }
 
-      // 查找当前学习的节点
       const { currentChapter, currentSection, currentPoint } =
         findCurrentNodes(data);
 
-      // 更新当前章节卡片
       if (currentChapter) {
         document.getElementById("current-chapter-name").textContent =
           currentChapter.name;
@@ -607,7 +597,6 @@ fetch("/api/knowledge-graph")
           chapterProgress + "%";
       }
 
-      // 更新当前小节卡片
       if (currentSection) {
         document.getElementById("current-section-name").textContent =
           currentSection.name;
@@ -627,7 +616,6 @@ fetch("/api/knowledge-graph")
           "等待开始学习";
       }
 
-      // 更新当前知识点卡片
       if (currentPoint) {
         document.getElementById("current-point-name").textContent =
           currentPoint.name;
@@ -646,11 +634,8 @@ fetch("/api/knowledge-graph")
         document.getElementById("current-point-desc").textContent =
           "等待开始学习";
       }
-
-      // 旧的知识图谱代码已被新实现替换
     }
   })
   .catch((error) => console.error("Failed to load knowledge graph:", error));
 
-// 加载新的知识图谱
 loadKnowledgeGraph();
