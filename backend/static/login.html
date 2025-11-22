@@ -417,19 +417,37 @@
                   class="toggle-btn active"
                   onclick="showForm('student-fields', this)"
                 >
-                  学生
+                  学生登录
                 </button>
                 <button
                   class="toggle-btn"
                   onclick="showForm('teacher-fields', this)"
                 >
-                  教师
+                  教师登录
                 </button>
                 <button
                   class="toggle-btn"
                   onclick="showForm('admin-fields', this)"
                 >
-                  管理员
+                  管理员登录
+                </button>
+              </div>
+
+              <div style="text-align: center; margin-bottom: 15px">
+                <button
+                  type="button"
+                  onclick="toggleRegisterMode()"
+                  style="
+                    background: none;
+                    border: none;
+                    color: #f5a425;
+                    cursor: pointer;
+                    text-decoration: underline;
+                    font-size: 14px;
+                  "
+                  id="register-toggle-btn"
+                >
+                  没有账号？点击注册
                 </button>
               </div>
 
@@ -459,6 +477,39 @@
                         />
                       </fieldset>
                     </div>
+                    <div class="col-lg-12 register-only" style="display: none">
+                      <fieldset>
+                        <input
+                          type="text"
+                          name="name"
+                          id="student_name"
+                          placeholder="姓名..."
+                          autocomplete="on"
+                        />
+                      </fieldset>
+                    </div>
+                    <div class="col-lg-12 register-only" style="display: none">
+                      <fieldset>
+                        <input
+                          type="email"
+                          name="email"
+                          id="student_email"
+                          placeholder="邮箱（可选）..."
+                          autocomplete="on"
+                        />
+                      </fieldset>
+                    </div>
+                    <div class="col-lg-12 register-only" style="display: none">
+                      <fieldset>
+                        <input
+                          type="text"
+                          name="teacher"
+                          id="student_teacher"
+                          placeholder="指导教师（可选）..."
+                          autocomplete="on"
+                        />
+                      </fieldset>
+                    </div>
                   </div>
 
                   <div id="teacher-fields" class="login-fields-group">
@@ -482,6 +533,28 @@
                           id="teacher_password"
                           placeholder="密码..."
                           required
+                        />
+                      </fieldset>
+                    </div>
+                    <div class="col-lg-12 register-only" style="display: none">
+                      <fieldset>
+                        <input
+                          type="text"
+                          name="name"
+                          id="teacher_name"
+                          placeholder="姓名..."
+                          autocomplete="on"
+                        />
+                      </fieldset>
+                    </div>
+                    <div class="col-lg-12 register-only" style="display: none">
+                      <fieldset>
+                        <input
+                          type="email"
+                          name="email"
+                          id="teacher_email"
+                          placeholder="邮箱（可选）..."
+                          autocomplete="on"
                         />
                       </fieldset>
                     </div>
@@ -533,6 +606,9 @@
     </div>
 
     <script>
+      let isRegisterMode = false;
+      let currentUserType = "student";
+
       function showForm(fieldsId, clickedButton) {
         var loginForm = document.getElementById("contact-form");
         var submitButton = document.getElementById("form-submit");
@@ -546,29 +622,131 @@
         });
         var activeGroup = document.getElementById(fieldsId);
         activeGroup.classList.add("active");
-        activeGroup.querySelectorAll("input").forEach(function (input) {
-          input.disabled = false;
-        });
+        activeGroup
+          .querySelectorAll("input:not(.register-only input)")
+          .forEach(function (input) {
+            input.disabled = false;
+          });
 
         var buttons = document.querySelectorAll(".toggle-btn");
         buttons.forEach(function (btn) {
           btn.classList.remove("active");
         });
         clickedButton.classList.add("active");
+
+        if (isRegisterMode) {
+          activeGroup
+            .querySelectorAll(".register-only input")
+            .forEach(function (input) {
+              input.disabled = false;
+            });
+        }
+
         switch (fieldsId) {
           case "student-fields":
+            currentUserType = "student";
             loginForm.action = "/login/student";
-            submitButton.innerText = "登录";
+            submitButton.innerText = isRegisterMode ? "注册" : "登录";
             break;
           case "teacher-fields":
+            currentUserType = "teacher";
             loginForm.action = "/login/teacher";
-            submitButton.innerText = "登录";
+            submitButton.innerText = isRegisterMode ? "注册" : "登录";
             break;
           case "admin-fields":
+            currentUserType = "admin";
             loginForm.action = "/login/admin";
             submitButton.innerText = "登录";
             break;
         }
+      }
+
+      function toggleRegisterMode() {
+        isRegisterMode = !isRegisterMode;
+        const registerFields = document.querySelectorAll(".register-only");
+        const submitButton = document.getElementById("form-submit");
+        const toggleBtn = document.getElementById("register-toggle-btn");
+        const loginForm = document.getElementById("contact-form");
+
+        if (isRegisterMode) {
+          registerFields.forEach((field) => (field.style.display = "block"));
+          registerFields.forEach((field) => {
+            const input = field.querySelector("input");
+            if (input) input.disabled = false;
+          });
+          submitButton.innerText = "注册";
+          toggleBtn.innerText = "已有账号？点击登录";
+          loginForm.onsubmit = handleRegister;
+        } else {
+          registerFields.forEach((field) => (field.style.display = "none"));
+          registerFields.forEach((field) => {
+            const input = field.querySelector("input");
+            if (input) input.disabled = true;
+          });
+          submitButton.innerText = "登录";
+          toggleBtn.innerText = "没有账号？点击注册";
+          loginForm.onsubmit = null;
+
+          if (currentUserType === "student") {
+            loginForm.action = "/login/student";
+          } else if (currentUserType === "teacher") {
+            loginForm.action = "/login/teacher";
+          } else {
+            loginForm.action = "/login/admin";
+          }
+        }
+      }
+
+      async function handleRegister(e) {
+        e.preventDefault();
+
+        let username, password, name, email, teacher;
+
+        if (currentUserType === "student") {
+          username = document.getElementById("student_id").value;
+          password = document.getElementById("student_password").value;
+          name = document.getElementById("student_name").value;
+          email = document.getElementById("student_email").value;
+          teacher = document.getElementById("student_teacher").value;
+        } else if (currentUserType === "teacher") {
+          username = document.getElementById("teacher_id").value;
+          password = document.getElementById("teacher_password").value;
+          name = document.getElementById("teacher_name").value;
+          email = document.getElementById("teacher_email").value;
+        } else {
+          alert("管理员账号不支持注册");
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: username,
+              password: password,
+              name: name,
+              email: email,
+              user_type: currentUserType,
+              teacher: teacher || "",
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            alert("注册成功！请登录");
+            toggleRegisterMode();
+          } else {
+            alert("注册失败：" + data.detail);
+          }
+        } catch (error) {
+          alert("注册失败：" + error.message);
+        }
+
+        return false;
       }
 
       document.addEventListener("DOMContentLoaded", function () {
@@ -581,7 +759,7 @@
           });
 
         document
-          .querySelectorAll("#student-fields input")
+          .querySelectorAll("#student-fields input:not(.register-only input)")
           .forEach(function (input) {
             input.disabled = false;
           });

@@ -5,6 +5,8 @@ from fastapi import (
     HTTPException,
     Form,
     status,
+    Cookie,
+    Response,
 )
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -25,12 +27,15 @@ from AgentModule.qa_agent import QA_Agent
 from QuizModule.quiz_agent import Quiz_Agent
 from LearningPlanModule.plan_agent import Plan_Agent
 from SummaryModule.summary_agent import Summary_Agent
+from CoordinatorAgentModule.coordinator_agent import Coordinator_Agent
 from QuizModule import generate_learning_plan_from_quiz
 from tools.language_handler import LanguageHandler
 from tools.rag_service import get_rag_service
 from tools.covert_resource import convert_to_pdf
 from tools.llm_logger import get_llm_logger
 from tools.ocr_service import get_ocr_service
+from tools.user_manager import UserManager
+from tools.session_manager import get_session_manager
 
 app = FastAPI(title="AI-Education API")
 
@@ -56,6 +61,21 @@ qa_agent = QA_Agent()
 quiz_agent = Quiz_Agent()
 summary_agent = Summary_Agent()
 plan_agent = Plan_Agent()
+coordinator_agent = Coordinator_Agent()
+user_manager = UserManager()
+session_manager = get_session_manager()
+
+
+def get_current_user(
+    session_id: Optional[str] = Cookie(None),
+) -> Optional[Dict[str, Any]]:
+    if not session_id:
+        return None
+    return session_manager.get_session(session_id)
+
+
+def get_user_knowledge_path(username: str) -> str:
+    return user_manager.get_user_course_path(username)
 
 
 class ChatMessage(BaseModel):
@@ -120,6 +140,15 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+    name: str
+    email: Optional[str] = ""
+    user_type: str
+    teacher: Optional[str] = ""
+
+
 class LLMLogRequest(BaseModel):
     messages: List[Dict[str, str]]
     response: Dict[str, Any]
@@ -150,9 +179,16 @@ async def get_admin_page():
 
 @app.post("/login/student")
 async def login_student(
-    student_id: str = Form(..., alias="student_id"), password: str = Form(...)
+    response: Response,
+    student_id: str = Form(..., alias="student_id"),
+    password: str = Form(...),
 ):
-    if student_id == "stuwangqiyu" and password == "123456":
+    user = user_manager.authenticate_student(student_id, password)
+    if user:
+        session_id = session_manager.create_session(student_id, "student", user)
+        response.set_cookie(
+            key="session_id", value=session_id, httponly=True, max_age=86400
+        )
         return RedirectResponse(
             url="/static/mainpage.html", status_code=status.HTTP_302_FOUND
         )
@@ -162,24 +198,89 @@ async def login_student(
 
 @app.post("/login/teacher")
 async def login_teacher(
-    teacher_id: str = Form(..., alias="teacher_id"), password: str = Form(...)
+    response: Response,
+    teacher_id: str = Form(..., alias="teacher_id"),
+    password: str = Form(...),
 ):
-    if teacher_id == "teawangqiyu" and password == "123456":
-
+    user = user_manager.authenticate_teacher(teacher_id, password)
+    if user:
+        session_id = session_manager.create_session(teacher_id, "teacher", user)
+        response.set_cookie(
+            key="session_id", value=session_id, httponly=True, max_age=86400
+        )
         return RedirectResponse(url="/teacher.html", status_code=status.HTTP_302_FOUND)
     else:
-
         return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
 
 
 @app.post("/login/admin")
 async def login_admin(
-    admin_username: str = Form(..., alias="admin_username"), password: str = Form(...)
+    response: Response,
+    admin_username: str = Form(..., alias="admin_username"),
+    password: str = Form(...),
 ):
-    if admin_username == "adminwangqiyu" and password == "123456":
+    user = user_manager.authenticate_admin(admin_username, password)
+    if user:
+        session_id = session_manager.create_session(admin_username, "admin", user)
+        response.set_cookie(
+            key="session_id", value=session_id, httponly=True, max_age=86400
+        )
         return RedirectResponse(url="/admin.html", status_code=status.HTTP_302_FOUND)
     else:
         return RedirectResponse(url="/", status_code=status.HTTP_302_FOUND)
+
+
+@app.post("/api/register")
+async def register_user(data: RegisterRequest):
+    try:
+        if data.user_type == "student":
+            user = user_manager.register_student(
+                username=data.username,
+                password=data.password,
+                stu_name=data.name,
+                email=data.email,
+                teacher=data.teacher,
+            )
+        elif data.user_type == "teacher":
+            user = user_manager.register_teacher(
+                username=data.username,
+                password=data.password,
+                name=data.name,
+                email=data.email,
+            )
+        else:
+            raise HTTPException(status_code=400, detail="Invalid user type")
+
+        return {
+            "success": True,
+            "message": "User registered successfully",
+            "user": user,
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Registration error: {e}")
+        raise HTTPException(status_code=500, detail="Registration failed")
+
+
+@app.post("/api/logout")
+async def logout(response: Response, session_id: Optional[str] = Cookie(None)):
+    if session_id:
+        session_manager.delete_session(session_id)
+    response.delete_cookie(key="session_id")
+    return {"success": True, "message": "Logged out successfully"}
+
+
+@app.get("/api/current-user")
+async def get_current_user_info(session_id: Optional[str] = Cookie(None)):
+    session = get_current_user(session_id)
+    if not session:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return {
+        "username": session["username"],
+        "user_type": session["user_type"],
+        "user_data": session["user_data"],
+    }
 
 
 @app.post("/api/chat")
@@ -253,13 +354,18 @@ async def chat(data: ChatMessage):
     }
 
 
-def find_children_index_for_pdf(pdf_path: str) -> Optional[int]:
+def find_children_index_for_pdf(
+    pdf_path: str, knowledge_path: str = None
+) -> Optional[int]:
     """根据PDF路径找到它属于big_data.json的哪个children"""
     if not pdf_path:
         return None
 
+    if knowledge_path is None:
+        knowledge_path = KNOWLEDGE_JSON_PATH
+
     try:
-        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(knowledge_path, "r", encoding="utf-8") as f:
             graph_data = json.load(f)
     except Exception as e:
         logger.error(f"Failed to load knowledge graph: {e}")
@@ -290,13 +396,18 @@ def find_children_index_for_pdf(pdf_path: str) -> Optional[int]:
     return None
 
 
-def find_grandchild_and_collect_pdfs(pdf_path: str) -> List[str]:
+def find_grandchild_and_collect_pdfs(
+    pdf_path: str, knowledge_path: str = None
+) -> List[str]:
     """找到PDF所属的grandchild，并收集该grandchild下所有great-grandchildren的PDF"""
     if not pdf_path:
         return []
 
+    if knowledge_path is None:
+        knowledge_path = KNOWLEDGE_JSON_PATH
+
     try:
-        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(knowledge_path, "r", encoding="utf-8") as f:
             graph_data = json.load(f)
     except Exception as e:
         logger.error(f"Failed to load knowledge graph: {e}")
@@ -505,12 +616,19 @@ def _compile_results(state: Dict) -> str:
 
 
 @app.post("/api/learning-plan")
-async def create_learning_plan(data: LearningPlanRequest):
+async def create_learning_plan(
+    data: LearningPlanRequest, session_id: Optional[str] = Cookie(None)
+):
     """生成学习计划"""
     code = LanguageHandler.code_from_display(data.lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(data.goals)
 
-    plan_agent = Plan_Agent(user_name=data.name, user_language=language)
+    username = data.name
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        username = session["username"]
+
+    plan_agent = Plan_Agent(user_name=username, user_language=language)
     goals_list = [g.strip() for g in data.goals.split(";") if g.strip()]
     user_input = {"goals": goals_list}
 
@@ -535,7 +653,9 @@ async def create_learning_plan(data: LearningPlanRequest):
 
 
 @app.post("/api/learning-plan/from-quiz")
-async def create_learning_plan_from_quiz(data: LearningPlanFromQuiz):
+async def create_learning_plan_from_quiz(
+    data: LearningPlanFromQuiz, session_id: Optional[str] = Cookie(None)
+):
     """根据测验结果生成学习计划"""
     if not data.state or not data.state.get("scores"):
         raise HTTPException(status_code=400, detail="No quiz results available")
@@ -543,7 +663,12 @@ async def create_learning_plan_from_quiz(data: LearningPlanFromQuiz):
     code = LanguageHandler.code_from_display(data.lang_choice)
     language = code if code != "auto" else data.state.get("language", "en")
 
-    plan_agent = Plan_Agent(user_name=data.name, user_language=language)
+    username = data.name
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        username = session["username"]
+
+    plan_agent = Plan_Agent(user_name=username, user_language=language)
     generated_plan = plan_agent.generate_plan_from_quiz(data.state["scores"])
     plan_agent.save_to_file()
 
@@ -642,21 +767,50 @@ async def generate_summary(data: SummaryRequest):
 
 
 @app.get("/api/knowledge-graph")
-async def get_knowledge_graph():
+async def get_knowledge_graph(session_id: Optional[str] = Cookie(None)):
     """获取知识图谱数据"""
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        knowledge_path = get_user_knowledge_path(session["username"])
+    else:
+        knowledge_path = KNOWLEDGE_JSON_PATH
+
     try:
-        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(knowledge_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         return data
     except FileNotFoundError:
         return {}
 
 
-@app.get("/api/learning-nodes")
-async def get_learning_nodes():
-    """获取所有学习节点"""
+@app.get("/api/graph-visualization")
+async def get_graph_visualization(session_id: Optional[str] = Cookie(None)):
+    """获取用户的可视化图谱数据"""
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        graph_path = user_manager.get_user_graph_path(session["username"])
+    else:
+        graph_path = "backend/static/vendor/graph.json"
+
     try:
-        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(graph_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data
+    except FileNotFoundError:
+        return {"nodes": [], "links": []}
+
+
+@app.get("/api/learning-nodes")
+async def get_learning_nodes(session_id: Optional[str] = Cookie(None)):
+    """获取所有学习节点"""
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        knowledge_path = get_user_knowledge_path(session["username"])
+    else:
+        knowledge_path = KNOWLEDGE_JSON_PATH
+
+    try:
+        with open(knowledge_path, "r", encoding="utf-8") as f:
             graph_data = json.load(f)
     except FileNotFoundError:
         return []
@@ -672,10 +826,18 @@ async def get_learning_nodes():
 
 
 @app.post("/api/node/resources")
-async def get_node_resources(data: NodeSelection):
+async def get_node_resources(
+    data: NodeSelection, session_id: Optional[str] = Cookie(None)
+):
     """获取节点资源"""
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        knowledge_path = get_user_knowledge_path(session["username"])
+    else:
+        knowledge_path = KNOWLEDGE_JSON_PATH
+
     try:
-        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(knowledge_path, "r", encoding="utf-8") as f:
             graph_data = json.load(f)
     except FileNotFoundError:
         return []
@@ -701,13 +863,23 @@ def find_resources_for_node(node_name: str, graph_data: dict) -> list:
 
 
 @app.post("/api/upload")
-async def upload_files(files: List[UploadFile] = File(...), node_name: str = ""):
+async def upload_files(
+    files: List[UploadFile] = File(...),
+    node_name: str = "",
+    session_id: Optional[str] = Cookie(None),
+):
     """上传文件到指定节点"""
     if not files:
         raise HTTPException(status_code=400, detail="No files uploaded")
 
     if not node_name:
         raise HTTPException(status_code=400, detail="No node selected")
+
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        knowledge_path = get_user_knowledge_path(session["username"])
+    else:
+        knowledge_path = KNOWLEDGE_JSON_PATH
 
     save_dir = Path("data/RAG_files")
     save_dir.mkdir(parents=True, exist_ok=True)
@@ -734,7 +906,7 @@ async def upload_files(files: List[UploadFile] = File(...), node_name: str = "")
         raise HTTPException(status_code=400, detail="No valid files processed")
 
     try:
-        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(knowledge_path, "r", encoding="utf-8") as f:
             graph_data = json.load(f)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Knowledge graph not found")
@@ -763,7 +935,7 @@ async def upload_files(files: List[UploadFile] = File(...), node_name: str = "")
             break
 
     if updated:
-        with open(KNOWLEDGE_JSON_PATH, "w", encoding="utf-8") as f:
+        with open(knowledge_path, "w", encoding="utf-8") as f:
             json.dump(graph_data, f, indent=2, ensure_ascii=False)
 
         ingest_error = rag_service.ingest_paths(newly_added_paths)
@@ -782,10 +954,18 @@ async def upload_files(files: List[UploadFile] = File(...), node_name: str = "")
 
 
 @app.post("/api/delete-resource")
-async def delete_resource(data: DeleteResourceRequest):
+async def delete_resource(
+    data: DeleteResourceRequest, session_id: Optional[str] = Cookie(None)
+):
     """删除节点的指定资源"""
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        knowledge_path = get_user_knowledge_path(session["username"])
+    else:
+        knowledge_path = KNOWLEDGE_JSON_PATH
+
     try:
-        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(knowledge_path, "r", encoding="utf-8") as f:
             graph_data = json.load(f)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Knowledge graph not found")
@@ -813,7 +993,7 @@ async def delete_resource(data: DeleteResourceRequest):
             break
 
     if updated:
-        with open(KNOWLEDGE_JSON_PATH, "w", encoding="utf-8") as f:
+        with open(knowledge_path, "w", encoding="utf-8") as f:
             json.dump(graph_data, f, indent=2, ensure_ascii=False)
 
         return {"success": True, "message": "Resource deleted successfully"}
@@ -931,9 +1111,14 @@ async def get_llm_logs():
 
 
 @app.get("/api/learning-plans")
-async def get_learning_plans():
+async def get_learning_plans(session_id: Optional[str] = Cookie(None)):
     """获取所有学习计划文件列表"""
-    plans_dir = Path("data/learning_plans")
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        plans_dir = Path(user_manager.get_user_learning_plans_dir(session["username"]))
+    else:
+        plans_dir = Path("data/learning_plans")
+
     if not plans_dir.exists():
         return []
 
@@ -992,10 +1177,16 @@ def find_and_update_node(node, target_name):
 
 
 @app.get("/api/learning-progress")
-async def get_learning_progress():
+async def get_learning_progress(session_id: Optional[str] = Cookie(None)):
     """获取学习进度统计"""
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        knowledge_path = get_user_knowledge_path(session["username"])
+    else:
+        knowledge_path = KNOWLEDGE_JSON_PATH
+
     try:
-        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(knowledge_path, "r", encoding="utf-8") as f:
             graph_data = json.load(f)
     except FileNotFoundError:
         return {"error": "Knowledge graph not found"}
@@ -1064,10 +1255,16 @@ async def get_learning_progress():
 
 
 @app.post("/api/quiz/complete")
-async def complete_quiz(data: QuizComplete):
+async def complete_quiz(data: QuizComplete, session_id: Optional[str] = Cookie(None)):
     """完成测验，更新节点flag"""
+    session = get_current_user(session_id)
+    if session and session["user_type"] == "student":
+        knowledge_path = get_user_knowledge_path(session["username"])
+    else:
+        knowledge_path = KNOWLEDGE_JSON_PATH
+
     try:
-        with open(KNOWLEDGE_JSON_PATH, "r", encoding="utf-8") as f:
+        with open(knowledge_path, "r", encoding="utf-8") as f:
             graph_data = json.load(f)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Knowledge graph not found")
@@ -1107,7 +1304,7 @@ async def complete_quiz(data: QuizComplete):
         if all_children_complete:
             graph_data["flag"] = "1"
 
-        with open(KNOWLEDGE_JSON_PATH, "w", encoding="utf-8") as f:
+        with open(knowledge_path, "w", encoding="utf-8") as f:
             json.dump(graph_data, f, indent=2, ensure_ascii=False)
         return {
             "success": True,

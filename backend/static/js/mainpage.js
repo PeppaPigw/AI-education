@@ -59,7 +59,7 @@ function initKGSVG() {
 }
 
 function loadKnowledgeGraph() {
-  fetch("/static/vendor/graph.json")
+  fetch("/api/graph-visualization")
     .then((response) => {
       if (!response.ok) {
         throw new Error("网络响应失败");

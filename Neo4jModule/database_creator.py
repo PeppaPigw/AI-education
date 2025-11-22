@@ -11,6 +11,14 @@ PASSWORD = os.getenv("NEO4J_PASSWORD", "12345678")
 COURSE_JSON_PATH = "data/course/big_data.json"
 
 
+def get_user_course_path(username: str) -> str:
+    """Get user-specific course path"""
+    user_path = f"data/user_data/{username}/big_data.json"
+    if os.path.exists(user_path):
+        return user_path
+    return COURSE_JSON_PATH
+
+
 class Neo4jDemo:
     def __init__(self, uri, user, password):
         self._driver = GraphDatabase.driver(uri, auth=(user, password))
@@ -229,8 +237,15 @@ class Neo4jDemo:
 if __name__ == "__main__":
     db = None
     try:
+        import sys
+
+        username = sys.argv[1] if len(sys.argv) > 1 else None
+        json_path = get_user_course_path(username) if username else COURSE_JSON_PATH
+
+        print(f"Using course data: {json_path}")
+
         db = Neo4jDemo(URI, USERNAME, PASSWORD)
-        if db.import_course_data(COURSE_JSON_PATH):
+        if db.import_course_data(json_path):
             if not db.visualize_graph():
                 print("⚠️ 可视化生成失败，但数据已成功导入Neo4j")
     except Exception as e:
