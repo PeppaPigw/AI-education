@@ -120,7 +120,11 @@ class QA_Agent:
         )
 
     def chat(
-        self, question: str, retriever=None, return_details: bool = False
+        self,
+        question: str,
+        retriever=None,
+        return_details: bool = False,
+        username: str = "anonymous",
     ) -> str | tuple[str, bool, bool]:
         print("\n" + "=" * 80)
         print("🤔 用户问题:")
@@ -169,6 +173,7 @@ class QA_Agent:
                     "language": lang,
                     "used_retriever": used_retriever,
                 },
+                username=username,
             )
 
             print("-" * 80)
@@ -217,6 +222,7 @@ class QA_Agent:
                     model=model_name,
                     module="AgentModule.qa_agent",
                     metadata={"function": "chat_fallback", "language": lang},
+                    username=username,
                 )
 
                 print(f"✅ Fallback LLM回答: {output}")

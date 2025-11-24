@@ -61,7 +61,11 @@ Respond in {language}.
         )
 
     def generate_summary(
-        self, input_text: str, language: str = "en", retriever=None
+        self,
+        input_text: str,
+        language: str = "en",
+        retriever=None,
+        username: str = "anonymous",
     ) -> tuple[str, bool]:
         lang = (
             LanguageHandler.choose_or_detect(input_text)
@@ -98,6 +102,7 @@ Respond in {language}.
                 "language": lang,
                 "used_retriever": used_retriever,
             },
+            username=username,
         )
 
         return response.content, used_retriever

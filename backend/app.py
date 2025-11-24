@@ -284,12 +284,15 @@ async def get_current_user_info(session_id: Optional[str] = Cookie(None)):
 
 
 @app.post("/api/chat")
-async def chat(data: ChatMessage):
+async def chat(data: ChatMessage, session_id: Optional[str] = Cookie(None)):
     """处理聊天消息 - 启用RAG检索"""
     global CURRENT_PDF_PATH
     message = data.message
     history = data.history
     lang_choice = data.lang_choice
+
+    session = get_current_user(session_id)
+    username = session["username"] if session else "anonymous"
 
     logger.info(f"📨 Chat request: {message[:50]}...")
     logger.info(f"📄 Current PDF: {CURRENT_PDF_PATH}")
@@ -338,7 +341,7 @@ async def chat(data: ChatMessage):
         logger.info(f"⚠️ No current PDF, using global retriever")
 
     result, used_fallback, used_retriever = qa_agent.chat(
-        message, retriever=current_retriever, return_details=True
+        message, retriever=current_retriever, return_details=True, username=username
     )
 
     logger.info(
@@ -451,9 +454,12 @@ def find_grandchild_and_collect_pdfs(
 
 
 @app.post("/api/quiz/start")
-async def start_quiz(data: QuizStart):
+async def start_quiz(data: QuizStart, session_id: Optional[str] = Cookie(None)):
     """开始测验"""
     global CURRENT_PDF_PATH
+
+    session = get_current_user(session_id)
+    username = session["username"] if session else "anonymous"
 
     code = LanguageHandler.code_from_display(data.lang_choice)
     language = (
@@ -523,7 +529,7 @@ async def start_quiz(data: QuizStart):
         logger.info(f"⚠️ No current PDF, using global retriever")
 
     questions, used_retriever = quiz_agent.prepare_quiz_questions(
-        data.subject, language=language, retriever=current_retriever
+        data.subject, language=language, retriever=current_retriever, username=username
     )
 
     if not questions:
@@ -679,9 +685,14 @@ async def create_learning_plan_from_quiz(
 
 
 @app.post("/api/summary")
-async def generate_summary(data: SummaryRequest):
+async def generate_summary(
+    data: SummaryRequest, session_id: Optional[str] = Cookie(None)
+):
     """生成知识总结"""
     global CURRENT_PDF_PATH
+
+    session = get_current_user(session_id)
+    username = session["username"] if session else "anonymous"
 
     code = LanguageHandler.code_from_display(data.lang_choice)
     language = code if code != "auto" else LanguageHandler.choose_or_detect(data.topic)
@@ -760,7 +771,7 @@ async def generate_summary(data: SummaryRequest):
         logger.info(f"⚠️ No current PDF, using global retriever")
 
     summary, used_retriever = summary_agent.generate_summary(
-        data.topic, language=language, retriever=current_retriever
+        data.topic, language=language, retriever=current_retriever, username=username
     )
 
     return {"summary": summary, "used_retriever": used_retriever}
@@ -1075,11 +1086,36 @@ async def get_languages():
 
 
 @app.get("/api/students")
-async def get_students():
+async def get_students(session_id: Optional[str] = Cookie(None)):
     """获取所有学生信息"""
     try:
         with open("data/Users/student.json", "r", encoding="utf-8") as f:
             students = json.load(f)
+
+        session = get_current_user(session_id)
+        if session and session["user_type"] == "teacher":
+            teacher_username = session["username"]
+            teacher_data = user_manager.get_teacher_profile(teacher_username)
+            if teacher_data:
+                teacher_students = teacher_data.get("students", [])
+                students = [
+                    s
+                    for s in students
+                    if s.get("stu_name") in teacher_students
+                    or s.get("username") in teacher_students
+                ]
+
+        for student in students:
+            username = student.get("username")
+            if username:
+                user_course_path = user_manager.get_user_course_path(username)
+                try:
+                    with open(user_course_path, "r", encoding="utf-8") as f:
+                        user_graph = json.load(f)
+                        student["user_progress_data"] = user_graph
+                except:
+                    pass
+
         return students
     except FileNotFoundError:
         return []
@@ -1316,9 +1352,12 @@ async def complete_quiz(data: QuizComplete, session_id: Optional[str] = Cookie(N
 
 
 @app.post("/api/llm-log")
-async def log_llm_call(data: LLMLogRequest):
+async def log_llm_call(data: LLMLogRequest, session_id: Optional[str] = Cookie(None)):
     """Log LLM call from frontend or backend"""
     try:
+        session = get_current_user(session_id)
+        username = session["username"] if session else "anonymous"
+
         llm_logger = get_llm_logger()
         response_obj = type(
             "Response",
@@ -1347,6 +1386,7 @@ async def log_llm_call(data: LLMLogRequest):
             model=data.model,
             module=data.module,
             metadata=data.metadata,
+            username=username,
         )
         return {"success": True, "message": "LLM call logged"}
     except Exception as e:

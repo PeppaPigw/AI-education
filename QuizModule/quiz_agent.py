@@ -22,7 +22,11 @@ class Quiz_Agent:
         )
 
     def prepare_quiz_questions(
-        self, subject: str, language: str = "en", retriever=None
+        self,
+        subject: str,
+        language: str = "en",
+        retriever=None,
+        username: str = "anonymous",
     ) -> tuple[list[dict], bool]:
         if retriever is None:
             retriever = RAGService().get_retriever()
@@ -59,6 +63,7 @@ class Quiz_Agent:
                 "subject": subject,
                 "language": language,
             },
+            username=username,
         )
 
         topics = [t.strip() for t in topic_result.content.split("\n") if t.strip()]
@@ -122,6 +127,7 @@ class Quiz_Agent:
                     "topic": topic,
                     "language": language,
                 },
+                username=username,
             )
 
         questions_list = []

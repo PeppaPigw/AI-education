@@ -116,6 +116,7 @@ class Plan_Agent:
                     "topic": topic,
                     "language": self.user_language,
                 },
+                username=self.user_name,
             )
 
             materials = [m for m in response.content.split("\n") if m]
@@ -147,7 +148,7 @@ class Plan_Agent:
             base_dir = f"data/user_data/{self.user_name}/learning_plans/"
             if not os.path.exists(f"data/user_data/{self.user_name}"):
                 base_dir = "data/learning_plans/"
-        
+
         os.makedirs(base_dir, exist_ok=True)
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

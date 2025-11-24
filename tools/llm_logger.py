@@ -35,11 +35,13 @@ class LLMLogger:
         model: str,
         module: str,
         metadata: Optional[Dict] = None,
+        username: Optional[str] = None,
     ):
         """Log LLM call with full details"""
         try:
             log_entry = {
                 "timestamp": datetime.now().isoformat(),
+                "username": username or "unknown",
                 "module": module,
                 "metadata": metadata or {},
                 "request": {"model": model, "messages": messages},
