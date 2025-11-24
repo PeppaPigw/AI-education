@@ -18,6 +18,7 @@ api_key = os.environ.get("api_key")
 
 @tool
 def intent_classifier(user_input: str) -> str:
+    """Classify user intent from input text"""
     intents = {
         "qa": [
             "问",
@@ -54,6 +55,7 @@ def intent_classifier(user_input: str) -> str:
 
 @tool
 def task_decomposer(user_input: str) -> str:
+    """Decompose complex user request into subtasks"""
     llm = ChatOpenAI(
         model=model_name, temperature=0, base_url=base_url, api_key=api_key
     )
@@ -96,6 +98,7 @@ Possible target agents: qa_agent, quiz_agent, summary_agent, plan_agent
 
 @tool
 def priority_analyzer(tasks: str) -> str:
+    """Analyze priority levels for given tasks"""
     try:
         tasks_data = json.loads(tasks)
         subtasks = tasks_data.get("subtasks", [])
