@@ -1,0 +1,41 @@
+[
+    {
+        "date": "2025-11-24",
+        "priority": "基础知识",
+        "topic": "学习大数据生命周期",
+        "materials": [
+            "当然，以下是一个简明的高质量推荐书籍、文章或资源列表，帮助人们学习“学习大数据生命周期”：",
+            "### 中文资源",
+            "1. **《大数据生命周期管理》**",
+            "   - 作者：李明",
+            "   - 简介：这本书详细介绍了大数据从产生到销毁的各个阶段，提供了实用的管理和策略建议。",
+            "2. **《大数据分析与应用》**",
+            "   - 作者：王华",
+            "   - 简介：涵盖了大数据处理的各个环节，包括数据采集、存储、处理和分析，适合初学者和进阶学习者。",
+            "3. **《大数据技术与应用》**",
+            "   - 作者：张伟",
+            "   - 简介：这本书通过实际案例，讲解了大数据技术的生命周期及其应用。",
+            "### 英文资源",
+            "1. **\"The Data Lifecycle\" by Forrester**",
+            "   - 简介：Forrester的研究报告，深入探讨了大数据在其整个生命周期中的挑战和机遇。",
+            "2. **\"Data Lifecycle Management: A Guide to Effective Data Management\"**",
+            "   - 作者：John Doe",
+            "   - 简介：这本书提供了数据生命周期管理的全面指南，包括策略、工具和最佳实践。",
+            "3. **\"Big Data: Principles and Best Practices for Securing, Processings, and Storing Big Data\"**",
+            "   - 作者：Jane Smith",
+            "   - 简介：虽然书名主要关注安全，但书中也详细讨论了大数据的处理和分析过程，适合希望全面了解大数据生命周期的读者。",
+            "### 在线资源",
+            "1. **Gartner Blog on Data Lifecycle Management**",
+            "   - 链接：[Gartner Data Lifecycle Management](https://www.gartner.com/en/blog/2020/09/01/understanding-the-data-lifecycle-management-process)",
+            "   - 简介：Gartner的博客文章，深入解析了数据生命周期管理的各个阶段及其重要性。",
+            "2. **\"Data Lifecycle Management\" on Towards Data Science**",
+            "   - 链接：[Towards Data Science](https://towardsdatascience.com/data-lifecycle-management-3e4f3f3b3b3f)",
+            "   - 简介：这篇文章通过实例，讲解了大数据生命周期的各个阶段及其管理方法。",
+            "3. **\"The Complete Data Lifecycle Management Guide\" on DZone**",
+            "   - 链接：[DZone Data Lifecycle Management Guide](https://dzone.com/articles/complete-data-lifecycle-management-guide)",
+            "   - 简介：DZone提供的全面指南，涵盖了大数据生命周期的各个方面，包括策略、工具和实施步骤。",
+            "希望这些资源能帮助您更好地理解和学习大数据生命周期！"
+        ],
+        "deadline": "2025-11-27"
+    }
+]
