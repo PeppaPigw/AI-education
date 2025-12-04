@@ -8,7 +8,9 @@ class SessionManager:
         self._sessions = {}
         self._session_timeout = timedelta(hours=24)
 
-    def create_session(self, username: str, user_type: str, user_data: Dict[str, Any]) -> str:
+    def create_session(
+        self, username: str, user_type: str, user_data: Dict[str, Any]
+    ) -> str:
         session_id = secrets.token_urlsafe(32)
         self._sessions[session_id] = {
             "username": username,
@@ -22,12 +24,12 @@ class SessionManager:
     def get_session(self, session_id: str) -> Optional[Dict[str, Any]]:
         if session_id not in self._sessions:
             return None
-        
+
         session = self._sessions[session_id]
         if datetime.now() - session["last_accessed"] > self._session_timeout:
             del self._sessions[session_id]
             return None
-        
+
         session["last_accessed"] = datetime.now()
         return session
 
@@ -37,7 +39,8 @@ class SessionManager:
 
     def cleanup_expired_sessions(self):
         expired = [
-            sid for sid, session in self._sessions.items()
+            sid
+            for sid, session in self._sessions.items()
             if datetime.now() - session["last_accessed"] > self._session_timeout
         ]
         for sid in expired:
@@ -49,4 +52,3 @@ _session_manager = SessionManager()
 
 def get_session_manager() -> SessionManager:
     return _session_manager
-
